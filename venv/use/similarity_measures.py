@@ -45,6 +45,8 @@ def mass_v1(q, t):
 
     dist = (sumt2 - 2 * sumt * meant + m * (np.power(meant,2))) / sigmat2 - 2 * (qt[m-1:n] - sum_q * meant) / sigmat + sum_q2
     dist = np.sqrt(dist)
+    #distance here is a complex number, need to return its amplitude/absolute value
+    #return a vector with size of n-m+1
     return np.abs(dist)
 
 def mass_v2(x, y):
@@ -66,12 +68,14 @@ def mass_v2(x, y):
         cumsum2 = numpy.cumsum(numpy.insert(x2, 0, np.zeros(N)))
         return (cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N)
 
+    #compute the moving average and standard deviation of Time Series 
     meanx = running_mean(x, n)
     sigmax = running_std(x, n)
 
     #The main trick of getting dot products in O(n log n) time
     z = dot_products_2(y, x)
     dist = 2*(m-(z[m-1:n]-m*meanx[m-1:n]*meany)/(sigmax[m-1:n]*sigmay))
-
     dist = np.sqrt(dist);
+    #distance here is a complex number, need to return its amplitude/absolute value
+    #return a vector with size of n-m+1
     return np.abs(dist)
