@@ -14,5 +14,6 @@ class Shapelet(object):
 
         # A dict: for each time series (by name) as a key, it exists a list of the indices where this shapelet
         #  matched this time series
+        self.matching_ts = []
         self.matching_indices = {}
 

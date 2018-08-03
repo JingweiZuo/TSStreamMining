@@ -43,7 +43,8 @@ class Utils(object):
     # if the dataset format is changed, just modify this function to adapt it
     @staticmethod
     def generate_timeseries(directory):
-        list_ts = list[TimeSeries]
+        #list_ts = list[TimeSeries]
+        dict_ts = {}
         list_rawData = load(directory, 'raw data')
         for d in list_rawData:
             # d[0] is the class of TS in the original data, d[1:] is the data in TS
@@ -51,8 +52,8 @@ class Utils(object):
             t.class_timeseries = d[0]
             t.timeseries = d[1:]
             t.name = hash(d[1:])
-            list_ts.append(t)
-        return list_ts
+            dict_ts.extend({t.name:t})
+        return dict_ts
 
     @staticmethod
     def save(directory, list_objects, option):

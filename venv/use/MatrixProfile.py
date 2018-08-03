@@ -13,6 +13,7 @@ class MatrixProfile(object):
         n2 = len(t2.timeseries)
         MP12 = [float('inf')] #Matrix Profile
         IP12 = [0] #Index Profile
+        DP_all = {} # Distance Profiles for All Index in the timeseries
         indexes = n2-subseq_length+1
 
         if (t1.name == t2.name):
@@ -25,9 +26,10 @@ class MatrixProfile(object):
             data = t1.timeseries
             query = t2.timeseries[index:index + subseq_length]
             # compute Distance Profile(DP)
-            DP = mass_v2(data, query)
+            #DP = mass_v2(data, query)
+            DP_all[index] = mass_v2(data, query)
             MP12, IP12 = updataMP_IP(MP12, DP, IP12, index, flag)
-        return MP12, IP12
+        return DP_all, MP12, IP12
 
     def updateMP_IP(self, MP, DP, IP, index, flag):
         if (flag =="self_similarity"):
