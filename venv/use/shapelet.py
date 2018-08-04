@@ -9,11 +9,12 @@ class Shapelet(object):
         self.subsequence = None
         self.class_shapelet = ''
         self.differ_distance = 0.0
+        self.normal_distance = 0.0
         self.dist_threshold = 0.0
         self.dimension_name = ''
 
-        # A dict: for each time series (by name) as a key, it exists a list of the indices where this shapelet
-        #  matched this time series
+        # [ts_target_name1, ts_target_name2, ...], Array[string]
         self.matching_ts = []
+        # {ts_target_name:[idx1,idx2,...]}, dict{String:Array[]}
         self.matching_indices = {}
 

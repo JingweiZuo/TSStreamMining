@@ -21,14 +21,13 @@ import argparse
 import sys
 import logging
 import time
-import tasea.tasea_machinelearning.tasea_algorithms as ust
-import tasea.tasea_machinelearning.evaluation as ev
-from tasea.ust_thread.thread_plots import PlottingThread
+import use.use_algorithms as use_algo
+import use.evaluation as ev
 import gc
 import csv
 import os
 
-from venv.utils import Utils
+from utils import Utils
 from sklearn.model_selection import StratifiedShuffleSplit, train_test_split, StratifiedKFold
 
 __author__ = "Jingwei ZUO"
@@ -76,6 +75,13 @@ def parse_args(args):
              "Use this method instead of providing one data set for the learning and another for the testing",
         action='store_true'
     )
+    parser.add_argument(
+        '-k',
+        '--topk',
+        dest="top_k",
+        help="Select the top-k shapelets.",
+        default='20'
+    )
 
     return parser.parse_args(args)
 
@@ -92,18 +98,15 @@ def main(args):
     else:
         distance_measure = 'brute'
 
-    if args.info:
-        print("This code is developed by " + __author__)
-        sys.exit()
-
     if not args.data_directory:
         print("No data directory is specified. Use the -d option, or -h for more help")
         sys.exit()
 
-    list_multivariate_timeseries = Utils.convert_csv_to_multivariate_timeseries(args.data_directory)
+    top_k_value = args.top_k
 
+    list_timeseries = Utils.generate_timeseries(args.data_directory)
 
-    y = [mts.class_timeseries for mts in list_multivariate_timeseries]
+    y = [ts.class_timeseries for ts in list_timeseries.values()]
 
     args.cross = int(args.cross)
 
@@ -111,45 +114,32 @@ def main(args):
         # sss = StratifiedShuffleSplit(n_splits=args.cross, test_size=0.25, random_state=0)
         skfold = StratifiedKFold(n_splits=args.cross)
         k = 1
-        total_earliness = 0.0
         total_acc = 0.0
         total_app = 0.0
-        dummy_list = list(range(len(list_multivariate_timeseries)))
+        dummy_list = list(range(len(list_timeseries)))
         gen = skfold.split(dummy_list, y)
         for train_index, test_index in gen:
             print("*******************************************************")
             print("Starting Fold Number", k, "out of", args.cross)
-            list_multi_train = [list_multivariate_timeseries[i] for i in train_index]
-            list_multi_test = [list_multivariate_timeseries[i] for i in test_index]
+            list_ts_train = [list_timeseries[i] for i in train_index]
+            list_ts_test = [list_timeseries[i] for i in test_index]
 
             start_time = time.time()
             print("Starting the USE algorithm...")
-            list_all_shapelets = ust.use_v4(list_multi_train, distance_measure=distance_measure)
+            list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, list_ts_train, "top_k")
             print("USE algorithm complete")
             print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
             print("*******************************************************")
             print()
             print()
 
-            start_time = time.time()
-            print("Starting the SEE algorithm...")
-            list_all_sequences = ust.see_v2(list_all_shapelets, list_multi_train)
-            print("SEE algorithm complete")
-            print("Time taken by the SEE algorithm (minutes):", (time.time() - start_time) / 60)
-            print("*******************************************************")
-            print()
-            print()
-
             print("Evaluating...")
-            acc, earliness, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_multi_test,
-                                                                                               list_all_sequences,
-                                                                                               distance_measure=
-                                                                                               distance_measure)
+            acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_ts_test,
+                                                                                    list_timeseries,
+                                                                                    distance_measure = distance_measure)
             # print("Accuracy:", acc)
             print("Applicability of Fold", k, ":", app, "%")
             total_app += app
-            print("Earliness of Fold", k, ":", earliness, "%")
-            total_earliness += earliness
             print("Total Accuracy:", acc, "%")
             total_acc += acc
             print("Classification Report:")
@@ -171,7 +161,6 @@ def main(args):
             k += 1
 
         print("Total Applicability of the", args.cross, " Folds:", total_app / args.cross, "%")
-        print("Total Earliness of the", args.cross, " Folds:", total_earliness / args.cross, "%")
         print("Total Accuracy of the", args.cross, " Folds:", total_acc / args.cross, "%")
         # if total_acc:
         #     print("Total Accuracy (closest) of the", args.cross, " Folds:", total_acc / args.cross, "%")
@@ -181,9 +170,7 @@ def main(args):
         sys.exit()
 
     if args.split:
-        list_multivariate_timeseries, list_multi_test, y_train, y_test = train_test_split(list_multivariate_timeseries,
-                                                                                          y, test_size=0.25,
-                                                                                          random_state=0)
+        list_ts_train, list_ts_test, y_train, y_test = train_test_split(list_timeseries, y, test_size=0.25, random_state=0)
         ###############################Save dataset to 'csv' file ###############################
         file_name = "dataset_test.csv"
         dirname = args.data_directory + "/csv_dataset/"
@@ -195,17 +182,15 @@ def main(args):
         path =  dirname + file_name
         with open(path, 'w') as f:
             writer = csv.writer(f, lineterminator='\n', delimiter=';',)
-            for anObject in list_multivariate_timeseries:
+            for anObject in list_timeseries:
                 writer.writerow([anObject.name, anObject.class_timeseries])
         ###############################Save dataset to 'csv' file ###############################
-        args.eval_directory = 'done'
 
-    if not args.skip1 and not args.skip2:
-        # Start of the UST algorithm
+        # Start of the USE algorithm
         # The USE algorithm
         start_time = time.time()
         print("Starting the USE algorithm...")
-        list_all_shapelets = ust.use_v4(list_multivariate_timeseries, distance_measure=distance_measure)
+        list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, list_ts_train, "top_k")
         print("USE algorithm complete")
 
         print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
@@ -214,82 +199,6 @@ def main(args):
         Utils.save(args.data_directory, list_all_shapelets, "csv")
         print()
         print()
-    else:
-        print("Skipping the USE algorithm and loading the shapelets from a directory")
-        list_all_shapelets = Utils.load(args.data_directory, "shapelet")
-        print("Loading complete")
-        print("*******************************************************")
-        print()
-        print()
-
-    if args.view_shapelet:
-        t = PlottingThread(list_multivariate_timeseries, list_all_shapelets=list_all_shapelets)
-        t.start()
-        t.join()
-        return
-
-    if not args.skip2:
-        # The SEE algorithm
-        start_time = time.time()
-        print("Starting the SEE algorithm...")
-        list_all_sequences = ust.see_v2(list_all_shapelets, list_multivariate_timeseries)
-        print("SEE algorithm complete")
-        print("Time taken by the SEE algorithm (minutes):", (time.time() - start_time) / 60)
-
-        print("*******************************************************")
-        Utils.save(args.data_directory, list_all_sequences, "sequence")
-        print()
-        print()
-    else:
-        print("Skipping the SEE algorithm and loading the sequences from a directory")
-        list_all_sequences = Utils.load(args.data_directory, "sequence")
-        print("Loading complete")
-        print("*******************************************************")
-        print()
-        print()
-
-    if args.json:
-        Utils.save_json(args.data_directory, list_all_sequences)
-
-    if args.view_rule:
-        t2 = PlottingThread(list_multivariate_timeseries, list_all_sequences=list_all_sequences)
-        t2.start()
-        t2.join()
-        return
-    # The TAQE algorithm
-    # print("Starting the TAQE algorithm...")
-    # list_all_sequences = ust.taqe(list_all_sequences, list_multivariate_timeseries)
-    # print("TAQE algorithm complete")
-    # print("*******************************************************")
-    # print()
-    # print()
-
-    if args.eval_directory:
-        print("Evaluating...")
-        if args.eval_directory == 'done':
-            list_multivariate_timeseries = list_multi_test
-        else:
-            list_multivariate_timeseries = Utils.convert_csv_to_multivariate_timeseries(args.eval_directory)
-        acc, earliness, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_multivariate_timeseries,
-                                                                                           list_all_sequences,
-                                                                                           distance_measure=
-                                                                                           distance_measure)
-        print("Total Applicability:", app, "%")
-        print("Total Earliness:", earliness, "%")
-        print("Total Accuracy:", acc, "%")
-        print("Classification Report:")
-        print(sk_report)
-        # if sk_acc:
-        #     print("Total Accuracy (closest):", sk_acc, "%")
-        #     print("Classification Report (closest):")
-        #     print(sk_report)
-        #
-        # if acc_maj:
-        #     print("Total Accuracy (majority voting):", acc_maj, "%")
-        #     print("Classification Report (majority voting):")
-        #     print(report_maj)
-        print("Evaluation complete")
-    _logger.info("Exiting ...")
 
 
 def run():

@@ -1,8 +1,8 @@
 import use.MatrixProfile
 import use.shapelet
-import use.similarity_measure
+import use.similarity_measures
 from use.timeseries import *
-from venv.utils import *
+from utils import *
 
 def findShapelet(timeseries, dataset, m):
     mp = MatrixProfile()
@@ -107,6 +107,7 @@ def extract_shapelet(k, dataset, m, pruning_option):
                 shap = shapelet()
                 shap.class_shapelet = c
                 shap.differ_distance = val
+                shap.normal_distance = val / m ** 0.5
                 shap.subsequence = dataset[ts_name_source][ts_index_source:ts_index_source + m]
                 shap.name = hash(shap.subsequence)
 
@@ -117,25 +118,28 @@ def extract_shapelet(k, dataset, m, pruning_option):
                 # ip_dict_same_list[c]: {ts_name_source1:{ts_name1:ip1, ts_name2:ip2, ...}, ts_name_source2:{ts_name1:ip1, ts_name2:ip2, ...}, ...}, map( String : map( String:Array[] ) )
                 ip_list_all = ip_dict_same_list[c][ts_name_source]
                 for ts_name_target, ip in ip_list_all.items():
-                    idx_target = ip[ts_index_source]
+                    # if we know 'idx_target', we can find the matching position in target time series with the minimal distance
+                    # however, we need to find all matching position in target time series, so here 'idx_target' is useless
+                    # idx_target = ip[ts_index_source]
+
                     # 'mp_all': map{ ts_name_source1: map{ts_name_target1:Array[], ...}, ts_name_source2: map{...}, ... }
-                    # 'dp_list_all': map{ ts_name_source1: map{ts_target.name: map{index_source:Array[]}} },
-                    dist = mp_all[ts_name_source][ts_name_target][idx_target]
-                    dp = dp_list_all[ts_name_source][ts_name_target]
+                    dist = mp_all[ts_name_source][ts_name_target][ts_index_source]
                     if (dist <= dist_thd ):
                         shap.matching_ts.append(ts_name_target)
                         # find the Distance Profile of idx_source -> ts_target
+                        # 'dp_list_all': map{ ts_name_source1: map{ts_target.name: map{index_source:Array[]}} },
+                        dp = dp_list_all[ts_name_source][ts_name_target]
                         for idx_d, d in enumerate(dp):
                             if (d <= dist_thd):
                                 # if it's not NULL, append the value to the original one
                                 if ts_name_target in shap.matching_indices.keys():
                                     shap.matching_indices[ts_name_target] = shap.matching_indices[ts_name_target].append(idx_d)
                                 else:
-                                    shap.matching_indices[ts_name_target] = idx_d
-
+                                    shap.matching_indices[ts_name_target] = [idx_d]
                 shapelet_list.append(shap)
         # for each class, we've token k shapelets, so the final result contains k * nbr(class) shapelets
         return shapelet_list
+
     elif (pruning_option=="over"):
         '''
             Pruning, use cover strategy and then select top-k shapelets
@@ -151,3 +155,21 @@ def extract_shapelet(k, dataset, m, pruning_option):
             if not remaining:
                 break
         return shapelet_list
+
+def extract_shapelet_all_length(k, dataset, pruning_option):
+    # length of shapelet is from 1 to min_ts-1 in dataset
+    min_l = float('inf')
+    shap_list = []
+    for ts in dataset:
+        size_ts = size(ts)
+        if (size_ts < min_l):
+            min_l = size_ts
+    # l: 1, 2, ..., min_l-1
+    for l in range(1, min_l):
+        #number of shapelet in shap_list: k * nbr_class * (min_l-1)
+        shap_list.extend(extract_shapelet(k, dataset, pruning_option))
+    # pruning by 'shapelet.normal_distance'
+    ## order 'shap_list' by 'shapelet.normal_distance'
+    shap_list = sorted(shap_list, key=lambda x: x.normal_distance)
+    shap_list = shap_list[:k]
+    return shap_list

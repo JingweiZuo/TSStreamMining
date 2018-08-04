@@ -35,7 +35,7 @@ class Utils(object):
         list_objects = []
         for file in files_list:
             path = directory + dirname + file
-            an_object = numpy.genfromtxt(path)
+            an_object = np.genfromtxt(path)
             list_objects.extend(an_object)
         # return a list[Array_TimeSeries]
         return list_objects
@@ -44,15 +44,15 @@ class Utils(object):
     @staticmethod
     def generate_timeseries(directory):
         #list_ts = list[TimeSeries]
-        dict_ts = {}
-        list_rawData = load(directory, 'raw data')
+        array_ts = []
+        list_rawData = Utils.load(directory, 'raw data')
         for d in list_rawData:
             # d[0] is the class of TS in the original data, d[1:] is the data in TS
             t = TimeSeries()
             t.class_timeseries = d[0]
             t.timeseries = d[1:]
-            t.name = hash(d[1:])
-            dict_ts.extend({t.name:t})
+            t.name = hash(d[1:].tostring())
+            dict_ts.append({t.name:t})
         return dict_ts
 
     @staticmethod
