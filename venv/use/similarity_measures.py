@@ -54,19 +54,19 @@ def mass_v2(x, y):
     n, m = len(x), len(y)
 
     #%compute y stats -- O(n)
-    meany = np.mean(y);
-    sigmay = np.std(y);
+    meany = np.mean(y)
 
+    sigmay = np.std(y)
     #compute x stats -- O(n)
     #compute the average of the first m elements in 'x'
     def running_mean(x, N):
-        cumsum = numpy.cumsum(numpy.insert(x, 0, np.zeros(N)))
+        cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
         return (cumsum[N:] - cumsum[:-N]) / float(N)
 
     def running_std(x, N):
         x2 = np.power(x, 2)
-        cumsum2 = numpy.cumsum(numpy.insert(x2, 0, np.zeros(N)))
-        return (cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N)
+        cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
+        return ((cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N) ** 2) ** 0.5
 
     #compute the moving average and standard deviation of Time Series 
     meanx = running_mean(x, n)
@@ -74,8 +74,8 @@ def mass_v2(x, y):
 
     #The main trick of getting dot products in O(n log n) time
     z = dot_products_2(y, x)
-    dist = 2*(m-(z[m-1:n]-m*meanx[m-1:n]*meany)/(sigmax[m-1:n]*sigmay))
-    dist = np.sqrt(dist);
+    dist = 2 * (m - (z[m-1:n] - m * meanx[m-1:n] * meany) / (sigmax[m-1:n] * sigmay))
+    dist = np.sqrt(dist)
     #distance here is a complex number, need to return its amplitude/absolute value
     #return a vector with size of n-m+1
     return np.abs(dist)

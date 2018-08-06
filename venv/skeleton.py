@@ -90,7 +90,7 @@ def main(args):
     args = parse_args(args)
 
     if args.distance_measure:
-        measures = ['brute', 'mass', 'dtw']
+        measures = ['brute', 'mass_v2', 'dtw']
         if args.distance_measure in measures:
             distance_measure = args.distance_measure
         else:
@@ -102,12 +102,12 @@ def main(args):
         print("No data directory is specified. Use the -d option, or -h for more help")
         sys.exit()
 
-    top_k_value = args.top_k
-
+    top_k_value = int(args.top_k)
+    #list_timeseries: Array[{ts_name:ts_value}]
     list_timeseries = Utils.generate_timeseries(args.data_directory)
 
-    y = [ts.class_timeseries for ts in list_timeseries.values()]
-
+    dataset = {k: v for ds in list_timeseries for k, v in ds.items()}
+    y = [ts.class_timeseries for ts in dataset.values()]
     args.cross = int(args.cross)
 
     if args.cross:
@@ -135,7 +135,7 @@ def main(args):
 
             print("Evaluating...")
             acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_ts_test,
-                                                                                    list_timeseries,
+                                                                                    list_all_shapelets,
                                                                                     distance_measure = distance_measure)
             # print("Accuracy:", acc)
             print("Applicability of Fold", k, ":", app, "%")
@@ -170,7 +170,7 @@ def main(args):
         sys.exit()
 
     if args.split:
-        list_ts_train, list_ts_test, y_train, y_test = train_test_split(list_timeseries, y, test_size=0.25, random_state=0)
+        list_ts_train, list_ts_test, y_train, y_test = train_test_split(list_timeseries, y, test_size=0.5, random_state=0)
         ###############################Save dataset to 'csv' file ###############################
         file_name = "dataset_test.csv"
         dirname = args.data_directory + "/csv_dataset/"
@@ -182,7 +182,7 @@ def main(args):
         path =  dirname + file_name
         with open(path, 'w') as f:
             writer = csv.writer(f, lineterminator='\n', delimiter=';',)
-            for anObject in list_timeseries:
+            for anObject in dataset.values():
                 writer.writerow([anObject.name, anObject.class_timeseries])
         ###############################Save dataset to 'csv' file ###############################
 
@@ -199,8 +199,14 @@ def main(args):
         Utils.save(args.data_directory, list_all_shapelets, "csv")
         print()
         print()
-
-
+        print("Evaluating...")
+        acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_ts_test,
+                                                                                list_all_shapelets,
+                                                                                distance_measure=distance_measure)
+        print("Applicability : ", app, "%")
+        print("Accuracy acc: ", acc, "%", "Accuracy sk_acc: ", sk_acc, "%", "Accuracy acc_maj: ", acc_maj, "%")
+        print("Classification Report:")
+        print(sk_report)
 def run():
     main(sys.argv[1:])
 

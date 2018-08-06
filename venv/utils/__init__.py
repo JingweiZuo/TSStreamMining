@@ -52,8 +52,8 @@ class Utils(object):
             t.class_timeseries = d[0]
             t.timeseries = d[1:]
             t.name = hash(d[1:].tostring())
-            dict_ts.append({t.name:t})
-        return dict_ts
+            array_ts.append({t.name:t})
+        return array_ts
 
     @staticmethod
     def save(directory, list_objects, option):
@@ -90,7 +90,7 @@ class Utils(object):
                 for anObject in list_objects:
                     i+=1
                     for key in anObject.matching_indices:
-                        writer.writerow(["shapelet" + str(i), anObject.name, anObject.dimension_name, anObject.class_shapelet, key, anObject.matching_indices[key], anObject.gain, anObject.subsequence.tolist(),  anObject.min_distance] )
+                        writer.writerow(["shapelet" + str(i), anObject.name, anObject.dimension_name, anObject.class_shapelet, key, anObject.matching_indices[key], anObject.normal_distance, anObject.subsequence.tolist(),  anObject.dist_threshold] )
 
 
     @staticmethod

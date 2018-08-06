@@ -26,9 +26,14 @@ class TimeSeries(object):
 
     @staticmethod
     def groupByClass_timeseries(list_timeseries):
+        #'list_timeseries': {ts_name1:ts1, ts_name2:ts2, ...}
         dict_ts = {}  # type: dict
-        for ts in list_timeseries:
-            dict_ts[ts.class_timeseries].append(ts)
+        for ts in list_timeseries.values():
+            ts_class = ts.class_timeseries
+            if ts_class in dict_ts.keys():
+                dict_ts[ts.class_timeseries].append(ts)
+            else:
+                dict_ts[ts.class_timeseries] = [ts]
         return dict_ts
 
     @staticmethod
