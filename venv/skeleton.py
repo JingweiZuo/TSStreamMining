@@ -170,7 +170,7 @@ def main(args):
         sys.exit()
 
     if args.split:
-        list_ts_train, list_ts_test, y_train, y_test = train_test_split(list_timeseries, y, test_size=0.5, random_state=0)
+        list_ts_train, list_ts_test, y_train, y_test = train_test_split(list_timeseries, y, test_size=0.25, random_state=0)
         ###############################Save dataset to 'csv' file ###############################
         file_name = "dataset_test.csv"
         dirname = args.data_directory + "/csv_dataset/"

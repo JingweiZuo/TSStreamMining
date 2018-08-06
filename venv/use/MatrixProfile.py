@@ -13,12 +13,6 @@ def computeMP(timeseries1, timeseries2, subseq_length):
     IP12 = [0]* indexes #Index Profile
     DP_all = {} # Distance Profiles for All Index in the timeseries
 
-    if (t1.name == t2.name):
-        # self-similarity join, avoid trivial match
-        flag = "self_similarity"
-    else:
-        # non self-similarity join
-        flag = "non_self"
     for index in range(0, indexes):
         data = t1.timeseries
         index2 = index + subseq_length
@@ -30,25 +24,12 @@ def computeMP(timeseries1, timeseries2, subseq_length):
             continue
         else:
             DP_all[index] = sm.mass_v2(data, query)
-            MP12, IP12 = updateMP_IP(MP12, DP_all[index], IP12, index, flag, subseq_length)
+            MP12, IP12 = updateMP_IP(MP12, DP_all[index], IP12, index, subseq_length)
     return DP_all, MP12, IP12
 
-def updateMP_IP(MP, DP, IP, index, flag, subseq_length):
-    if (flag =="self_similarity"):
-        range1 = max(0, index - subseq_length / 2)
-        range2 = min(index + subseq_length / 2, len(MP))
-        for i in range(0, int(range1)):
-            if (MP[i] > DP[i]):
-                MP[i] = DP[i]
-                IP[i] = index
-        for i in range(int(range2), len(MP)):
-            if (MP[i] > DP[i]):
-                MP[i] = DP[i]
-                IP[i] = index
-        return MP, IP
-    else:
-        for i in range(0, len(MP)):
-            if (MP[i] > DP[i]):
-                MP[i] = DP[i]
-                IP[i] = index
-        return MP, IP
+def updateMP_IP(MP, DP, IP, index, subseq_length):
+    for i in range(0, len(MP)):
+        if (MP[i] > DP[i]):
+            MP[i] = DP[i]
+            IP[i] = index
+    return MP, IP
