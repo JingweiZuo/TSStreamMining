@@ -18,37 +18,43 @@ def findShapelet(timeseries, dataset, m):
         # 1. "_list": all index in source timeseries and target timeseries
         # 2. "_all": source timeseries and all target TS in dataset
     dp_all = {}
-
+    i = 0
     for ts in dataset.values():
         # mp_dict_same: [mp1, mp2, ...], Array[Array[]]
         # ip_dict_same: {ts_name1:ip1, ts_name1:ip2, ...}, dict(ts.name:Array[])
-        # mp_all: {ts_name1:mp1, ts_name2:mp2, ...}, dict(ts.name:Array[])
-        # dp_all: {ts.target_name1:{index1:dp1, index2:dp2, ...}, ts.target_name2:{...}, ...}, dict( ts_target.name: dict(index:Array[]) )
+        # mp_all: {ts_target.name1:mp1, ts_target.name2:mp2, ...}, dict(ts_targe.name:Array[])
+        # dp_all: {ts_target.name1:{index1:dp1, index2:dp2, ...}, ts_target.name2:{...}, ...}, dict(ts_target.name: dict(index:Array[]) )
+
         if ts.name != timeseries.name:
             if (timeseries.class_timeseries == ts.class_timeseries):
-                dp_list, mp_sameClass, ip_sameClass = mp.computeMP(timeseries, ts, m)
+                dp_list, mp_sameClass= mp.computeMP(timeseries, ts, m)
                 mp_dict_same.append(mp_sameClass)
-                ip_all.update( {ts.name:ip_sameClass} )
                 mp_all.update( {ts.name:mp_sameClass})
                 dp_all.update( {ts.name:dp_list} )
+                '''if (np.mean(mp_sameClass) > 10000):
+                    print("mp_sameClass is ", mp_sameClass)'''
             else:
-                dp_list, mp_differClass, ip_differClass = mp.computeMP(timeseries, ts, m)
+                dp_list, mp_differClass= mp.computeMP(timeseries, ts, m)
+                '''if(np.mean(mp_differClass) > 100000):
+                    print("mp_differClass is " ,mp_differClass)'''
+
                 mp_dict_differ.append(mp_differClass)
-                ip_all.update({ts.name: ip_differClass})
                 mp_all.update({ts.name: mp_differClass})
                 dp_all.update({ts.name: dp_list})
 
     # compute the average distance for each side (under the same class, or the different class)
-    dist_side1 = np.mean(mp_dict_same, axis = 0)
-    dist_side2 = np.mean(mp_dict_differ, axis = 0)
-
+    dist_side1 = np.median(mp_dict_same, axis = 0)
+    #dist_side2 has a lot of e+07??????!!!!!!!!!!!
+    dist_side2 = np.median(mp_dict_differ, axis = 0)
+    #print("mp_dict_same is ", mp_dict_same)
     # compute the difference of distance for 2 sides
     dist_differ = np.subtract(dist_side2, dist_side1)
+
     dist_threshold = np.divide(np.add(dist_side1, dist_side2),2)
 
     # retrun the Distance Profiles, Matrix Profiles, distance difference, array size keeps the same,
     # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[], Array[]
-    return dp_all, mp_all, dist_differ, dist_threshold, ip_all
+    return dp_all, mp_all, dist_differ, dist_threshold
 
 '''
     Pruning, select top-k shapelets
@@ -68,15 +74,17 @@ def extract_shapelet(k, dataset, m, pruning_option):
         # 'dp_all': dict{ ts_name_source1: dict{ts_target.name: dict{index_source:Array[]}} },
         # 'mp_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         # 'ip_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
-        dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold, ip_all[ts.name] = findShapelet(ts, dataset, m)
+        dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold= findShapelet(ts, dataset, m)
         # Array of distance's difference for all timeseries in the dataset
         # dist_differ_list[c]: {ts_name_source1:dp1, ts_name_source2:dp2, ...}, dict(String:Array[])
-        dist_differ_list[c] = {}
-        dist_differ_list[c].update( {ts.name:dist_differ} )
 
         # dist_threshold_list[c]: {ts_name_source1:dist_threshold1, ts_name_source2:dist_threshold2, ...}, dict(String:Array[])
-        dist_threshold_list[c] = {}
-        dist_threshold_list[c].update( {ts.name:dist_threshold} )
+        if c in dist_differ_list.keys():
+            dist_differ_list[c].update({ts.name:dist_differ})
+            dist_threshold_list[c].update({ts.name:dist_threshold})
+        else:
+            dist_differ_list[c] = {ts.name:dist_differ}
+            dist_threshold_list[c] = {ts.name: dist_threshold}
 
     # for each class, select top-k shapelets, then find the matching indices for top-k shapelets
     # top-k aims at the shapelets of different class, or top-k shapelets of each class?
@@ -109,8 +117,10 @@ def extract_shapelet(k, dataset, m, pruning_option):
             # create shapelets and put matching timeseries
             #topk_distdiff: {ts_name_source+index1 : distdiff1, ts_name_source+index2 : distdiff2, ... }
             for key, val in topk_distdiff.items():
+                #print("key ", key, "value", val)
                 key_val = key.split("_")
                 ts_name_source = int(key_val[0])
+                #the position of the shapelet in the source timeseries
                 ts_index_source = int(key_val[1])
 
                 shap = sp.Shapelet()
@@ -141,7 +151,8 @@ def extract_shapelet(k, dataset, m, pruning_option):
                             shap.matching_ts.append(ts_name_target)
                             # find the Distance Profile of idx_source -> ts_target
                             # 'dp_all': dict{ ts_name_source1: dict{ts_target.name: dict{index_source:Array[]}} },
-                            dp = dp_all[ts_name_source][ts_name_target]
+                            dp = dp_all[ts_name_source][ts_name_target][ts_index_source]
+                            #dp:dict with less index then source ts, d:array with all index of source ts
                             for idx_d, d in enumerate(dp):
                                 if (d <= dist_thd):
                                     # if it's not NULL, append the value to the original one
@@ -152,11 +163,9 @@ def extract_shapelet(k, dataset, m, pruning_option):
                 shapelet_list.append(shap)
         # for each class, we've token k shapelets, so the final result contains k * nbr(class) shapelets
         return shapelet_list
-    '''
-    elif (pruning_option=="over"):
-        
-            Pruning, use cover strategy and then select top-k shapelets
-        
+    # pruning by checking if the list_shapelet covers the entire dataset
+    '''elif (pruning_option=="cover"):
+        #take top-K from every class, then check the coverage
         shapelet_list = []
         for aShapelet in list_shapelets:
             ##using the same training_data for all shapelets
@@ -167,8 +176,8 @@ def extract_shapelet(k, dataset, m, pruning_option):
             ##if remaining =0, that's to say the all timeseries in training data have been covered
             if not remaining:
                 break
-        return shapelet_list
-        '''
+        return shapelet_list'''
+
 
 def extract_shapelet_all_length(k, dataset_list, pruning_option):
     #'dataset_list': [dict{}, dict{}, ...]
@@ -183,13 +192,14 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
             min_m = size_ts
     # m: 1, 2, ..., min_m-1
     print("Maximum length of shapelet is : " + str(min_m))
-    for m in range(10, min_m):
+    for m in range(20, min_m):
     #for m in range(2, 20):
         print("Extracting shapelet length: " + str(m))
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
-        if min_m - m < k :
-            shap_list.extend(extract_shapelet(min_m - m, dataset, m, pruning_option))
-        else:
+        step = int((min_m - m)/(0.25*m))
+        if 0 < step < k :
+            shap_list.extend(extract_shapelet(step, dataset, m, pruning_option))
+        elif step > 0:
             shap_list.extend(extract_shapelet(k, dataset, m, pruning_option))
 
     # pruning by 'shapelet.normal_distance'

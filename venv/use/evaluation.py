@@ -32,28 +32,28 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
             print(shap_class)
             if(shap_class == timeseries.class_timeseries):
                 if shap_found:      #TP
-                    print("shap_found1")
+                    #print("shap_found1")
                     true_classification += 1
                     avg_f_dict[shap_class] += 1
                     if(min_dist < min_distance):
-                        print("shap_found1 min_dist < min_distance")
+                        #print("shap_found1 min_dist < min_distance")
                         min_distance = min_dist
                         predicted_class_distance = shap_class
                 else:               #FN
-                    print("shap not found1")
+                    #print("shap not found1")
                     false_classification += 1
             else:
                 if shap_found:      #FP
-                    print("shap_found2")
+                    #print("shap_found2")
 
                     false_classification += 1
                     avg_f_dict[shap_class] += 1
                     if (min_dist < min_distance):
-                        print("shap_found2 min_dist < min_distance")
+                        #print("shap_found2 min_dist < min_distance")
                         min_distance = min_dist
                         predicted_class_distance = shap_class
                 else:               #TN
-                    print("shap not found2")
+                    #print("shap not found2")
                     true_classification += 1
         #the class is decided by the majority corresponding shapelets in 'shap_list'
         if (key[1] and key[1] == 'majority') or key[0] == 'majority':
@@ -113,8 +113,8 @@ def pattern_found(a_timeseries, a_shapelet, distance_measure):
     if(distance_measure == "mass_v2" ):
         dist_profile = sm.mass_v2(a_timeseries.timeseries, a_shapelet.subsequence)
         min_dist = min(dist_profile)
-        print("min_dist is: " + str(min_dist))
-        print("a_shapelet.dist_threshold: " + str(a_shapelet.dist_threshold))
+        #print("min_dist is: " + str(min_dist))
+        #print("a_shapelet.dist_threshold: " + str(a_shapelet.dist_threshold))
         if (min_dist <= a_shapelet.dist_threshold):
             pattern_found = True
         else:
