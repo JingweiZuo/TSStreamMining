@@ -121,3 +121,10 @@ class Utils(object):
             return False
         return True
 
+    @staticmethod
+    def min_length_dataset(list_timeseries):
+        min_l = sys.maxsize
+        for mts in list_timeseries:
+            if len(mts.timeseries) < min_l:
+                min_l = len(mts.timeseries)
+        return min_l

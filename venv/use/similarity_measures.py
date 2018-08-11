@@ -1,4 +1,22 @@
 import numpy as np
+from utils.old_Utils import old_Utils
+
+def calculate_distances(timeseries, subsequence, distance_measure):
+    if distance_measure == "mass_v1" :
+        return mass_v1(subsequence, timeseries)
+    elif distance_measure == "mass_v2" :
+        return mass_v2(timeseries, subsequence)
+    elif distance_measure == "brute":
+        return euclidean_distance_unequal_lengths(timeseries, subsequence)
+
+def euclidean_distance(t1, t2):
+    return np.sqrt(sum((t1 - t2) ** 2))
+
+
+def euclidean_distance_unequal_lengths(t, s):##O(m)
+    ## return a array of distance between 'shapelet' and every slices of 'timeseries'
+    distances = np.array([euclidean_distance(np.array(s1), s) for s1 in old_Utils.sliding_window(t, len(s))])
+    return distances
 
 def dot_products_1(q, t):
     m, n = len(q), len(t)
@@ -68,7 +86,7 @@ def mass_v2(x, y):
         cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
         return ((cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N) ** 2) ** 0.5
 
-    #compute the moving average and standard deviation of Time Series 
+    #compute the moving average and standard deviation of Time Series
     meanx = running_mean(x, n)
     sigmax = running_std(x, n)
 
@@ -79,3 +97,4 @@ def mass_v2(x, y):
     #distance here is a complex number, need to return its amplitude/absolute value
     #return a vector with size of n-m+1
     return np.abs(dist)
+

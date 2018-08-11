@@ -5,6 +5,7 @@ from use.timeseries import *
 from utils import *
 import numpy as np
 
+'''Optimisation of USE'''
 def findShapelet(timeseries, dataset, m):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
@@ -50,8 +51,8 @@ def findShapelet(timeseries, dataset, m):
     # compute the difference of distance for 2 sides
     dist_differ = np.subtract(dist_side2, dist_side1)
 
-    dist_threshold = np.divide(np.add(dist_side1, dist_side2),2)
-
+    #dist_threshold = np.divide(np.add(dist_side1, dist_side2),2)
+    dist_threshold = dist_side1
     # retrun the Distance Profiles, Matrix Profiles, distance difference, array size keeps the same,
     # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[], Array[]
     return dp_all, mp_all, dist_differ, dist_threshold
@@ -91,7 +92,7 @@ def extract_shapelet(k, dataset, m, pruning_option):
     ## Here, we take k shapelets for each class
     ### remove repetitive element in class_list
     class_list = list(set(class_list))
-    if (pruning_option == "top_k"):
+    if (pruning_option == "top-k"):
         for c in class_list:
             ts_namelist = dist_differ_list[c].keys()
             # take the k first values as the initial values, then update them
@@ -186,13 +187,11 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
     min_m = float('inf')
     shap_list = []
     # 'ts' is the object of TimeSeries
-    for ts in dataset.values():
-        size_ts = len(ts.timeseries)
-        if (size_ts < min_m):
-            min_m = size_ts
+    min_m = Utils.min_length_dataset(dataset.values())
+
     # m: 1, 2, ..., min_m-1
-    print("Maximum length of shapelet is : " + str(min_m))
-    for m in range(20, min_m):
+    #print("Maximum length of shapelet is : " + str(min_m))
+    for m in range(int(0.3*min_m), int(min_m/2)):
     #for m in range(2, 20):
         print("Extracting shapelet length: " + str(m))
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)

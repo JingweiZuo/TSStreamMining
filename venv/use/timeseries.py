@@ -14,13 +14,13 @@ class TimeSeries(object):
 
     def __repr__(self):
         representation = "Timeseries with dimension: " + self.dimension_name
-        representation += " with class: " + self.class_timeseries
+        representation += " with class: " + str(self.class_timeseries)
         representation += " with series: " + str(self.timeseries)
         return representation
 
     def __str__(self):
         representation = "Timeseries with dimension: " + self.dimension_name
-        representation += " with class: " + self.class_timeseries
+        representation += " with class: " + str(self.class_timeseries)
         representation += " with series: " + str(self.timeseries)
         return representation
 

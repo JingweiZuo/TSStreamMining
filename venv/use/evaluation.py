@@ -28,8 +28,6 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
         for shap in list_shapelets:
             shap_found, min_dist = pattern_found(timeseries, shap, distance_measure)
             shap_class = shap.class_shapelet
-            print("shap_class is: ")
-            print(shap_class)
             if(shap_class == timeseries.class_timeseries):
                 if shap_found:      #TP
                     #print("shap_found1")

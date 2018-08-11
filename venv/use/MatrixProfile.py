@@ -11,7 +11,7 @@ def computeMP(timeseries1, timeseries2, subseq_length):
     indexes = n1 - subseq_length + 1
     step = int(subseq_length/4)
     MP12 = [] #Matrix Profile
-    IP12 = [0] #Index Profile
+    #IP12 = [0] #Index Profile
     DP_all = {} # Distance Profiles for All Index in the timeseries
     idx = 0
     if int(subseq_length/4)==0:
@@ -33,14 +33,4 @@ def computeMP(timeseries1, timeseries2, subseq_length):
             DP_all[idx] = sm.mass_v2(data, query)
             MP12.append(min(DP_all[idx]))
             idx += 1
-            #MP12, IP12 = updateMP_IP(MP12, DP_all[index], IP12, index, subseq_length)
-    #return DP_all, MP12, IP12
-    #print("MP12 is ", MP12)
     return DP_all, MP12
-
-'''def updateMP_IP(MP, DP, IP, index, subseq_length):
-    for i in range(0, len(MP)):
-        if (MP[i] > DP[i]):
-            MP[i] = DP[i]
-            IP[i] = index
-    return MP, IP'''
