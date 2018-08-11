@@ -10,11 +10,11 @@ import threading
 import gc
 import sys
 
-def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cover", k=10, distance_measure='brute', skip=False):
+def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cover", k=20, distance_measure='brute', skip=False):
     # USE with psutil support
     # 'list_timeseries_dict': [dict{}, dict{}, ...]
+    # 'list_timeseries': {ts_name : ts}
     list_timeseries = {k: v for ds in list_timeseries_dict for k, v in ds.items()}
-
     if not min_length:
         length = old_Utils.min_length_dataset(list_timeseries.values())
         min_length = int(length * 0.3)
@@ -25,10 +25,7 @@ def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cove
 
     dict_timeseries_by_class = TimeSeries.groupByClass_timeseries(list_timeseries)
     list_all_shapelets_pruned = []
-    print("Detecting " + str(len(dict_timeseries_by_class.keys())) + " classed")
-
-    tsclass = [ts.class_timeseries for ts in list_timeseries.values()]
-    print("tsclass is ", tsclass)
+    print("Detecting " + str(len(dict_timeseries_by_class.keys())) + " classes")
     done = False
     list_remaining_cands = None
     while not done:
@@ -36,44 +33,21 @@ def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cove
                                                                            distance_measure=distance_measure, skip=skip,
                                                                            list_remaining_cands=
                                                                            list_remaining_cands)
-        #print([shap.name for shap in list_done_shapelets])
         if not list_remaining_cands:
             done = True
-        '''grouped_shapelets = itertools.groupby(list_done_shapelets, lambda shapelet: shapelet.class_shapelet)
+
         print("Starting the pruning procedure...")
-
-        i = 0
         length = len(list_done_shapelets)
-        #print("length is ", len(list_done_shapelets))
-        old_Utils.print_progress(i, length)
-        for keyShapelet, groupShapelet in grouped_shapelets:
-            list_shapelet_group = list(groupShapelet)
-            #print("keyShapelet is ", str(keyShapelet))
-            print("length of list_shapelet_group is ", len(list_shapelet_group))
-            the_class = list_shapelet_group[0].class_shapelet
-            list_all_shapelets_pruned += pruning_shapelet(list_shapelet_group, algorithm=pruning, training_data=dict_timeseries_by_class[the_class])
-            #print("pruning_shapelet is : ", pruning_shapelet(list_shapelet_group, algorithm=pruning, training_data=dict_timeseries_by_class[the_class]))
-            i += len(list_shapelet_group)
-            old_Utils.print_progress(i, length)
-            '''
-        print("Starting the pruning procedure...")
-
-        i = 0
-        length = len(list_done_shapelets)
-        # print("length is ", len(list_done_shapelets))
-
-        # print("keyShapelet is ", str(keyShapelet))
+        # print("length of list_done_shapelets is ", len(list_done_shapelets))
         print("length of list_done_shapelets is ", len(list_done_shapelets))
-        list_all_shapelets_pruned = pruning_shapelet(list_done_shapelets, algorithm=pruning, k = k)
-        # print("pruning_shapelet is : ", pruning_shapelet(list_shapelet_group, algorithm=pruning, training_data=dict_timeseries_by_class[the_class]))
-
+        list_all_shapelets_pruned = pruning_shapelet(list_done_shapelets, algorithm=pruning, k = k, training_data = list_timeseries)
+        # print("length of list_all_shapelets_pruned is ", len(list_all_shapelets_pruned))
         print("Pruning complete")
         print("*************************")
-        print()
-        print()
         list_done_shapelets = None
         gc.collect()
-    print("length of list_all_shapelets_pruned is ", len(list_all_shapelets_pruned))
+
+    #print("Length of list_all_shapelets_pruned is ", len(list_all_shapelets_pruned))
     print("Calculating the matching indices...")
     i = 0
     old_Utils.print_progress(i, length)
@@ -101,8 +75,7 @@ def uts_brute_force_v3(list_time_series, min_length, max_length, distance_measur
     length = len(candidate_shapelets)
 
     print("Calculating the different features of the candidate shapelets...")
-    #old_Utils.print_progress(i, length)
-
+    old_Utils.print_progress(i, length)
 
     #tsclass = [ts.class_timeseries for ts in list_time_series]
     #print("tsclass is ", tsclass)
@@ -110,7 +83,7 @@ def uts_brute_force_v3(list_time_series, min_length, max_length, distance_measur
         candidate.gain, candidate.dist_threshold = candidate.check(list_time_series, distance_measure=distance_measure)
         #print("candidate.gain is ", str(candidate.gain), "candidate.dist_threshold is", candidate.dist_threshold)
         i += 1
-        #old_Utils.print_progress(i, length)
+        old_Utils.print_progress(i, length)
         good = old_Utils.check_memory()
         if not good:
             print()
@@ -122,7 +95,7 @@ def uts_brute_force_v3(list_time_series, min_length, max_length, distance_measur
     # Return all the candidates
     return candidate_shapelets, None
 
-def pruning_shapelet(list_shapelets, algorithm='top-k', k=6, training_data=None):
+def pruning_shapelet(list_shapelets, algorithm='cover', k=20, training_data=None):
     """
     :param list_shapelets: takes input as a list of shapelets
     :param algorithm: a parametrisation in order to add additional pruning algorithms
@@ -138,6 +111,7 @@ def pruning_shapelet(list_shapelets, algorithm='top-k', k=6, training_data=None)
         return list_shapelets[:int(k)]
 
     if algorithm == "cover":
+        print("the algorithm is cover")
         if not training_data:
             return []
 

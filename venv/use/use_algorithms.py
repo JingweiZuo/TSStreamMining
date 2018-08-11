@@ -32,29 +32,22 @@ def findShapelet(timeseries, dataset, m):
                 mp_dict_same.append(mp_sameClass)
                 mp_all.update( {ts.name:mp_sameClass})
                 dp_all.update( {ts.name:dp_list} )
-                '''if (np.mean(mp_sameClass) > 10000):
-                    print("mp_sameClass is ", mp_sameClass)'''
             else:
                 dp_list, mp_differClass= mp.computeMP(timeseries, ts, m)
-                '''if(np.mean(mp_differClass) > 100000):
-                    print("mp_differClass is " ,mp_differClass)'''
-
                 mp_dict_differ.append(mp_differClass)
                 mp_all.update({ts.name: mp_differClass})
                 dp_all.update({ts.name: dp_list})
 
     # compute the average distance for each side (under the same class, or the different class)
     dist_side1 = np.median(mp_dict_same, axis = 0)
-    #dist_side2 has a lot of e+07??????!!!!!!!!!!!
     dist_side2 = np.median(mp_dict_differ, axis = 0)
-    #print("mp_dict_same is ", mp_dict_same)
     # compute the difference of distance for 2 sides
     dist_differ = np.subtract(dist_side2, dist_side1)
 
     #dist_threshold = np.divide(np.add(dist_side1, dist_side2),2)
     dist_threshold = dist_side1
-    # retrun the Distance Profiles, Matrix Profiles, distance difference, array size keeps the same,
-    # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[], Array[]
+    # retrun the Distance Profiles, Matrix Profiles, distance difference, distance threshold, array size keeps the same
+    # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[]
     return dp_all, mp_all, dist_differ, dist_threshold
 
 '''
@@ -188,17 +181,17 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
     shap_list = []
     # 'ts' is the object of TimeSeries
     min_m = Utils.min_length_dataset(dataset.values())
-
     # m: 1, 2, ..., min_m-1
     #print("Maximum length of shapelet is : " + str(min_m))
-    for m in range(int(0.3*min_m), int(min_m/2)):
-    #for m in range(2, 20):
-        print("Extracting shapelet length: " + str(m))
+    min_length = int(0.3 * min_m)
+    max_length = int(0.5 * min_m)
+    for m in range(min_length, max_length):
+        #print("Extracting shapelet length: " + str(m))
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
-        step = int((min_m - m)/(0.25*m))
-        if 0 < step < k :
-            shap_list.extend(extract_shapelet(step, dataset, m, pruning_option))
-        elif step > 0:
+        nbr_candidate = int((min_m - m)/(0.25*m))
+        if 0 < nbr_candidate < k :
+            shap_list.extend(extract_shapelet(nbr_candidate, dataset, m, pruning_option))
+        elif nbr_candidate > 0:
             shap_list.extend(extract_shapelet(k, dataset, m, pruning_option))
 
     # pruning by 'shapelet.normal_distance'

@@ -90,6 +90,13 @@ def parse_args(args):
         help="Choose the old/new algorithm",
         default='use_old'
     )
+    parser.add_argument(
+        '-p',
+        '--pruning',
+        dest="pruning",
+        help="Choose the pruning strategy",
+        default='top-k'
+    )
     return parser.parse_args(args)
 
 
@@ -134,14 +141,12 @@ def main(args):
             start_time = time.time()
             print("Starting the USE algorithm...")
             if args.algo == "use_old":
-                print("this is old algorithm")
                 list_all_shapelets = old_use_algo.use_v4(list_ts_train, min_length=None, max_length=None,
-                                                         pruning='top_k', k=top_k_value,
-                                                         distance_measure=distance_measure, skip='True')
+                                                         pruning=args.pruning, k=top_k_value,
+                                                         distance_measure=distance_measure, skip=True)
             elif args.algo == "use_new":
-                list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, list_ts_train, "top_k")
-
-
+                print("this is new use algorithm")
+                list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, list_ts_train, "top-k")
 
             print("USE algorithm complete")
             print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
@@ -201,14 +206,11 @@ def main(args):
             for anObject in dataset.values():
                 writer.writerow([anObject.name, anObject.class_timeseries])
         ###############################Save dataset to 'csv' file ###############################
-
-        # Start of the USE algorithm
         # The USE algorithm
         start_time = time.time()
         if args.algo == "use_old":
-            print("this is old use algorithm")
             list_all_shapelets = old_use_algo.use_v4(list_ts_train, min_length=None, max_length=None,
-                                                     pruning='top-k', k=top_k_value,
+                                                     pruning=args.pruning, k=top_k_value,
                                                      distance_measure=distance_measure, skip=True)
         elif args.algo == "use_new":
             print("this is new use algorithm")
@@ -217,7 +219,6 @@ def main(args):
         print("USE algorithm complete")
         print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
         print("*******************************************************")
-        #Utils.save(args.data_directory, list_all_shapelets, "shapelet")
         Utils.save(args.data_directory, list_all_shapelets, "csv")
         print()
         print()
