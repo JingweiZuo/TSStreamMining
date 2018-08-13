@@ -17,7 +17,7 @@ def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cove
     list_timeseries = {k: v for ds in list_timeseries_dict for k, v in ds.items()}
     if not min_length:
         length = old_Utils.min_length_dataset(list_timeseries.values())
-        min_length = int(length * 0.3)
+        min_length = int(length * 0.1)
         if length >= 40:
             max_length = int(length * 0.5)
         else:

@@ -98,3 +98,71 @@ def mass_v2(x, y):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
+def mass_v3(x, y):
+    #x is the data, y is the query
+    n, m = len(x), len(y)
+
+    #%compute y stats -- O(n)
+    meany = np.mean(y)
+
+    sigmay = np.std(y)
+    #compute x stats -- O(n)
+    #compute the average of the first m elements in 'x'
+    def running_mean(x, N):
+        cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
+        return (cumsum[N:] - cumsum[:-N]) / float(N)
+
+    def running_std(x, N):
+        x2 = np.power(x, 2)
+        cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
+        return ((cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N) ** 2) ** 0.5
+
+    #compute the moving average and standard deviation of Time Series
+    meanx = running_mean(x, n)
+    sigmax = running_std(x, n)
+
+    #The main trick of getting dot products in O(n log n) time
+    z = dot_products_2(y, x)
+    dist = 2 * (m - (z[m-1:n] - m * meanx[m-1:n] * meany) / (sigmax[m-1:n] * sigmay))
+    dist = np.sqrt(dist)
+    #distance here is a complex number, need to return its amplitude/absolute value
+    #return a vector with size of n-m+1
+    return np.abs(dist), z
+
+def test_func(q, t, q_new):
+    # length= l
+    dist_old, qt_old = mass_v3(t, q)
+
+    dist_LB = computeLB(dist_old)
+    #dist_LB_sorted: [(index in dist_LB, value)], e.g. [(0, 1), (2, 2), (1, 3), (3, 5)]
+    dist_LB_sorted = sorted(enumerate(dist_LB), key=lambda x: x[1])
+
+    meant = np.mean(t)
+    meanq = np.mean(q_new)
+    sigmat = np.std(t)
+    sigmaq = np.std(q_new)
+
+    m = len(q_new)
+    n = len(t)
+
+    min_LB = min(dist_LB)
+    max_LB = max(dist_LB)
+    for idx, qt in enumerate(qt_old):
+
+        #compute distance
+
+        qt_new = qt + q_new[-1] * t[idx + m-1 ] # idex=0, t[m-1], m is the length of the new Query, so t[m-1] is the last element
+        #dist = 2 * (m - (z[m-1:n] - m * meanx[m-1:n] * meany) / (sigmax[m-1:n] * sigmay))
+        dist =  2 * (m - (qt_new - m * meant * meanq) / (sigmat * sigmaq)) #the distance between Query and sub_seq[idx]
+
+        if min_LB < dist < max_LB :
+            # locate dist in dist_LB: index, and compute exact distance whose index' < index
+            index = dist_LB.locate(dist)
+            for i in range(0, index):
+                exact_dist_index = dist_LB[i].key
+                qt_new = qt + q_new[-1] * t[idx + m]
+                dist = 2 * (m - (qt_new - m * meant * meanq) / (sigmat * sigmaq))
+                exact_dist[exact_dist_index] = dist
+        else:
+            dist_BSF = min(dist_BSF, dist)
+

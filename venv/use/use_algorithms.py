@@ -6,7 +6,7 @@ from utils import *
 import numpy as np
 
 '''Optimisation of USE'''
-def findShapelet(timeseries, dataset, m):
+def computeDistDiffer(timeseries, dataset, m):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
     mp_dict_same = []
@@ -26,17 +26,17 @@ def findShapelet(timeseries, dataset, m):
         # mp_all: {ts_target.name1:mp1, ts_target.name2:mp2, ...}, dict(ts_targe.name:Array[])
         # dp_all: {ts_target.name1:{index1:dp1, index2:dp2, ...}, ts_target.name2:{...}, ...}, dict(ts_target.name: dict(index:Array[]) )
 
-        if ts.name != timeseries.name:
-            if (timeseries.class_timeseries == ts.class_timeseries):
-                dp_list, mp_sameClass= mp.computeMP(timeseries, ts, m)
-                mp_dict_same.append(mp_sameClass)
-                mp_all.update( {ts.name:mp_sameClass})
-                dp_all.update( {ts.name:dp_list} )
-            else:
-                dp_list, mp_differClass= mp.computeMP(timeseries, ts, m)
-                mp_dict_differ.append(mp_differClass)
-                mp_all.update({ts.name: mp_differClass})
-                dp_all.update({ts.name: dp_list})
+        #if ts.name != timeseries.name: check the self-similarity
+        if (timeseries.class_timeseries == ts.class_timeseries):
+            dp_list, mp_sameClass= mp.computeMP(timeseries, ts, m)
+            mp_dict_same.append(mp_sameClass)
+            mp_all.update( {ts.name:mp_sameClass})
+            dp_all.update( {ts.name:dp_list} )
+        else:
+            dp_list, mp_differClass= mp.computeMP(timeseries, ts, m)
+            mp_dict_differ.append(mp_differClass)
+            mp_all.update({ts.name: mp_differClass})
+            dp_all.update({ts.name: dp_list})
 
     # compute the average distance for each side (under the same class, or the different class)
     dist_side1 = np.median(mp_dict_same, axis = 0)
@@ -68,7 +68,7 @@ def extract_shapelet(k, dataset, m, pruning_option):
         # 'dp_all': dict{ ts_name_source1: dict{ts_target.name: dict{index_source:Array[]}} },
         # 'mp_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         # 'ip_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
-        dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold= findShapelet(ts, dataset, m)
+        dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold= computeDistDiffer(ts, dataset, m)
         # Array of distance's difference for all timeseries in the dataset
         # dist_differ_list[c]: {ts_name_source1:dp1, ts_name_source2:dp2, ...}, dict(String:Array[])
 
@@ -183,7 +183,7 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
     min_m = Utils.min_length_dataset(dataset.values())
     # m: 1, 2, ..., min_m-1
     #print("Maximum length of shapelet is : " + str(min_m))
-    min_length = int(0.3 * min_m)
+    min_length = int(0.1 * min_m)
     max_length = int(0.5 * min_m)
     for m in range(min_length, max_length):
         #print("Extracting shapelet length: " + str(m))
