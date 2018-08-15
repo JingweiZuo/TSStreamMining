@@ -83,8 +83,9 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
             for_app += 1
     #the proportion of predictable timeseries in the dataset
     app = (len(list_timeseries) - for_app) / float(len(list_timeseries))
-
+    acc=0
     sk_acc = sk_report = sk_acc_maj = sk_report_maj = 0
+
     if y_pred:
         print("y_true is : ")
         print(y_true)
@@ -118,3 +119,52 @@ def pattern_found(a_timeseries, a_shapelet, distance_measure):
         else:
             pattern_found = False
     return pattern_found, min_dist
+
+
+def check_performance_optimized(list_timeseries, list_shapelets, distance_measure, key='closest|majority'):
+    y_pred_maj = []
+    y_true = []
+    y_pred = []
+    true_classification = 0
+    false_classification = 0
+    for_app = 0
+    # instance = 1   # to check the probability for each class prediction
+    key = key.split('|')
+    # 'list_timeseries': [dict{}, dict{}, ...]
+    # 'list_timeseries_dict': dict{ts_name:ts}
+
+    list_timeseries_dict = {k: v for ds in list_timeseries for k, v in ds.items()}
+    for timeseries in list_timeseries_dict.values():
+        avg_f_dict = defaultdict(int)
+        ts_class = timeseries.class_timeseries
+        # 'y_true' is the true class of every timeseries in dataset
+        y_true.append(ts_class)
+        true_classification = false_classification = 0
+        min_distance = float('inf')
+        predicted_class_distance = ''
+        shap_list = {}
+        for shap in list_shapelets:
+            shap_class = shap.class_shapelet
+            if shap_class in shap_list.keys():
+                shap_list[shap_class].append(shap)
+            else:
+                shap_list[shap_class] = [shap]
+        keys = list(shap_list.copy().keys())
+        dist = dict.fromkeys(keys, 0)
+        for c, s_list in shap_list.items():
+            for s in s_list:
+                shap_found, min_dist = pattern_found(timeseries, s, distance_measure)
+                dist[c] += min_dist
+            dist[c] = dist[c] / len(s_list)
+        for s_class, s_dist in dist.items():
+            if s_dist == min(dist.values()):
+                class_pred = s_class
+        y_pred.append(class_pred)
+    print("y_true is : ")
+    print(y_true)
+    print("y_pred is : ")
+    print(y_pred)
+    sk_acc = accuracy_score(y_true, y_pred)
+    # sk_precision, sk_recall, sk_fscore, sk_support = precision_recall_fscore_support(y_true, y_pred, average='macro')
+    sk_report = classification_report(y_true, y_pred)
+    return  0, sk_acc * 100, sk_report, 0, 0, 0

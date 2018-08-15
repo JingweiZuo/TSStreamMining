@@ -98,6 +98,7 @@ def mass_v2(x, y):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
+'''
 def mass_v3(x, y):
     #x is the data, y is the query
     n, m = len(x), len(y)
@@ -165,4 +166,4 @@ def test_func(q, t, q_new):
                 exact_dist[exact_dist_index] = dist
         else:
             dist_BSF = min(dist_BSF, dist)
-
+'''
