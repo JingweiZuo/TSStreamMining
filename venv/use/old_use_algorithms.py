@@ -35,13 +35,26 @@ def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cove
                                                                            list_remaining_cands)
         if not list_remaining_cands:
             done = True
-
         print("Starting the pruning procedure...")
+        #grouped_shapelets = itertools.groupby(list_done_shapelets, lambda shapelet: shapelet.class_shapelet)
+        grouped_shapelets = {}
+        for shap in list_done_shapelets:
+            if shap.class_shapelet in grouped_shapelets.keys():
+                grouped_shapelets[shap.class_shapelet].append(shap)
+            else:
+                grouped_shapelets[shap.class_shapelet] = [shap]
+        for keyShapelet, groupShapelet in grouped_shapelets.items():
+            list_shapelet_group = list(groupShapelet)
+            list_all_shapelets_pruned += pruning_shapelet(groupShapelet, algorithm=pruning, k=k,
+                                                         training_data=list_timeseries)
+
+        '''
         length = len(list_done_shapelets)
         # print("length of list_done_shapelets is ", len(list_done_shapelets))
         print("length of list_done_shapelets is ", len(list_done_shapelets))
         list_all_shapelets_pruned = pruning_shapelet(list_done_shapelets, algorithm=pruning, k = k, training_data = list_timeseries)
         # print("length of list_all_shapelets_pruned is ", len(list_all_shapelets_pruned))
+        '''
         print("Pruning complete")
         print("*************************")
         list_done_shapelets = None

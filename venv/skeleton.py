@@ -97,11 +97,19 @@ def parse_args(args):
         help="Choose the pruning strategy",
         default='top-k'
     )
+    parser.add_argument(
+        '-e',
+        '--eval',
+        dest='eval_directory',
+        help='Select the directory where the evaluation csv files exist',
+        default=''
+    )
     return parser.parse_args(args)
 
 
 def main(args):
     args = parse_args(args)
+    top_k_value = int(args.top_k)
 
     if args.distance_measure:
         measures = ['brute', 'mass_v2', 'dtw']
@@ -116,12 +124,12 @@ def main(args):
         print("No data directory is specified. Use the -d option, or -h for more help")
         sys.exit()
 
-    top_k_value = int(args.top_k)
+
     #list_timeseries: Array[{ts_name:ts_value}]
     list_timeseries = Utils.generate_timeseries(args.data_directory)
-
     dataset = {k: v for ds in list_timeseries for k, v in ds.items()}
     y = [ts.class_timeseries for ts in dataset.values()]
+
     args.cross = int(args.cross)
 
     if args.cross:
@@ -192,36 +200,8 @@ def main(args):
 
     if args.split:
         list_ts_train, list_ts_test, y_train, y_test = train_test_split(list_timeseries, y, test_size=0.25, random_state=0)
-        ###############################Save dataset to 'csv' file ###############################
-        file_name = "dataset_test.csv"
-        dirname = args.data_directory + "/csv_dataset/"
-        ##clean the historical files
-        files_list = [f for f in os.listdir(dirname) if f.lower().endswith('csv')]
-        for file in files_list:
-                    path = dirname + file
-                    os.remove(path)
-        path =  dirname + file_name
-        with open(path, 'w') as f:
-            writer = csv.writer(f, lineterminator='\n', delimiter=';',)
-            for anObject in dataset.values():
-                writer.writerow([anObject.name, anObject.class_timeseries])
-        ###############################Save dataset to 'csv' file ###############################
-        # The USE algorithm
-        start_time = time.time()
-        if args.algo == "use_old":
-            list_all_shapelets = old_use_algo.use_v4(list_ts_train, min_length=None, max_length=None,
-                                                     pruning=args.pruning, k=top_k_value,
-                                                     distance_measure=distance_measure, skip=True)
-        elif args.algo == "use_new":
-            print("this is new use algorithm")
-            list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, list_ts_train, "top-k")
+        list_all_shapelets = use_train(list_ts_train, distance_measure, top_k_value, args)
 
-        print("USE algorithm complete")
-        print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
-        print("*******************************************************")
-        Utils.save(args.data_directory, list_all_shapelets, "csv")
-        print()
-        print()
         print("Evaluating...")
         acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_ts_test,
                                                                                 list_all_shapelets,
@@ -230,6 +210,57 @@ def main(args):
         print("Accuracy acc: ", acc, "%", "Accuracy sk_acc: ", sk_acc, "%", "Accuracy acc_maj: ", acc_maj, "%")
         print("Classification Report:")
         print(sk_report)
+
+    if args.eval_directory:
+        list_all_shapelets = use_train(list_timeseries, distance_measure, top_k_value, args)
+        #'eval_dataset': dict{name: TS}
+        list_ts_test = Utils.generate_timeseries(args.eval_directory)
+        print("Evaluating...")
+        acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance_optimized(list_ts_test,
+                                                                                list_all_shapelets,
+                                                                                distance_measure=distance_measure)
+        print("Applicability : ", app, "%")
+        print("Accuracy acc: ", acc, "%", "Accuracy sk_acc: ", sk_acc, "%", "Accuracy acc_maj: ", acc_maj, "%")
+        print("Classification Report:")
+        print(sk_report)
+
+def use_train(ts_training, distance_measure, top_k_value, args):
+    dataset = {k: v for ds in ts_training for k, v in ds.items()}
+
+    ###############################Save dataset to 'csv' file ###############################
+    file_name = "dataset_test.csv"
+    dirname = args.data_directory + "/csv_dataset/"
+    ##clean the historical files
+    files_list = [f for f in os.listdir(dirname) if f.lower().endswith('csv')]
+    for file in files_list:
+        path = dirname + file
+        os.remove(path)
+    path = dirname + file_name
+
+    with open(path, 'w') as f:
+        writer = csv.writer(f, lineterminator='\n', delimiter=';', )
+        for anObject in dataset.values():
+            writer.writerow([anObject.name, anObject.class_timeseries])
+
+    ###############################Save dataset to 'csv' file ###############################
+    # The USE algorithm
+    start_time = time.time()
+    if args.algo == "use_old":
+        list_all_shapelets = old_use_algo.use_v4(ts_training, min_length=None, max_length=None,
+                                                 pruning=args.pruning, k=top_k_value,
+                                                 distance_measure=distance_measure, skip=True)
+    elif args.algo == "use_new":
+        print("this is new use algorithm")
+        list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, ts_training, "top-k")
+
+    print("USE algorithm complete")
+    print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
+    print("*******************************************************")
+    Utils.save(args.data_directory, list_all_shapelets, "csv")
+    print()
+    print()
+    return list_all_shapelets
+
 def run():
     main(sys.argv[1:])
 

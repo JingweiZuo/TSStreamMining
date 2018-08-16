@@ -27,15 +27,18 @@ class Utils(object):
 
     @staticmethod
     def load(directory, option):
-        if option.lower() == 'raw data':
-            dirname = "/RawData/"
+        dirname = ""
+        extension =""
+        if option.lower() == "dataset":
+            dirname = "/Dataset/"
             extension = ".csv"
 
         files_list = [f for f in os.listdir(directory + dirname) if f.lower().endswith(extension)]
         list_objects = []
         for file in files_list:
             path = directory + dirname + file
-            an_object = np.genfromtxt(path)
+            #an_object = np.genfromtxt(path)
+            an_object = np.genfromtxt(path, delimiter = ",")
             list_objects.extend(an_object)
         # return a list[Array_TimeSeries]
         return list_objects
@@ -45,7 +48,7 @@ class Utils(object):
     def generate_timeseries(directory):
         #list_ts = list[TimeSeries]
         array_ts = []
-        list_rawData = Utils.load(directory, 'raw data')
+        list_rawData = Utils.load(directory, 'Dataset')
         for d in list_rawData:
             # d[0] is the class of TS in the original data, d[1:] is the data in TS
             t = TimeSeries()

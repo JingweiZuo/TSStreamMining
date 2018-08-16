@@ -24,7 +24,9 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
         y_true.append(ts_class)
         true_classification = false_classification = 0
         min_distance = float('inf')
+        min_distance_not_found = float('inf')
         predicted_class_distance = ''
+        predicted_class_distance_not_found = ''
         for shap in list_shapelets:
             shap_found, min_dist = pattern_found(timeseries, shap, distance_measure)
             shap_class = shap.class_shapelet
@@ -40,6 +42,11 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
                 else:               #FN
                     #print("shap not found1")
                     false_classification += 1
+                    if (min_dist < min_distance_not_found):
+                        # print("shap_found1 min_dist < min_distance")
+                        min_distance_not_found = min_dist
+                        predicted_class_distance_not_found = shap_class
+
             else:
                 if shap_found:      #FP
                     #print("shap_found2")
@@ -53,17 +60,24 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
                 else:               #TN
                     #print("shap not found2")
                     true_classification += 1
+                    if (min_dist < min_distance_not_found):
+                        # print("shap_found1 min_dist < min_distance")
+                        min_distance_not_found = min_dist
+                        predicted_class_distance_not_found = shap_class
         #the class is decided by the majority corresponding shapelets in 'shap_list'
         if (key[1] and key[1] == 'majority') or key[0] == 'majority':
-            predicted_class = ""
-            predicted = 0
-            total = 0
-            for aKey in avg_f_dict:
-                if avg_f_dict[aKey] > predicted:
-                    predicted_class = aKey
-                    predicted = avg_f_dict[aKey]
-                total += avg_f_dict[aKey]
-            y_pred_maj.append(predicted_class)
+            if not predicted_class_distance: #Pattern found
+                y_pred_maj.append(predicted_class_distance_not_found)
+            else:
+                predicted_class = ""
+                predicted = 0
+                total = 0
+                for aKey in avg_f_dict:
+                    if avg_f_dict[aKey] > predicted:
+                        predicted_class = aKey
+                        predicted = avg_f_dict[aKey]
+                    total += avg_f_dict[aKey]
+                y_pred_maj.append(predicted_class)
             '''
             print("*" * 80)
             print("Time series number", instance, "with name:", timeseries.name)
@@ -76,25 +90,31 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
             '''
         # the class is decided by the closest shapelet in 'shap_list'
         if key[0] == 'closest':
-            y_pred.append(predicted_class_distance)
+            if not predicted_class_distance:
+                y_pred.append(predicted_class_distance_not_found)
+            else:
+                y_pred.append(predicted_class_distance)
 
         if not predicted_class_distance and not predicted_class:
             # can't find any corresponding shapelet in the timeseries, not be able to predict its class
             for_app += 1
+
     #the proportion of predictable timeseries in the dataset
     app = (len(list_timeseries) - for_app) / float(len(list_timeseries))
     acc=0
     sk_acc = sk_report = sk_acc_maj = sk_report_maj = 0
 
     if y_pred:
-        print("y_true is : ")
+        '''print("y_true is : ")
         print(y_true)
         print("y_pred is : ")
-        print(y_pred)
+        print(y_pred)'''
         sk_acc = accuracy_score(y_true, y_pred)
         #sk_precision, sk_recall, sk_fscore, sk_support = precision_recall_fscore_support(y_true, y_pred, average='macro')
         sk_report = classification_report(y_true, y_pred)
     if y_pred_maj:
+        '''print("y_pred_maj is : ")
+        print(y_pred_maj)'''
         sk_acc_maj = accuracy_score(y_true, y_pred_maj)
         #sk_precision_maj, sk_recall_maj, sk_fscore_maj, sk_support_maj = precision_recall_fscore_support(y_true, y_pred_maj, average= 'macro')
     acc = sk_acc
@@ -160,10 +180,10 @@ def check_performance_optimized(list_timeseries, list_shapelets, distance_measur
             if s_dist == min(dist.values()):
                 class_pred = s_class
         y_pred.append(class_pred)
-    print("y_true is : ")
+    '''print("y_true is : ")
     print(y_true)
     print("y_pred is : ")
-    print(y_pred)
+    print(y_pred)'''
     sk_acc = accuracy_score(y_true, y_pred)
     # sk_precision, sk_recall, sk_fscore, sk_support = precision_recall_fscore_support(y_true, y_pred, average='macro')
     sk_report = classification_report(y_true, y_pred)

@@ -4,9 +4,10 @@ import use.similarity_measures
 from use.timeseries import *
 from utils import *
 import numpy as np
+from matplotlib import pyplot as plt
 
 '''Optimisation of USE'''
-def computeDistDiffer(timeseries, dataset, m):
+def computeDistDiffer(timeseries, dataset, m, plot_flag):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
     mp_dict_same = []
@@ -19,7 +20,6 @@ def computeDistDiffer(timeseries, dataset, m):
         # 1. "_list": all index in source timeseries and target timeseries
         # 2. "_all": source timeseries and all target TS in dataset
     dp_all = {}
-    i = 0
     for ts in dataset.values():
         # mp_dict_same: [mp1, mp2, ...], Array[Array[]]
         # ip_dict_same: {ts_name1:ip1, ts_name1:ip2, ...}, dict(ts.name:Array[])
@@ -32,6 +32,7 @@ def computeDistDiffer(timeseries, dataset, m):
             mp_dict_same.append(mp_sameClass)
             mp_all.update( {ts.name:mp_sameClass})
             dp_all.update( {ts.name:dp_list} )
+
         else:
             dp_list, mp_differClass= mp.computeMP(timeseries, ts, m)
             mp_dict_differ.append(mp_differClass)
@@ -39,11 +40,19 @@ def computeDistDiffer(timeseries, dataset, m):
             dp_all.update({ts.name: dp_list})
 
     # compute the average distance for each side (under the same class, or the different class)
-    dist_side1 = np.median(mp_dict_same, axis = 0)
-    dist_side2 = np.median(mp_dict_differ, axis = 0)
+    dist_side1 = np.mean(mp_dict_same, axis = 0)
+    dist_side2 = np.mean(mp_dict_differ, axis = 0)
     # compute the difference of distance for 2 sides
     dist_differ = np.subtract(dist_side2, dist_side1)
-
+    # Plot the diagram
+    if plot_flag:
+        plt.figure()
+        #plt.xlim((0, len_data_0))
+        dist_side1.plot(legend='true')
+        dist_side2.plot(legend='true')
+        dist_differ.plot(legend='true')
+        plt.title("class of the TimeSeries: ",timeseries.class_timeseries)
+        plot_flag = False
     #dist_threshold = np.divide(np.add(dist_side1, dist_side2),2)
     dist_threshold = dist_side1
     # retrun the Distance Profiles, Matrix Profiles, distance difference, distance threshold, array size keeps the same
@@ -62,13 +71,15 @@ def extract_shapelet(k, dataset, m, pruning_option):
     ip_all = {}
     class_list = []
     shapelet_list = []
+    plot_flag = True
     for ts in dataset.values():
         c = ts.class_timeseries
         class_list.append(c)
         # 'dp_all': dict{ ts_name_source1: dict{ts_target.name: dict{index_source:Array[]}} },
         # 'mp_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         # 'ip_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
-        dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold= computeDistDiffer(ts, dataset, m)
+        dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold= computeDistDiffer(ts, dataset, m, plot_flag)
+        plot_flag = False
         # Array of distance's difference for all timeseries in the dataset
         # dist_differ_list[c]: {ts_name_source1:dp1, ts_name_source2:dp2, ...}, dict(String:Array[])
 
@@ -196,6 +207,18 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
 
     # pruning by 'shapelet.normal_distance'
     ## order 'shap_list' by 'shapelet.normal_distance', descending order
-    shap_list = sorted(shap_list, key=lambda x: x.normal_distance, reverse=True)
-    shap_list = shap_list[:k]
-    return shap_list
+    '''shap_list = sorted(shap_list, key=lambda x: x.normal_distance, reverse=True)
+    shap_list = shap_list[:k]'''
+
+    grouped_shapelets = {}
+    list_all_shapelets_pruned = []
+    for shap in shap_list:
+        if shap.class_shapelet in grouped_shapelets.keys():
+            grouped_shapelets[shap.class_shapelet].append(shap)
+        else:
+            grouped_shapelets[shap.class_shapelet] = [shap]
+    for keyShapelet, groupShapelet in grouped_shapelets.items():
+        list_shapelet_group = list(groupShapelet)
+        shap_list_sorted = sorted(list_shapelet_group, key=lambda shap: shap.normal_distance, reverse=True)
+        list_all_shapelets_pruned += list_shapelet_group[:int(k)]
+    return list_all_shapelets_pruned
