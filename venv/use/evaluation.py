@@ -78,16 +78,6 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
                         predicted = avg_f_dict[aKey]
                     total += avg_f_dict[aKey]
                 y_pred_maj.append(predicted_class)
-            '''
-            print("*" * 80)
-            print("Time series number", instance, "with name:", timeseries.name)
-            print("True Class:", ts_class)
-            print("Predicted Classes:")
-            for aKey in avg_f_dict:
-                print("\t", aKey, ":", round(avg_f_dict[aKey] / total, 2) * 100, "%")
-            print("*" * 80)
-            instance += 1
-            '''
         # the class is decided by the closest shapelet in 'shap_list'
         if key[0] == 'closest':
             if not predicted_class_distance:
@@ -95,7 +85,7 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
             else:
                 y_pred.append(predicted_class_distance)
 
-        if not predicted_class_distance and not predicted_class:
+        if not predicted_class_distance:
             # can't find any corresponding shapelet in the timeseries, not be able to predict its class
             for_app += 1
 
@@ -105,16 +95,10 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
     sk_acc = sk_report = sk_acc_maj = sk_report_maj = 0
 
     if y_pred:
-        '''print("y_true is : ")
-        print(y_true)
-        print("y_pred is : ")
-        print(y_pred)'''
         sk_acc = accuracy_score(y_true, y_pred)
         #sk_precision, sk_recall, sk_fscore, sk_support = precision_recall_fscore_support(y_true, y_pred, average='macro')
         sk_report = classification_report(y_true, y_pred)
     if y_pred_maj:
-        '''print("y_pred_maj is : ")
-        print(y_pred_maj)'''
         sk_acc_maj = accuracy_score(y_true, y_pred_maj)
         #sk_precision_maj, sk_recall_maj, sk_fscore_maj, sk_support_maj = precision_recall_fscore_support(y_true, y_pred_maj, average= 'macro')
     acc = sk_acc

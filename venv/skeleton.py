@@ -216,7 +216,7 @@ def main(args):
         #'eval_dataset': dict{name: TS}
         list_ts_test = Utils.generate_timeseries(args.eval_directory)
         print("Evaluating...")
-        acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance_optimized(list_ts_test,
+        acc, sk_acc, sk_report, acc_maj, report_maj, app = ev.check_performance(list_ts_test,
                                                                                 list_all_shapelets,
                                                                                 distance_measure=distance_measure)
         print("Applicability : ", app, "%")

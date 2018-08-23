@@ -45,7 +45,7 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag):
     # compute the difference of distance for 2 sides
     dist_differ = np.subtract(dist_side2, dist_side1)
     # Plot the diagram
-    if plot_flag:
+    '''if plot_flag:
         plt.title("class of the TimeSeries: " + "class1")
         plt.xlabel("index/offset")
         plt.ylabel("Distance measure")
@@ -54,7 +54,7 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag):
         plt.plot(X, dist_side2, color='blue', linewidth=0.3, label='Distance to TS in non-class1')
         plt.plot(X, dist_differ, color='red', linewidth=0.3, label='Distance difference')
         plt.legend()
-        plt.show()
+        plt.show()'''
     #dist_threshold = np.divide(np.add(dist_side1, dist_side2),2)
     dist_threshold = dist_side1
     # retrun the Distance Profiles, Matrix Profiles, distance difference, distance threshold, array size keeps the same
