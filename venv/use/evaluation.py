@@ -50,7 +50,6 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
             else:
                 if shap_found:      #FP
                     #print("shap_found2")
-
                     false_classification += 1
                     avg_f_dict[shap_class] += 1
                     if (min_dist < min_distance):
@@ -95,6 +94,10 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
     sk_acc = sk_report = sk_acc_maj = sk_report_maj = 0
 
     if y_pred:
+        '''print("y_true is : ")
+        print(y_true)
+        print("y_pred is : ")
+        print(y_pred)'''
         sk_acc = accuracy_score(y_true, y_pred)
         #sk_precision, sk_recall, sk_fscore, sk_support = precision_recall_fscore_support(y_true, y_pred, average='macro')
         sk_report = classification_report(y_true, y_pred)
@@ -113,17 +116,15 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
 def pattern_found(a_timeseries, a_shapelet, distance_measure):
     pattern_found =False
     min_dist = float('inf')
-    if(distance_measure == "mass_v2" ):
-        dist_profile = sm.mass_v2(a_timeseries.timeseries, a_shapelet.subsequence)
-        min_dist = min(dist_profile)
-        #print("min_dist is: " + str(min_dist))
-        #print("a_shapelet.dist_threshold: " + str(a_shapelet.dist_threshold))
-        if (min_dist <= a_shapelet.dist_threshold):
-            pattern_found = True
-        else:
-            pattern_found = False
+    dist_profile = sm.calculate_distances(a_timeseries.timeseries, a_shapelet.subsequence, distance_measure)
+    min_dist = min(dist_profile)
+    #print("min_dist is: " + str(min_dist))
+    #print("a_shapelet.dist_threshold: " + str(a_shapelet.dist_threshold))
+    if (min_dist <= a_shapelet.dist_threshold):
+        pattern_found = True
+    else:
+        pattern_found = False
     return pattern_found, min_dist
-
 
 def check_performance_optimized(list_timeseries, list_shapelets, distance_measure, key='closest|majority'):
     y_pred_maj = []

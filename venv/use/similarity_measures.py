@@ -98,6 +98,29 @@ def mass_v2(x, y):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
+'''to complete'''
+def compute1Dist():
+    return 0
+
+def getRawIndexLB(LB, index):
+    return 0
+
+def linearComputeLB(LB, sigma):
+    return 0
+
+def computeLbGlobal(DP_all):
+    LB = {}
+    for dp in DP_all:
+        LB.append(computeLB(dp))
+
+def computeLB(QT, L, meanQ, meanT, sigmaQ, sigmaT, sigmaNewQ):
+    q_ij = (QT/L - meanQ*meanT) / sigmaQ * sigmaT
+    if q_ij <= 0:
+        LB = L**0.5 * sigmaQ / sigmaNewQ
+    else:
+        LB = ((L * (1 - q_ij**2))**0.5) * sigmaQ / sigmaNewQ
+    return LB
+
 '''
 def mass_v3(x, y):
     #x is the data, y is the query
