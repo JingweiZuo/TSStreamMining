@@ -12,7 +12,6 @@ def calculate_distances(timeseries, subsequence, distance_measure):
 def euclidean_distance(t1, t2):
     return np.sqrt(sum((t1 - t2) ** 2))
 
-
 def euclidean_distance_unequal_lengths(t, s):##O(m)
     ## return a array of distance between 'shapelet' and every slices of 'timeseries'
     distances = np.array([euclidean_distance(np.array(s1), s) for s1 in old_Utils.sliding_window(t, len(s))])
@@ -98,30 +97,6 @@ def mass_v2(x, y):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
-'''to complete'''
-def compute1Dist():
-    return 0
-
-def getRawIndexLB(LB, index):
-    return 0
-
-def linearComputeLB(LB, sigma):
-    return 0
-
-def computeLbGlobal(DP_all):
-    LB = {}
-    for dp in DP_all:
-        LB.append(computeLB(dp))
-
-def computeLB(QT, L, meanQ, meanT, sigmaQ, sigmaT, sigmaNewQ):
-    q_ij = (QT/L - meanQ*meanT) / sigmaQ * sigmaT
-    if q_ij <= 0:
-        LB = L**0.5 * sigmaQ / sigmaNewQ
-    else:
-        LB = ((L * (1 - q_ij**2))**0.5) * sigmaQ / sigmaNewQ
-    return LB
-
-'''
 def mass_v3(x, y):
     #x is the data, y is the query
     n, m = len(x), len(y)
@@ -151,42 +126,21 @@ def mass_v3(x, y):
     dist = np.sqrt(dist)
     #distance here is a complex number, need to return its amplitude/absolute value
     #return a vector with size of n-m+1
-    return np.abs(dist), z
+    return np.abs(dist), meany, sigmay, meanx, sigmax, z
 
-def test_func(q, t, q_new):
-    # length= l
-    dist_old, qt_old = mass_v3(t, q)
+'''to complete'''
+def compute1Dist(meanQ, meanT, sigmaQ, sigmaT, QT, m):
+    dist = 2 * (m - (QT - m * meanQ * meanT) / (sigmaQ * sigmaT))
+    return dist**0.5
 
-    dist_LB = computeLB(dist_old)
-    #dist_LB_sorted: [(index in dist_LB, value)], e.g. [(0, 1), (2, 2), (1, 3), (3, 5)]
-    dist_LB_sorted = sorted(enumerate(dist_LB), key=lambda x: x[1])
+def linearComputeLB(LB, sigmaQ, sigmaQplus):
+    #LB is an array list
+    return LB * sigmaQ / sigmaQplus
 
-    meant = np.mean(t)
-    meanq = np.mean(q_new)
-    sigmat = np.std(t)
-    sigmaq = np.std(q_new)
-
-    m = len(q_new)
-    n = len(t)
-
-    min_LB = min(dist_LB)
-    max_LB = max(dist_LB)
-    for idx, qt in enumerate(qt_old):
-
-        #compute distance
-
-        qt_new = qt + q_new[-1] * t[idx + m-1 ] # idex=0, t[m-1], m is the length of the new Query, so t[m-1] is the last element
-        #dist = 2 * (m - (z[m-1:n] - m * meanx[m-1:n] * meany) / (sigmax[m-1:n] * sigmay))
-        dist =  2 * (m - (qt_new - m * meant * meanq) / (sigmat * sigmaq)) #the distance between Query and sub_seq[idx]
-
-        if min_LB < dist < max_LB :
-            # locate dist in dist_LB: index, and compute exact distance whose index' < index
-            index = dist_LB.locate(dist)
-            for i in range(0, index):
-                exact_dist_index = dist_LB[i].key
-                qt_new = qt + q_new[-1] * t[idx + m]
-                dist = 2 * (m - (qt_new - m * meant * meanq) / (sigmat * sigmaq))
-                exact_dist[exact_dist_index] = dist
-        else:
-            dist_BSF = min(dist_BSF, dist)
-'''
+def computeLB(QT, L, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus):
+    q_ij = (QT/L - meanQ*meanT) / sigmaQ * sigmaT
+    if q_ij <= 0:
+        LB = [L**0.5 * sigmaQ / sigmaQplus]*len(sigmaT)
+    else:
+        LB = ((L * (1 - q_ij**2))**0.5) * sigmaQ / sigmaQplus
+    return LB

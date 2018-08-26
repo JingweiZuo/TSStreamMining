@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 min_length = 0
 
 '''Optimisation of USE'''
-def computeDistDiffer(timeseries, dataset, m, plot_flag, IterateData = {}):
+def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {}):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
     mp_dict_same = []
@@ -31,9 +31,9 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, IterateData = {}):
         # dp_all: {ts_target.name1:{index1:dp1, index2:dp2, ...}, ts_target.name2:{...}, ...}, dict(ts_target.name: dict(index:Array[]) )
         global min_length
         if m == min_length:
-            dp_list, mp, iteratedata = admp.computeMP(timeseries, ts, m)
+            dp_list, mp, iteratedata = admp.computeMP(timeseries, ts, m, step)
         else:
-            dp_list, mp, iteratedata = admp.updateMP(timeseries, ts, m, IterateData[ts.name])
+            dp_list, mp, iteratedata = admp.updateMP(timeseries, ts, m, IterateData[ts.name], step)
         #if ts.name != timeseries.name: check the self-similarity
         if (timeseries.class_timeseries == ts.class_timeseries):
             mp_dict_same.append(mp)
@@ -66,10 +66,8 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, IterateData = {}):
     # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[]
     return dp_all, mp_all, dist_differ, dist_threshold, IterateDataNew
 
-'''
-    Pruning, select top-k shapelets
-'''
-def computeAllData(dataset, m, plot_flag, IterateDataList):
+
+def computeAllData(dataset, m, plot_flag, IterateDataList, step):
     dist_differ_list = {}
     dist_threshold_list = {}
     class_list = []
@@ -85,9 +83,9 @@ def computeAllData(dataset, m, plot_flag, IterateDataList):
         # 'ip_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         global min_length
         if m == min_length:
-            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, IterateDataListNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag)
+            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, IterateDataListNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, step)
         else:
-            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, IterateDataListNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, IterateDataList[ts.name])
+            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, IterateDataListNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, step, IterateDataList[ts.name])
         plot_flag = False
         # Array of distance's difference for all timeseries in the dataset
         # dist_differ_list[c]: {ts_name_source1:dp1, ts_name_source2:dp2, ...}, dict(String:Array[])
@@ -101,7 +99,7 @@ def computeAllData(dataset, m, plot_flag, IterateDataList):
             dist_threshold_list[c] = {ts.name: dist_threshold}
     return dist_differ_list, dist_threshold_list, dp_all_list, mp_all_list, class_list, IterateDataListNew
 
-def extract_shapelet(k, dataset, m, pruning_option, IterateData):
+def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
     # then check if the shapelet is in the timeseries, note timeseries' name
     dist_differ_list = {}
     dist_threshold_list = {}
@@ -112,7 +110,7 @@ def extract_shapelet(k, dataset, m, pruning_option, IterateData):
     shapelet_list = []
     plot_flag = True
 
-    dist_differ_list, dist_threshold_list, dp_all, mp_all, class_list, IterateDataNew = computeAllData(dataset, m, plot_flag, IterateData)
+    dist_differ_list, dist_threshold_list, dp_all, mp_all, class_list, IterateDataNew = computeAllData(dataset, m, plot_flag, IterateData, step)
     # for each class, select top-k shapelets, then find the matching indices for top-k shapelets
     # top-k aims at the shapelets of different class, or top-k shapelets of each class?
     ## Here, we take k shapelets for each class
@@ -206,7 +204,7 @@ def extract_shapelet(k, dataset, m, pruning_option, IterateData):
         return shapelet_list'''
 
 
-def extract_shapelet_all_length(k, dataset_list, pruning_option):
+def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
     #'dataset_list': [dict{}, dict{}, ...]
     dataset = {k: v for ds in dataset_list for k, v in ds.items()}
     # length of shapelet is from 1 to min_ts-1 in dataset
@@ -227,10 +225,10 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
         nbr_candidate = int((min_m - m)/(0.25*m))
         if 0 < nbr_candidate < k :
-            shapelets, IterateData = extract_shapelet(nbr_candidate, dataset, m, pruning_option, IterateData)
+            shapelets, IterateData = extract_shapelet(nbr_candidate, dataset, m, pruning_option, IterateData, step)
             shap_list.extend(shapelets)
         elif nbr_candidate > 0:
-            shapelets, IterateData = extract_shapelet(k, dataset, m, pruning_option, IterateData)
+            shapelets, IterateData = extract_shapelet(k, dataset, m, pruning_option, IterateData, step)
             shap_list.extend(shapelets)
 
     # pruning by 'shapelet.normal_distance'
