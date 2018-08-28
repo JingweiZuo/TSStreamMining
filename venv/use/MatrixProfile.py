@@ -1,16 +1,16 @@
 import numpy as np
 from use.timeseries import TimeSeries
 import use.similarity_measures as sm
-
+import line_profiler
 '''to complete the motification of step'''
-def computeMP(timeseries1, timeseries2, subseq_length, step):
+@profile
+def computeMP(timeseries1, timeseries2, subseq_length):
     #timeseries1: Query TS, timeseries2: Target TS
     t1 = timeseries1
     t2 = timeseries2
     n1 = len(t1.timeseries)
     n2 = len(t2.timeseries)
     indexes = n1 - subseq_length + 1
-    step = int(subseq_length/4)
     MP12 = [] #Matrix Profile
     #IP12 = [0] #Index Profile
     DP_all = {} # Distance Profiles for All Index in the timeseries

@@ -4,9 +4,12 @@ import use.similarity_measures
 from use.timeseries import *
 from utils import *
 import numpy as np
+import time
+import line_profiler
 from matplotlib import pyplot as plt
 
 '''Optimisation of USE'''
+@profile
 def computeDistDiffer(timeseries, dataset, m, plot_flag):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
@@ -64,6 +67,7 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag):
 '''
     Pruning, select top-k shapelets
 '''
+@profile
 def extract_shapelet(k, dataset, m, pruning_option):
     # then check if the shapelet is in the timeseries, note timeseries' name
     dist_differ_list = {}
@@ -185,7 +189,7 @@ def extract_shapelet(k, dataset, m, pruning_option):
                 break
         return shapelet_list'''
 
-
+@profile
 def extract_shapelet_all_length(k, dataset_list, pruning_option):
     #'dataset_list': [dict{}, dict{}, ...]
     dataset = {k: v for ds in dataset_list for k, v in ds.items()}
@@ -195,18 +199,19 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
     # 'ts' is the object of TimeSeries
     min_m = Utils.min_length_dataset(dataset.values())
     # m: 1, 2, ..., min_m-1
-    #print("Maximum length of shapelet is : " + str(min_m))
+    print("Maximum length of shapelet is : " + str(min_m))
     min_length = int(0.1 * min_m)
-    max_length = int(0.5 * min_m)
+    max_length = min_length + 3
     for m in range(min_length, max_length):
-        #print("Extracting shapelet length: " + str(m))
+        print("Extracting shapelet length: " + str(m))
+        start = time.time()
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
         nbr_candidate = int((min_m - m)/(0.25*m))
         if 0 < nbr_candidate < k :
             shap_list.extend(extract_shapelet(nbr_candidate, dataset, m, pruning_option))
         elif nbr_candidate > 0:
             shap_list.extend(extract_shapelet(k, dataset, m, pruning_option))
-
+        print("time consumed: ", str(time.time() - start))
     # pruning by 'shapelet.normal_distance'
     ## order 'shap_list' by 'shapelet.normal_distance', descending order
     '''shap_list = sorted(shap_list, key=lambda x: x.normal_distance, reverse=True)

@@ -23,11 +23,12 @@ import logging
 import time
 import use.use_algorithms as use_algo
 import use.old_use_algorithms as old_use_algo
+import variableQueryMP.ad_use_algorithms as ad_use_algo
 import use.evaluation as ev
 import gc
 import csv
 import os
-
+import cProfile
 from utils import Utils
 from sklearn.model_selection import StratifiedShuffleSplit, train_test_split, StratifiedKFold
 
@@ -252,7 +253,8 @@ def use_train(ts_training, distance_measure, top_k_value, args):
     elif args.algo == "use_new":
         print("this is new use algorithm")
         list_all_shapelets = use_algo.extract_shapelet_all_length(top_k_value, ts_training, "top-k")
-
+    elif args.algo == "use_ad":
+        list_all_shapelets = ad_use_algo.extract_shapelet_all_length(top_k_value, ts_training, "top-k", 4)
     print("USE algorithm complete")
     print("Time taken by the USE algorithm (minutes):", (time.time() - start_time) / 60)
     print("*******************************************************")

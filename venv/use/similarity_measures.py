@@ -1,5 +1,7 @@
 import numpy as np
 from utils.old_Utils import old_Utils
+import line_profiler
+from variableQueryMP.iterationData import IterationData
 
 def calculate_distances(timeseries, subsequence, distance_measure):
     if distance_measure == "mass_v1" :
@@ -66,6 +68,7 @@ def mass_v1(q, t):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
+@profile
 def mass_v2(x, y):
     #x is the data, y is the query
     n, m = len(x), len(y)
@@ -97,7 +100,8 @@ def mass_v2(x, y):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
-def mass_v3(x, y):
+@profile
+def mass_v3(x, y, Qplus):
     #x is the data, y is the query
     n, m = len(x), len(y)
 
@@ -122,25 +126,69 @@ def mass_v3(x, y):
 
     #The main trick of getting dot products in O(n log n) time
     z = dot_products_2(y, x)
-    dist = 2 * (m - (z[m-1:n] - m * meanx[m-1:n] * meany) / (sigmax[m-1:n] * sigmay))
-    dist = np.sqrt(dist)
+    #dist = 2 * m * (1 - (z[m-1:n]/m - meanx[m-1:n] * meany) / (sigmax[m-1:n] * sigmay))
+    #dist = np.sqrt(dist)
     #distance here is a complex number, need to return its amplitude/absolute value
     #return a vector with size of n-m+1
-    return np.abs(dist), meany, sigmay, meanx, sigmax, z
+
+    sigmaxy = sigmax[m - 1:n] * sigmay
+    q_ij = (z[m-1:n] / m - meanx[m-1:n] * meany) / sigmaxy
+    dist = np.sqrt(2 * m * (1 - q_ij))
+
+    iterationData = IterationData()
+    # Q is a subsequence, T is the entire timeseries, meanT/sigmaT are lists of elements
+    meanQplus, sigmaQplus = iterationData.updateMeanSigma(meany, sigmay, Qplus)
+    coeff = sigmay / sigmaQplus
+    # compute the LB profile: q_ij
+    # q_ij[q_ij <= 0] = (m ** 0.5) * coeff
+    # q_ij[q_ij > 0] = ((m * (1 - q_ij ** 2)) ** 0.5) * coeff
+    LB = np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij))
+
+
+    meant = {idx: value for idx, value in enumerate(meanx)}
+    sigmat = {idx: value for idx, value in enumerate(sigmax)}
+    qt = {idx: value for idx, value in enumerate(z)}
+
+    lb_list = [(idx, dist) for idx, dist in enumerate(LB)]
+    lb_list = sorted(lb_list, key=lambda d: d[1])
+    iterationData.LB = lb_list
+    iterationData.meanQ = meany
+    iterationData.sigmaQ = sigmay
+    iterationData.meanT = meant
+    iterationData.sigmaT = sigmat
+    iterationData.QT = qt
+    return np.abs(dist), iterationData #q_ij here is the LB profile
 
 '''to complete'''
+@profile
 def compute1Dist(meanQ, meanT, sigmaQ, sigmaT, QT, m):
-    dist = 2 * (m - (QT - m * meanQ * meanT) / (sigmaQ * sigmaT))
-    return dist**0.5
+    if sigmaT <= 0.0001:
+        dist = 10000
+    else:
+        dist = 2 * (m - (QT - m * meanQ * meanT) / (sigmaQ * sigmaT))
+    return abs(dist*0.5)
 
 def linearComputeLB(LB, sigmaQ, sigmaQplus):
-    #LB is an array list
-    return LB * sigmaQ / sigmaQplus
+    #LB: [(rawIndex, value)]
+    LB_new = [(rawIndex, value* sigmaQ / sigmaQplus) for (rawIndex,value) in LB]
+    return LB_new
 
-def computeLB(QT, L, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus):
-    q_ij = (QT/L - meanQ*meanT) / sigmaQ * sigmaT
-    if q_ij <= 0:
-        LB = [L**0.5 * sigmaQ / sigmaQplus]*len(sigmaT)
-    else:
-        LB = ((L * (1 - q_ij**2))**0.5) * sigmaQ / sigmaQplus
-    return LB
+@profile
+def computeLB(QT, m, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus):
+    # Q is a subsequence, T is an entire timeseries
+    qt = np.array(list(QT.values()))
+    meant = np.array(list(meanT.values()))
+    sigmat = np.array(list(sigmaT.values()))
+    q_ij = (qt/m - meanQ*meant) / sigmaQ * sigmat
+    LB = {}
+    coeff= sigmaQ / sigmaQplus
+    q_ij = np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij))
+    lb_list = [(idx, dist) for idx, dist in enumerate(q_ij)]
+    lb_list = sorted(lb_list, key=lambda d: d[1])
+
+    '''for idx, val in enumerate(q_ij):
+        if val <= 0:
+            LB[idx] = (L**0.5) * coeff
+        else:
+            LB[idx] = ((L * (1 - val**2))**0.5) * coeff'''
+    return lb_list

@@ -5,11 +5,13 @@ import variableQueryMP.adMatrixProfile as admp
 from use.timeseries import *
 from utils import *
 import numpy as np
+import time
 from matplotlib import pyplot as plt
-
+import line_profiler
 min_length = 0
 
 '''Optimisation of USE'''
+@profile
 def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {}):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
@@ -33,7 +35,7 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {})
         if m == min_length:
             dp_list, mp, iteratedata = admp.computeMP(timeseries, ts, m, step)
         else:
-            dp_list, mp, iteratedata = admp.updateMP(timeseries, ts, m, IterateData[ts.name], step)
+            dp_list, mp, iteratedata = admp.updateMP(timeseries, ts, IterateData[ts.name], m, step)
         #if ts.name != timeseries.name: check the self-similarity
         if (timeseries.class_timeseries == ts.class_timeseries):
             mp_dict_same.append(mp)
@@ -66,7 +68,7 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {})
     # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[]
     return dp_all, mp_all, dist_differ, dist_threshold, IterateDataNew
 
-
+@profile
 def computeAllData(dataset, m, plot_flag, IterateDataList, step):
     dist_differ_list = {}
     dist_threshold_list = {}
@@ -99,6 +101,7 @@ def computeAllData(dataset, m, plot_flag, IterateDataList, step):
             dist_threshold_list[c] = {ts.name: dist_threshold}
     return dist_differ_list, dist_threshold_list, dp_all_list, mp_all_list, class_list, IterateDataListNew
 
+@profile
 def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
     # then check if the shapelet is in the timeseries, note timeseries' name
     dist_differ_list = {}
@@ -178,6 +181,7 @@ def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
                             # 'dp_all': dict{ ts_name_source1: dict{ts_target.name: dict{index_source:Array[]}} },
                             dp = dp_all[ts_name_source][ts_name_target][ts_index_source]
                             #dp:dict with less index then source ts, d:array with all index of source ts
+
                             for idx_d, d in enumerate(dp):
                                 if (d <= dist_thd):
                                     # if it's not NULL, append the value to the original one
@@ -203,7 +207,7 @@ def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
                 break
         return shapelet_list'''
 
-
+@profile
 def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
     #'dataset_list': [dict{}, dict{}, ...]
     dataset = {k: v for ds in dataset_list for k, v in ds.items()}
@@ -216,12 +220,13 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
     #print("Maximum length of shapelet is : " + str(min_m))
     global min_length
     min_length = int(0.1 * min_m)
-    max_length = int(0.5 * min_m)
+    max_length = min_length+3
     # for length = m, compute IterationDataList(QT, LB, mean, sigma)
     IterateData = {}
 
     for m in range(min_length, max_length):
-        #print("Extracting shapelet length: " + str(m))
+        print("Extracting shapelet length: " + str(m))
+        start = time.time()
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
         nbr_candidate = int((min_m - m)/(0.25*m))
         if 0 < nbr_candidate < k :
@@ -230,7 +235,7 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
         elif nbr_candidate > 0:
             shapelets, IterateData = extract_shapelet(k, dataset, m, pruning_option, IterateData, step)
             shap_list.extend(shapelets)
-
+        print("time consumed: ", str(time.time() - start))
     # pruning by 'shapelet.normal_distance'
     ## order 'shap_list' by 'shapelet.normal_distance', descending order
     '''shap_list = sorted(shap_list, key=lambda x: x.normal_distance, reverse=True)

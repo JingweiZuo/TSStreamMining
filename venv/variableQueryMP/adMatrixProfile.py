@@ -1,8 +1,10 @@
 import numpy as np
 from use.timeseries import TimeSeries
-import use.MatrixProfile as mp
+
 import use.similarity_measures as sm
 from variableQueryMP.iterationData import IterationData
+import line_profiler
+from bisect import bisect_left
 
 '''def computeIterateMP(TS_Query, TS_Target, L, newL, step):
     # Initalization
@@ -32,6 +34,7 @@ from variableQueryMP.iterationData import IterationData
                 LB[i] = sm.computeLB(QT, L, meanQ[L][i], meanT[L][i], sigmaQ[L][i], sigmaT[L][i], sigmaQ[L+1][i])
     return DP, MP'''
 
+@profile
 def computeMP(timeseries1, timeseries2, m, skip_step):
     #timeseries1: Query TS, timeseries2: Target TS
     iterationDataList = []
@@ -58,39 +61,48 @@ def computeMP(timeseries1, timeseries2, m, skip_step):
         #DP = mass_v2(data, query)
         # if std(query)==0, then 'mass_v2' will return a NAN, ignore this Distance profile
         #Numpy will generate the result with datatype 'float64', where std(query) maybe equals to 'x*e-17', but not 0
-        if round(np.std(query),4) == 0:
+        if np.std(query)<= 0.0001:
             continue
         else:
-            DP_all[idx], meanQ, sigmaQ, meanT, sigmaT, QT = sm.mass_v2(data, query)
+            DP_all[idx], iterationData = sm.mass_v3(data, query, t1.timeseries[index:index2+1])
             MP12.append(min(DP_all[idx]))
             idx += 1
-            iterationData = IterationData()
+            '''iterationData = IterationData()
             #Q is a subsequence, T is the entire timeseries, meanT/sigmaT are lists of elements
-            meanQplus, sigmaQplus = iterationData.updateMeanSigma(meanQ, sigmaQ, query)
-            iterationData.LB = sm.computeLB(QT, m, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus)
+            meanQplus, sigmaQplus = iterationData.updateMeanSigma(meanQ, sigmaQ)
+            LBtemp = sm.computeLB(QT, m, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus)
+            lb_list = [(idx, dist) for idx, dist in LBtemp.items()]
+            lb_list = sorted(lb_list, key=lambda d: d[1])
+            iterationData.LB = lb_list
             iterationData.meanQ = meanQ
             iterationData.sigmaQ = sigmaQ
             iterationData.meanT = meanT
             iterationData.sigmaT = sigmaT
-            iterationData.QT = QT
+            iterationData.QT = QT'''
             iterationDataList.append(iterationData)
     return DP_all, MP12, iterationDataList
-
+@profile
 # newL here is L+1, the incremental step is 1 by default
 def updateMP(TS_Query, TS_Target, IterationDataList, new_m, skip_step):
-    n_Q = len(TS_Query)
+
+    ts_query = TS_Query.timeseries
+    ts_target = TS_Target.timeseries
+    n_Q = len(ts_query)
     if int(new_m/skip_step)==0:
         step = 1
     else:
         step = int(new_m / skip_step)
     nbr_offset = int((n_Q - new_m) / step)
     DP = {}
-    MP = {}
+    MP = []
     IterationDataNewList = {}
     for i in range(0, nbr_offset):
         index = i * step
-        Q = TS_Query[index:index + new_m]
-        iterationData = IterationDataList[i]
+        Q = ts_query[index:index + new_m]
+        if i >= len(IterationDataList):
+            continue
+        else:
+            iterationData = IterationDataList[i]
         '''lb_dict = LB[i]
         lb_list = [(idx, dist) for idx, dist in lb_dict.items()]
         lb_list = sorted(lb_list, key=lambda d: d[1])
@@ -98,12 +110,15 @@ def updateMP(TS_Query, TS_Target, IterationDataList, new_m, skip_step):
                                                                                        meanQ[i], sigmaQ[i],
                                                                                        meanTList=meanT[i],
                                                                                        sigmaTList=sigmaT[i])'''
-        dp, min_dist, iterationData = updateMpPart(Q, TS_Target, iterationData)
+        if round(iterationData.sigmaQ,4) == 0:
+            continue
+        else:
+            dp, min_dist, iterationData = updateMpPart(Q, ts_target, iterationData)
         DP[i] = dp
-        MP[i] = min_dist
+        MP.append(min_dist)
         IterationDataNewList[i] = iterationData
     return DP, MP, IterationDataNewList
-
+@profile
 # from the given data of length =l, to get the minimal distance and Distance Profile for length =l+1
 # Q(length = l+1), T; QT, meanQ, sigmaQ, meanTList, sigmaTList:(length = l)
 #def updateMpPart(lb_list, QT, Q, T, meanQ, sigmaQ, meanTList, sigmaTList):
@@ -128,18 +143,27 @@ def updateMpPart(Q, T, iterationData):
     for i, (rawIdx, lb) in enumerate(lb_list):
         # check if rawIdx exists in the original list
         T_subseq = T[rawIdx : rawIdx+L]
-        meanTplus[rawIdx], sigmaTplus[rawIdx], QTplus[rawIdx] = iterationData.updateParaT(rawIdx, meanT[rawIdx], sigmaT[rawIdx], Q, T_subseq, QT[rawIdx])
-        dist_exact = sm.compute1Dist(meanQplus, meanTplus[rawIdx], sigmaQplus, sigmaTplus[rawIdx], QTplus[rawIdx], L)
-        index, rawIndexList = locateDistIndex(dist_exact, lb_list)
-        if index is None or index+i >= nbr_distance:
-            DPplus.update({rawIdx: dist_exact})
+        #print("length Q is ", str(len(Q)), "length T_subseq is ", str(len(T_subseq)))
+        if len(Q)!= len(T_subseq):
             continue
         else:
+            meanTplus[rawIdx], sigmaTplus[rawIdx], QTplus[rawIdx] = iterationData.updateParaT(rawIdx, meanT, sigmaT, Q, T_subseq, QT)
+        dist_exact = sm.compute1Dist(meanQplus, meanTplus[rawIdx], sigmaQplus, sigmaTplus[rawIdx], QTplus[rawIdx], L)
+        index = locateDistIndex(dist_exact, lb_list)
+        if index+i >= nbr_distance:
+            DPplus.update({rawIdx: dist_exact})
+            continue
+        elif i >= index:
+            DPplus.update({rawIdx: dist_exact})
+            min_dist = dist_exact
+            break
+        else:
+            rawIndexList = locateDistIndexList(i, index, lb_list)
             # have found an exact distance in LB profile
             for idx in rawIndexList:
                 # Two choses: - try to use the RAW index, or use the index in 'lb_list'
                 #retrun to the original index in 'lb_list': QT, mean, sigma
-                meanTplus[idx], sigmaTplus[idx], QTplus[idx] = iterationData.updateParaT(idx, meanT[idx], sigmaT[idx], Q, T_subseq, QT[idx])
+                meanTplus[idx], sigmaTplus[idx], QTplus[idx] = iterationData.updateParaT(idx, meanT, sigmaT, Q, T_subseq, QT)
                 dist_exact = sm.compute1Dist(meanQplus, meanTplus[idx], sigmaQplus, sigmaTplus[idx], QTplus[idx], L)
                 DPplus.update({idx: dist_exact})
                 dist_list.append(dist_exact)
@@ -149,10 +173,12 @@ def updateMpPart(Q, T, iterationData):
         min_dist = min(DPplus.values())
         # limite the number of element in LBplus, decrease 1
         LBplus = sm.computeLB(QT, L, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus)
-        lb_list = [(idx, dist) for idx, dist in LBplus.items()]
+        '''lb_list = [(idx, dist) for idx, dist in LBplus.items()]
         lb_list = sorted(lb_list, key=lambda d: d[1])
-        iterationData.LB = lb_list
+        iterationData.LB = lb_list'''
+        iterationData.LB = LBplus
     else:
+        # no need to sort LBplus here, its order will follow the previous one
         LBplus = sm.linearComputeLB(lb_list, sigmaQ, sigmaQplus)
         iterationData.LB = LBplus
     iterationData.meanQ = meanQplus
@@ -164,9 +190,9 @@ def updateMpPart(Q, T, iterationData):
     return DPplus, min_dist, iterationData
 
 # to check the existence of dist in LB profile
-def locateDistIndex(dist_exact, lb_list):
+'''def locateDistIndex(dist_exact, lb_list):
     #lb_list: [(rawIndex, LB)]
-    for idx in range(0, len(lb_list)):
+    for idx in range(1, len(lb_list)-1):
         low_value = lb_list.__getitem__(idx - 1)[1]
         high_value = lb_list.__getitem__(idx + 1)[1]
         if low_value <= dist_exact and high_value >= dist_exact:
@@ -174,4 +200,16 @@ def locateDistIndex(dist_exact, lb_list):
             for i in range(0, idx):
                 rawIndexList.append(lb_list.__getitem__(idx)[0])
             return idx, rawIndexList
-    return None, None
+    return None, None'''
+@profile
+def locateDistIndex(dist_exact, lb_list):
+    #lb_list: [(rawIndex, LB)]
+    values = [lb[1] for lb in lb_list]
+    index = bisect_left(values, dist_exact)
+    return index
+
+@profile
+def locateDistIndexList(i, index, lb_list):
+    #lb_list: [(rawIndex, LB)]
+    rawIndexList = [lb[0] for lb in lb_list[i:index]]
+    return rawIndexList
