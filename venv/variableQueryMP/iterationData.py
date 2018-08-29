@@ -24,7 +24,7 @@ class IterationData(object):
         return QT_new
 
     #def updateParaT(self, rawIdx, meanTList, sigmaTList, T_subseq, QT, Q):
-    @profile
+    #@profile
     def updateParaT(self, rawIdx, meanT, sigmaT, Q, T_subseq, QT):
         meanTplus = None
         sigmaTplus = None

@@ -9,7 +9,7 @@ import line_profiler
 from matplotlib import pyplot as plt
 
 '''Optimisation of USE'''
-@profile
+#@profile
 def computeDistDiffer(timeseries, dataset, m, plot_flag):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
@@ -67,7 +67,7 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag):
 '''
     Pruning, select top-k shapelets
 '''
-@profile
+#@profile
 def extract_shapelet(k, dataset, m, pruning_option):
     # then check if the shapelet is in the timeseries, note timeseries' name
     dist_differ_list = {}
@@ -189,7 +189,7 @@ def extract_shapelet(k, dataset, m, pruning_option):
                 break
         return shapelet_list'''
 
-@profile
+#@profile
 def extract_shapelet_all_length(k, dataset_list, pruning_option):
     #'dataset_list': [dict{}, dict{}, ...]
     dataset = {k: v for ds in dataset_list for k, v in ds.items()}
@@ -201,7 +201,7 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option):
     # m: 1, 2, ..., min_m-1
     print("Maximum length of shapelet is : " + str(min_m))
     min_length = int(0.1 * min_m)
-    max_length = min_length + 3
+    max_length = int(0.5 * min_m)
     for m in range(min_length, max_length):
         print("Extracting shapelet length: " + str(m))
         start = time.time()

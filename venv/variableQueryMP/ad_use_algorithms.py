@@ -1,6 +1,6 @@
 import use.MatrixProfile as mp
 import use.shapelet as sp
-import use.similarity_measures
+import use.similarity_measures as sm
 import variableQueryMP.adMatrixProfile as admp
 from use.timeseries import *
 from utils import *
@@ -11,8 +11,8 @@ import line_profiler
 min_length = 0
 
 '''Optimisation of USE'''
-@profile
-def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {}):
+#@profile
+def computeDistDiffer(timeseries, dataset, m, plot_flag, step, mean, sigma, meanplus, sigmaplus, QT = {}, LB = {}):
     # Matrix Profile Dictionary "mp_dict", Distance Difference Profile, and Index Profile Dictionary "ip_dict"
     #'dataset': {key1:val1, key2:val2, ...}
     mp_dict_same = []
@@ -25,7 +25,8 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {})
         # 1. "_list": all index in source timeseries and target timeseries
         # 2. "_all": source timeseries and all target TS in dataset
     dp_all = {}
-    IterateDataNew = {}
+    QTNew = {}
+    LBNew = {}
     for ts in dataset.values():
         # mp_dict_same: [mp1, mp2, ...], Array[Array[]]
         # ip_dict_same: {ts_name1:ip1, ts_name1:ip2, ...}, dict(ts.name:Array[])
@@ -33,9 +34,9 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {})
         # dp_all: {ts_target.name1:{index1:dp1, index2:dp2, ...}, ts_target.name2:{...}, ...}, dict(ts_target.name: dict(index:Array[]) )
         global min_length
         if m == min_length:
-            dp_list, mp, iteratedata = admp.computeMP(timeseries, ts, m, step)
+            dp_list, mp, qt, lb = admp.computeMP(timeseries, ts, m, step, mean, sigma, sigmaplus)
         else:
-            dp_list, mp, iteratedata = admp.updateMP(timeseries, ts, IterateData[ts.name], m, step)
+            dp_list, mp, qt, lb = admp.updateMP(timeseries, ts, QT[ts.name], LB[ts.name], m, step, mean, sigma, meanplus, sigmaplus)
         #if ts.name != timeseries.name: check the self-similarity
         if (timeseries.class_timeseries == ts.class_timeseries):
             mp_dict_same.append(mp)
@@ -44,8 +45,8 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {})
             mp_dict_differ.append(mp)
         mp_all.update({ts.name: mp})
         dp_all.update({ts.name: dp_list})
-        IterateDataNew.update({ts.name: iteratedata})
-
+        QTNew.update({ts.name: qt})
+        LBNew.update({ts.name: lb})
     # compute the average distance for each side (under the same class, or the different class)
     dist_side1 = np.mean(mp_dict_same, axis = 0)
     dist_side2 = np.mean(mp_dict_differ, axis = 0)
@@ -66,16 +67,17 @@ def computeDistDiffer(timeseries, dataset, m, plot_flag, step, IterateData = {})
     dist_threshold = dist_side1
     # retrun the Distance Profiles, Matrix Profiles, distance difference, distance threshold, array size keeps the same
     # dict(ts_target.name: dict(index_source:Array[])), dict(ts_target.name:Array[]), Array[], Array[]
-    return dp_all, mp_all, dist_differ, dist_threshold, IterateDataNew
+    return dp_all, mp_all, dist_differ, dist_threshold, QTNew, LBNew
 
-@profile
-def computeAllData(dataset, m, plot_flag, IterateDataList, step):
+#@profile
+def computeAllData(dataset, m, plot_flag, QT, LB, mean, sigma, meanplus, sigmaplus, step):
     dist_differ_list = {}
     dist_threshold_list = {}
     class_list = []
     dp_all_list = {}
     mp_all_list = {}
-    IterateDataListNew = {}
+    QTNew = {}
+    LBNew = {}
 
     for ts in dataset.values():
         c = ts.class_timeseries
@@ -83,11 +85,12 @@ def computeAllData(dataset, m, plot_flag, IterateDataList, step):
         # 'dp_all': dict{ ts_name_source1: dict{ts_target.name: dict{index_source:Array[]}} },
         # 'mp_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         # 'ip_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
+        # 'QT': dict{ ts_name_source1: dict{ts_target.name: List[Source_index]} }
         global min_length
         if m == min_length:
-            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, IterateDataListNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, step)
+            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, QTNew[ts.name], LBNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, step, mean, sigma, meanplus, sigmaplus)
         else:
-            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, IterateDataListNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, step, IterateDataList[ts.name])
+            dp_all_list[ts.name], mp_all_list[ts.name], dist_differ, dist_threshold, QTNew[ts.name], LBNew[ts.name] = computeDistDiffer(ts, dataset, m, plot_flag, step, mean, sigma, meanplus, sigmaplus, QT[ts.name], LB[ts.name])
         plot_flag = False
         # Array of distance's difference for all timeseries in the dataset
         # dist_differ_list[c]: {ts_name_source1:dp1, ts_name_source2:dp2, ...}, dict(String:Array[])
@@ -99,21 +102,20 @@ def computeAllData(dataset, m, plot_flag, IterateDataList, step):
         else:
             dist_differ_list[c] = {ts.name:dist_differ}
             dist_threshold_list[c] = {ts.name: dist_threshold}
-    return dist_differ_list, dist_threshold_list, dp_all_list, mp_all_list, class_list, IterateDataListNew
+    return dist_differ_list, dist_threshold_list, dp_all_list, mp_all_list, class_list, QTNew, LBNew
 
-@profile
-def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
+
+def extract_shapelet(k, dataset, m, pruning_option, QT, LB, mean, sigma, meanplus, sigmaplus, step):
     # then check if the shapelet is in the timeseries, note timeseries' name
-    dist_differ_list = {}
+    '''dist_differ_list = {}
     dist_threshold_list = {}
     dp_all = {}
     mp_all = {}
-    ip_all = {}
-    class_list = []
+    class_list = []'''
     shapelet_list = []
     plot_flag = True
 
-    dist_differ_list, dist_threshold_list, dp_all, mp_all, class_list, IterateDataNew = computeAllData(dataset, m, plot_flag, IterateData, step)
+    dist_differ_list, dist_threshold_list, dp_all, mp_all, class_list, QTNew, LBNew = computeAllData(dataset, m, plot_flag, QT, LB, mean, sigma, meanplus, sigmaplus, step)
     # for each class, select top-k shapelets, then find the matching indices for top-k shapelets
     # top-k aims at the shapelets of different class, or top-k shapelets of each class?
     ## Here, we take k shapelets for each class
@@ -191,7 +193,7 @@ def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
                                         shap.matching_indices[ts_name_target] = [idx_d]
                 shapelet_list.append(shap)
         # for each class, we've token k shapelets, so the final result contains k * nbr(class) shapelets
-        return shapelet_list, IterateDataNew
+        return shapelet_list, QTNew, LBNew
     # pruning by checking if the list_shapelet covers the entire dataset
     '''elif (pruning_option=="cover"):
         #take top-K from every class, then check the coverage
@@ -207,7 +209,7 @@ def extract_shapelet(k, dataset, m, pruning_option, IterateData, step):
                 break
         return shapelet_list'''
 
-@profile
+
 def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
     #'dataset_list': [dict{}, dict{}, ...]
     dataset = {k: v for ds in dataset_list for k, v in ds.items()}
@@ -220,22 +222,28 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
     #print("Maximum length of shapelet is : " + str(min_m))
     global min_length
     min_length = int(0.1 * min_m)
-    max_length = min_length+3
+    max_length = int(0.5 * min_m)
     # for length = m, compute IterationDataList(QT, LB, mean, sigma)
-    IterateData = {}
-
+    QT = {}
+    LB = {}
+    mean, sigma = sm.computeMeanSigma(dataset, min_length)
     for m in range(min_length, max_length):
         print("Extracting shapelet length: " + str(m))
+        # m=8, mean(8), sigma(8)
+        meanplus, sigmaplus = sm.updateMeanSigma(dataset, mean, sigma, m + 1)
         start = time.time()
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
         nbr_candidate = int((min_m - m)/(0.25*m))
         if 0 < nbr_candidate < k :
-            shapelets, IterateData = extract_shapelet(nbr_candidate, dataset, m, pruning_option, IterateData, step)
+            shapelets, QT, LB = extract_shapelet(nbr_candidate, dataset, m, pruning_option, QT, LB, mean, sigma, meanplus, sigmaplus, step)
             shap_list.extend(shapelets)
         elif nbr_candidate > 0:
-            shapelets, IterateData = extract_shapelet(k, dataset, m, pruning_option, IterateData, step)
+            shapelets, QT, LB = extract_shapelet(k, dataset, m, pruning_option, QT, LB, mean, sigma, meanplus, sigmaplus, step)
             shap_list.extend(shapelets)
+        #update the Global mean/std deviation for every timeseries
+        mean, sigma = meanplus, sigmaplus
         print("time consumed: ", str(time.time() - start))
+
     # pruning by 'shapelet.normal_distance'
     ## order 'shap_list' by 'shapelet.normal_distance', descending order
     '''shap_list = sorted(shap_list, key=lambda x: x.normal_distance, reverse=True)
@@ -252,5 +260,6 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
         list_shapelet_group = list(groupShapelet)
         shap_list_sorted = sorted(list_shapelet_group, key=lambda shap: shap.normal_distance, reverse=True)
         list_all_shapelets_pruned += list_shapelet_group[:int(k)]
+
     return list_all_shapelets_pruned
 

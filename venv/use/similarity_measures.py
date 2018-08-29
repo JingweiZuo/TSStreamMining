@@ -68,7 +68,7 @@ def mass_v1(q, t):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
-@profile
+
 def mass_v2(x, y):
     #x is the data, y is the query
     n, m = len(x), len(y)
@@ -100,29 +100,19 @@ def mass_v2(x, y):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
-@profile
-def mass_v3(x, y, Qplus):
+def running_mean(x, N):
+    cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
+    return (cumsum[N:] - cumsum[:-N]) / float(N)
+
+def running_std(x, N):
+    x2 = np.power(x, 2)
+    cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
+    return ((cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N) ** 2) ** 0.5
+
+#@profile
+def mass_v3(x, y, meanx, meany, sigmax, sigmay, sigmaQplus):
     #x is the data, y is the query
     n, m = len(x), len(y)
-
-    #%compute y stats -- O(n)
-    meany = np.mean(y)
-
-    sigmay = np.std(y)
-    #compute x stats -- O(n)
-    #compute the average of the first m elements in 'x'
-    def running_mean(x, N):
-        cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
-        return (cumsum[N:] - cumsum[:-N]) / float(N)
-
-    def running_std(x, N):
-        x2 = np.power(x, 2)
-        cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
-        return ((cumsum2[N:] - cumsum2[:-N]) / float(N) - running_mean(x, N) ** 2) ** 0.5
-
-    #compute the moving average and standard deviation of Time Series
-    meanx = running_mean(x, n)
-    sigmax = running_std(x, n)
 
     #The main trick of getting dot products in O(n log n) time
     z = dot_products_2(y, x)
@@ -131,36 +121,24 @@ def mass_v3(x, y, Qplus):
     #distance here is a complex number, need to return its amplitude/absolute value
     #return a vector with size of n-m+1
 
-    sigmaxy = sigmax[m - 1:n] * sigmay
-    q_ij = (z[m-1:n] / m - meanx[m-1:n] * meany) / sigmaxy
+    sigmaxy = sigmax * sigmay
+    q_ij = (z[m-1:n] / m - meanx * meany) / sigmaxy
     dist = np.sqrt(2 * m * (1 - q_ij))
 
-    iterationData = IterationData()
     # Q is a subsequence, T is the entire timeseries, meanT/sigmaT are lists of elements
-    meanQplus, sigmaQplus = iterationData.updateMeanSigma(meany, sigmay, Qplus)
     coeff = sigmay / sigmaQplus
     # compute the LB profile: q_ij
     # q_ij[q_ij <= 0] = (m ** 0.5) * coeff
     # q_ij[q_ij > 0] = ((m * (1 - q_ij ** 2)) ** 0.5) * coeff
-    LB = np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij))
-
-
-    meant = {idx: value for idx, value in enumerate(meanx)}
-    sigmat = {idx: value for idx, value in enumerate(sigmax)}
-    qt = {idx: value for idx, value in enumerate(z)}
+    LB = np.abs(np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij)))
+    qt = {idx: value for idx, value in enumerate(z[m-1:n])}
 
     lb_list = [(idx, dist) for idx, dist in enumerate(LB)]
     lb_list = sorted(lb_list, key=lambda d: d[1])
-    iterationData.LB = lb_list
-    iterationData.meanQ = meany
-    iterationData.sigmaQ = sigmay
-    iterationData.meanT = meant
-    iterationData.sigmaT = sigmat
-    iterationData.QT = qt
-    return np.abs(dist), iterationData #q_ij here is the LB profile
+    return np.abs(dist), qt, lb_list #q_ij here is the LB profile
 
 '''to complete'''
-@profile
+#@profile
 def compute1Dist(meanQ, meanT, sigmaQ, sigmaT, QT, m):
     if sigmaT <= 0.0001:
         dist = 10000
@@ -173,16 +151,14 @@ def linearComputeLB(LB, sigmaQ, sigmaQplus):
     LB_new = [(rawIndex, value* sigmaQ / sigmaQplus) for (rawIndex,value) in LB]
     return LB_new
 
-@profile
-def computeLB(QT, m, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus):
+#@profile
+def computeLB(QT, m, meanQ, meant, sigmaQ, sigmat, sigmaQplus):
     # Q is a subsequence, T is an entire timeseries
-    qt = np.array(list(QT.values()))
-    meant = np.array(list(meanT.values()))
-    sigmat = np.array(list(sigmaT.values()))
-    q_ij = (qt/m - meanQ*meant) / sigmaQ * sigmat
-    LB = {}
+    qt = np.array([QT[i] for i in sorted(QT)])
+    lenQT = len(qt)
+    q_ij = (qt/m - meanQ*meant[:lenQT]) / sigmaQ * sigmat[:lenQT]
     coeff= sigmaQ / sigmaQplus
-    q_ij = np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij))
+    q_ij = np.abs(np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij)))
     lb_list = [(idx, dist) for idx, dist in enumerate(q_ij)]
     lb_list = sorted(lb_list, key=lambda d: d[1])
 
@@ -192,3 +168,39 @@ def computeLB(QT, m, meanQ, meanT, sigmaQ, sigmaT, sigmaQplus):
         else:
             LB[idx] = ((L * (1 - val**2))**0.5) * coeff'''
     return lb_list
+#@profile
+def computeMeanSigma(dataset, m):
+    mean = {}
+    sigma = {}
+    for ts in dataset.values():
+        TS = ts.timeseries
+        n = len(TS)
+        # compute the moving average and standard deviation of Time Series
+        mean_ts = running_mean(TS, n)
+        sigma_ts = running_std(TS, n)
+        mean[ts.name] = mean_ts[m - 1:n]
+        sigma[ts.name] = sigma_ts[m - 1:n]
+    return mean, sigma
+#@profile
+def updateMeanSigma(dataset, mean, sigma, mplus):
+    mean_new = {}
+    sigma_new = {}
+    for ts in dataset.values():
+        TS = ts.timeseries
+        n = len(TS)
+        nbr_elem = len(mean[ts.name]) - len(TS[mplus-1:])
+        #print("length of TS[mplus-1:] is ", str(len(TS[mplus-1:])))
+        new_elem = np.append(TS[mplus-1:], [0]*nbr_elem)
+        #print("length of new TS[mplus-1:] is ", str(len(new_elem)))
+        mean_new[ts.name] = (mean[ts.name] * (mplus-1) + new_elem) / mplus
+
+        ss_old = (mplus-1) * (sigma[ts.name] ** 2 + mean[ts.name] ** 2)
+        ss_new = ss_old + new_elem ** 2
+        sigma_new[ts.name]= ((ss_new / mplus) - mean_new[ts.name]  ** 2) ** 0.5
+
+        '''mean_new = (mean * m + T_subseq[-1]) / m_new
+        ss_old = m * (sigma ** 2 + mean ** 2)
+        ss_new = ss_old + T_subseq[-1] ** 2
+        sigma_new = ((ss_new / m_new) - mean_new ** 2) ** 0.5'''
+
+    return mean_new, sigma_new
