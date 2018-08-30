@@ -229,7 +229,6 @@ def extract_shapelet_all_length(k, dataset_list, pruning_option, step):
     mean, sigma = sm.computeMeanSigma(dataset, min_length)
     for m in range(min_length, max_length):
         print("Extracting shapelet length: " + str(m))
-        # m=8, mean(8), sigma(8)
         meanplus, sigmaplus = sm.updateMeanSigma(dataset, mean, sigma, m + 1)
         start = time.time()
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)

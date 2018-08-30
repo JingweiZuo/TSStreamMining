@@ -68,7 +68,7 @@ def mass_v1(q, t):
     #return a vector with size of n-m+1
     return np.abs(dist)
 
-
+#@profile
 def mass_v2(x, y):
     #x is the data, y is the query
     n, m = len(x), len(y)
@@ -137,7 +137,6 @@ def mass_v3(x, y, meanx, meany, sigmax, sigmay, sigmaQplus):
     lb_list = sorted(lb_list, key=lambda d: d[1])
     return np.abs(dist), qt, lb_list #q_ij here is the LB profile
 
-'''to complete'''
 #@profile
 def compute1Dist(meanQ, meanT, sigmaQ, sigmaT, QT, m):
     if sigmaT <= 0.0001:
@@ -156,18 +155,16 @@ def computeLB(QT, m, meanQ, meant, sigmaQ, sigmat, sigmaQplus):
     # Q is a subsequence, T is an entire timeseries
     qt = np.array([QT[i] for i in sorted(QT)])
     lenQT = len(qt)
-    q_ij = (qt/m - meanQ*meant[:lenQT]) / sigmaQ * sigmat[:lenQT]
+    #print("length of QT is ", str(lenQT), "length of meant is ", str(len(meant)))
+    # problem of LB, as when sigma<0.0001, skip
+    #q_ij = (qt/m - meanQ*meant[:lenQT]) / sigmaQ * sigmat[:lenQT]
+    q_ij = (qt / m - meanQ * meant) / sigmaQ * sigmat
     coeff= sigmaQ / sigmaQplus
-    q_ij = np.abs(np.where(q_ij <= 0, (m ** 0.5) * coeff, np.where(q_ij > 0, ((m * (1 - q_ij ** 2)) ** 0.5) * coeff, q_ij)))
+    q_ij = np.abs(np.where(q_ij.real <= 0, (m ** 0.5) * coeff, np.where(q_ij.real > 0, ((m * (1 - q_ij.real ** 2)) ** 0.5) * coeff, q_ij)))
     lb_list = [(idx, dist) for idx, dist in enumerate(q_ij)]
     lb_list = sorted(lb_list, key=lambda d: d[1])
-
-    '''for idx, val in enumerate(q_ij):
-        if val <= 0:
-            LB[idx] = (L**0.5) * coeff
-        else:
-            LB[idx] = ((L * (1 - val**2))**0.5) * coeff'''
     return lb_list
+
 #@profile
 def computeMeanSigma(dataset, m):
     mean = {}
@@ -181,26 +178,23 @@ def computeMeanSigma(dataset, m):
         mean[ts.name] = mean_ts[m - 1:n]
         sigma[ts.name] = sigma_ts[m - 1:n]
     return mean, sigma
+
 #@profile
+# input: mean(m), sigma(m), mplus(m+1)
+# output: mean_new(m+1), sigma_new(m+1)
 def updateMeanSigma(dataset, mean, sigma, mplus):
     mean_new = {}
     sigma_new = {}
     for ts in dataset.values():
         TS = ts.timeseries
         n = len(TS)
-        nbr_elem = len(mean[ts.name]) - len(TS[mplus-1:])
-        #print("length of TS[mplus-1:] is ", str(len(TS[mplus-1:])))
-        new_elem = np.append(TS[mplus-1:], [0]*nbr_elem)
-        #print("length of new TS[mplus-1:] is ", str(len(new_elem)))
-        mean_new[ts.name] = (mean[ts.name] * (mplus-1) + new_elem) / mplus
+        new_elem = TS[mplus-1:]
+        mean_temp = mean[ts.name][:n-mplus+1]
+        mean_new[ts.name] = (mean_temp * (mplus-1) + new_elem) / mplus
 
-        ss_old = (mplus-1) * (sigma[ts.name] ** 2 + mean[ts.name] ** 2)
+        sigma_temp = sigma[ts.name][:n-mplus+1]
+        ss_old = (mplus - 1) * (sigma_temp ** 2 + mean_temp ** 2)
         ss_new = ss_old + new_elem ** 2
-        sigma_new[ts.name]= ((ss_new / mplus) - mean_new[ts.name]  ** 2) ** 0.5
-
-        '''mean_new = (mean * m + T_subseq[-1]) / m_new
-        ss_old = m * (sigma ** 2 + mean ** 2)
-        ss_new = ss_old + T_subseq[-1] ** 2
-        sigma_new = ((ss_new / m_new) - mean_new ** 2) ** 0.5'''
+        sigma_new[ts.name] = ((ss_new / mplus) - mean_new[ts.name] ** 2) ** 0.5
 
     return mean_new, sigma_new
