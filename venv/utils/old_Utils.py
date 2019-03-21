@@ -7,7 +7,7 @@ import psutil as ps
 import random
 import csv
 import json
-from use.timeseries import TimeSeries
+from timeseries import TimeSeries
 
 
 class old_Utils(object):

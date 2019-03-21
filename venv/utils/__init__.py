@@ -7,8 +7,39 @@ import psutil as ps
 import random
 import csv
 import json
-from use.timeseries import TimeSeries
+from timeseries import TimeSeries
 
+class Dataset(object):
+    def __init__(self):
+        self.name = "test"
+        self.ClassList = []
+        self.size = 0
+        self.tslength = 0
+        self.queryLength = []
+        self.queryIndex = []
+        self.tsNameDir = {} #TS+number : Hash name of TS
+        self.tsNbrList = [] #TS_number list
+
+    def update(self, array_tsdict, datasetname):
+        self.name = datasetname
+        # "array_tsdict": [ {HashName: tsObject} ]
+        self.tsObjectDir = {key: value for element in array_tsdict for key, value in element.items()}
+        HushList = self.tsObjectDir.keys()
+        for Hush in HushList:
+            self.tsNameDir["ts" + str(self.size)] = Hush  # ts.name here is a hash number, should be converted into a simple interger
+            self.ClassList.append(self.tsObjectDir[Hush].class_timeseries)
+            self.size += 1
+        self.tsNbrList = list(self.tsNameDir.keys())
+        self.ClassList = list(set(self.ClassList))
+        self.tslength = len(self.tsObjectDir[list(HushList)[0]].timeseries)
+        self.queryLength = list(range(self.tslength//2))
+        # the index will be changed along with the query's length
+        #self.queryIndex = list(range(0, self.tslength - v_queryLength))
+
+    def ts_object(self, ts_name):
+        #return the TS object
+        hush = self.tsNameDir(ts_name)
+        return self.tsObjectDir(hush)
 
 class Utils(object):
 
@@ -49,6 +80,20 @@ class Utils(object):
         #list_ts = list[TimeSeries]
         array_ts = []
         list_rawData = Utils.load(directory, 'Dataset')
+        for d in list_rawData:
+            # d[0] is the class of TS in the original data, d[1:] is the data in TS
+            t = TimeSeries()
+            t.class_timeseries = d[0]
+            t.timeseries = d[1:]
+            t.name = hash(d[1:].tostring())
+            array_ts.append({t.name:t})
+        return array_ts
+
+    @staticmethod
+    def load_dataset(directory):
+        #list_ts = list[TimeSeries]
+        array_ts = []
+        list_rawData = np.genfromtxt(directory, delimiter=",")
         for d in list_rawData:
             # d[0] is the class of TS in the original data, d[1:] is the data in TS
             t = TimeSeries()

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="Copy of project-level server 'DAVID'">
+    <serverData>
+      <paths name="Copy of project-level server 'DAVID'">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Matrix_Profile" local="$PROJECT_DIR$" web="/Matrix_Profile" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="DAVID">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Matrix_Profile" local="$PROJECT_DIR$" web="/Matrix_Profile" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="InterpreterPython3">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Matrix_Profile2" local="$PROJECT_DIR$" web="/Matrix_Profile2" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

@@ -5,7 +5,7 @@
 ****************************************************************
 
 In earlier versions of Python (up to 1.5a3), scripts or modules that
-needed to use site-specific modules would place ``import site''
+needed to USE site-specific modules would place ``import site''
 somewhere near the top of their code.  Because of the automatic
 import, this is no longer necessary (but code that does it still
 works).
@@ -361,7 +361,7 @@ def addusersitepackages(known_paths):
 
 def setBEGINLIBPATH():
     """The OS/2 EMX port has optional extension modules that do double duty
-    as DLLs (and must use the .DLL file extension) for other extensions.
+    as DLLs (and must USE the .DLL file extension) for other extensions.
     The library search path needs to be amended so these will be found
     during module import.  Use BEGINLIBPATH so that these are at the start
     of the library search path.

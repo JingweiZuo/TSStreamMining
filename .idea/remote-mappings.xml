@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteMappingsManager">
+    <list>
+      <list>
+        <remote-mappings server-id="python@sftp://jingwei@diane.prism.uvsq.fr:22/home/jingwei/Matrix_Profile/venv/bin/python" />
+        <remote-mappings server-id="python@ssh://jingwei@diane.prism.uvsq.fr:22/home/jingwei/Matrix_Profile/venv/bin/python" />
+      </list>
+    </list>
+  </component>
+</project>

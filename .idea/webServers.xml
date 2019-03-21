@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="8b3997c5-75d0-40c8-b77a-2fab7e35270d" name="DAVID" url="http://diane.prism.uvsq.fr">
+        <fileTransfer host="diane.prism.uvsq.fr" port="22" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/home/jingwei" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="0bc47a2b-513d-46c4-8385-fd90a655b9ec" name="InterpreterPython3" url="http://diane.prism.uvsq.fr">
+        <fileTransfer host="diane.prism.uvsq.fr" port="22" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/home/jingwei" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
