@@ -2,6 +2,10 @@ import tkinter
 from tkinter import *
 from tkinter.ttk import *  # Widgets avec thèmes
 from GUI_function import gui_function
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+import numpy as np
 
 class SMAPPage(tkinter.Frame):
     # SMAP
@@ -20,7 +24,7 @@ class SMAPPage(tkinter.Frame):
         self.v_class = StringVar()
 
         self.frame2_1 = tkinter.Frame(self.container, bg="gray90")
-        self.frame2_1.grid(row=0, column=0, ipady = 50, sticky="new")
+        self.frame2_1.grid(row=0, column=0, ipady = 25, sticky="new")
         l_source = tkinter.Label(self.frame2_1, text="Source Time Series :", background="gray90",
                                  foreground="SkyBlue4")
 
@@ -52,6 +56,7 @@ class SMAPPage(tkinter.Frame):
         self.frame2_1_2.grid(row=1, column=0, sticky=W, columnspan=2)
         self.index = tkinter.Label(self.frame2_1_2, text="index", bg="gray90")
         self.combb_index = Combobox(self.frame2_1_2, values=self.dataset.queryLength, textvariable = self.v_queryI, state='readonly', width=5)
+        self.combb_index.bind('<<ComboboxSelected>>', self.callback_index)
 
         l_DP = tkinter.Label(self.frame2_1_2, text="Distance Profile", bg="gray90")
         b_DP = tkinter.Button(self.frame2_1_2, text="extract", command=lambda: self.parent.guiFunc.extractDP(self), highlightbackground="gray90")
@@ -77,9 +82,15 @@ class SMAPPage(tkinter.Frame):
         b_RP.grid(row=3, column=2, sticky=W)
         l_DiscP = tkinter.Label(self.frame2_1, text="Discm. Profile ", bg="gray90", foreground="SkyBlue4")
         b_DiscP = tkinter.Button(self.frame2_1, text="extract", command=lambda: self.parent.guiFunc.extractDiscP(self), highlightbackground="gray90")
+        b_USE = tkinter.Button(self.frame2_1, text="time(USE)",
+                                  command=lambda: self.parent.guiFunc.extractEDMatrix(self),
+                                  highlightbackground="gray90")
+        b_SMAPLB = tkinter.Button(self.frame2_1, text="speedup(LB)", command=lambda: self.parent.guiFunc.extractDiscP_LB(self),
+                                 highlightbackground="gray90")
         l_DiscP.grid(row=4, column=0, sticky=W)
         b_DiscP.grid(row=4, column=1, sticky=E, columnspan=2)
-
+        b_USE.grid(row=5, column=0, sticky=E, columnspan=1)
+        b_SMAPLB.grid(row=5, column=1, sticky=E, columnspan=2)
     def callback_m(self, event=None):
         print('--- callback_m ---')
         queryL = self.v_queryL.get()
@@ -93,6 +104,17 @@ class SMAPPage(tkinter.Frame):
         hash_source = dataset.tsNameDir[nbr_source]
         self.source = dataset.tsObjectDir[hash_source]
         self.parent.v_sourceC.set(self.source.class_timeseries)
+        # CANVAS
+        source = self.source.timeseries
+        x = range(len(source))
+        self.ax1 = self.parent.ax1
+        self.ax1.clear()  # clear the previous plot at the same position
+        self.ax1.spines['top'].set_visible(False)
+        self.ax1.spines['right'].set_visible(False)
+        self.ax1.plot(x, source, linewidth=0.5, label=nbr_source)
+        self.ax1.set_ylabel("Source TS")
+        self.ax1.legend(loc="upper right")
+        self.parent.canvas.show()
 
     def callback_target(self, event=None):
         print('--- callback_target ---')
@@ -101,3 +123,38 @@ class SMAPPage(tkinter.Frame):
         hash_target = dataset.tsNameDir[nbr_target]
         self.target = dataset.tsObjectDir[hash_target]
         self.parent.v_targetC.set(self.target.class_timeseries)
+        # CANVAS
+        # remove the axis_x of "self.axe1"
+        plt.setp(self.ax1.get_xaxis(), visible=False)
+        self.ax1.spines['bottom'].set_visible(False)
+        target = self.target.timeseries
+        x = range(len(target))
+        self.ax2 = self.parent.ax2
+        self.ax2.clear()  # clear the previous plot at the same position
+        self.ax2.spines['top'].set_visible(False)
+        self.ax2.spines['right'].set_visible(False)
+        self.ax2.plot(x, target, linewidth=0.5, label=nbr_target)
+        self.ax2.set_ylabel("Target TS")
+        self.ax2.legend(loc="upper right")
+        self.parent.canvas.show()
+
+    def callback_index(self, event=None):
+        print('--- callback_index ---')
+        dataset = self.dataset
+        self.m = self.v_queryL.get()
+        index_start = self.v_queryI.get()
+        index_end = index_start + self.m
+        x_query = range(index_start,index_end)
+        self.query = self.source.timeseries[index_start:index_end]
+        # CANVAS
+        self.ax1 = self.parent.ax1
+        self.ax1.clear()
+        source = self.source.timeseries
+        x_source = range(len(source))
+        self.ax1.plot(x_source, source, linewidth=0.5, label=self.v_source.get())
+        self.ax1.plot(x_query, self.query, linewidth=2, label="Query")
+        self.ax1.spines['top'].set_visible(False)
+        self.ax1.spines['right'].set_visible(False)
+        self.ax1.set_ylabel("Source TS")
+        self.ax1.legend(loc="upper right")
+        self.parent.canvas.show()

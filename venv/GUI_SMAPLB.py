@@ -2,13 +2,17 @@ import tkinter
 from tkinter import *
 from tkinter.ttk import *  # Widgets avec thèmes
 from GUI_function import gui_function
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+import numpy as np
 
 class SMAPLBPage(tkinter.Frame):
     # SMAPLB
-    def __init__(self, container, parent):
+    def __init__(self, container, master):
         self.container = container
-        self.parent = parent
-        self.dataset = self.parent.guiFunc.dataset
+        self.master = master
+        self.dataset = self.master.guiFunc.dataset
         tkinter.Frame.__init__(self, container)
 
         # the "textvairiable" of each Combobox:
@@ -20,7 +24,7 @@ class SMAPLBPage(tkinter.Frame):
         self.v_class = StringVar()
 
         self.frame2_1 = tkinter.Frame(self.container, bg="gray90")
-        self.frame2_1.grid(row=0, column=0, ipady = 50, sticky="new")
+        self.frame2_1.grid(row=0, column=0, sticky="new")
         l_source = tkinter.Label(self.frame2_1, text="Source Time Series :", background="gray90",
                                  foreground="SkyBlue4")
 

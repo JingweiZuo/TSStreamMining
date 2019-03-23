@@ -2,13 +2,17 @@ import tkinter
 from tkinter import *
 from tkinter.ttk import *  # Widgets avec thèmes
 from GUI_function import gui_function
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+import numpy as np
 
 class USEPage(tkinter.Frame):
     # USE
-    def __init__(self, container, parent):
+    def __init__(self, container, master):
         self.container = container
-        self.parent = parent
-        self.dataset = self.parent.guiFunc.dataset
+        self.master = master
+        self.dataset = self.master.guiFunc.dataset
         tkinter.Frame.__init__(self, container)
 
         # the "textvairiable" of each Combobox:
