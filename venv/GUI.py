@@ -294,7 +294,7 @@ class StartPage(Tk):
                                    borderwidth=0)
         self.combb_test = Combobox(self.frame3_2, values=self.guiFunc.testdataset.tsNbrList, textvariable=self.v_testInstance, postcommand=self.update_combbtest,state='readonly', width=10)
         self.combb_test.bind('<<ComboboxSelected>>', self.callback_test)
-        b_predict = tkinter.Button(self.frame3_2, text="predict", command=self.guiFunc.predict, highlightthickness=4,
+        b_predict = tkinter.Button(self.frame3_2, text="predict", command=lambda :self.guiFunc.predict(self), highlightthickness=4,
                       #highlightcolor="SkyBlue4",
                       anchor="center",
                       highlightbackground="gray90",
@@ -334,6 +334,7 @@ class StartPage(Tk):
         self.ax.spines['right'].set_visible(False)
         self.ax.plot(x, testTS, linewidth=0.5, label="testing TS: " + nbr_testTS)
         self.ax.set_ylabel("Testing TS")
+        self.ax.set_title("Real class: " + str(self.testTS.class_timeseries))
         self.ax.legend(loc="upper right")
         self.canvas.show()
 

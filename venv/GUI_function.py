@@ -26,6 +26,8 @@ class gui_function:
         self.dataset = Dataset()
         self.testdataset = Dataset()
         self.dataset_name = None
+        self.shapeletList1 = []
+        self.shapeletList2 = []
 
     def add_dataset(self):
         self.dataset_name = askopenfilename(parent=self.master, title="Choose a file")
@@ -265,6 +267,7 @@ class gui_function:
             shapObject = shapObject.split(',')
             shap.DD = float(shapObject[0])
             shap.thresh = float(shapObject[1])
+            shap.Class = Class
             shap.subseq = [float(s) for s in shapObject[2:]]
             shapeletList.append(shap)
         return shapeletList
@@ -329,14 +332,14 @@ class gui_function:
         path = path_ECG
         filename1 = f1_ECG
         filename2 = f2_ECG
-        shapeletList1 = self.drawShapelet(path, filename1)
-        shapeletList2 = self.drawShapelet(path, filename2)
+        self.shapeletList1 = self.drawShapelet(path, filename1)
+        self.shapeletList2 = self.drawShapelet(path, filename2)
         input_k = self.master.v_k.get()
         input_c = self.master.v_class.get()
         self.fig = self.master.figure
         if input_c == "1.0":
             i = 0
-            for shap in shapeletList1[:input_k]:
+            for shap in self.shapeletList1[:input_k]:
                 self.subaxe = self.fig.add_subplot(211)
                 shapdata = shap.subseq
                 # add a shift of 10 for shapelets
@@ -345,7 +348,7 @@ class gui_function:
                 i = i + 0.1
         elif input_c == "-1.0":
             i = 0
-            for shap in shapeletList2[:input_k]:
+            for shap in self.shapeletList2[:input_k]:
                 self.subaxe = self.fig.add_subplot(212)
                 shapdata = shap.subseq
                 X = range(0, len(shapdata))
@@ -367,41 +370,44 @@ class gui_function:
         self.USE_time = round(fac * (end - start), 2)
         self.master.v_timeUSE.set(self.USE_time)
 
-    def predict(self):
-        import numpy as np
-        import matplotlib.pyplot as plt
-
-        class LineBuilder:
-            def __init__(self, line):
-                self.line = line
-                self.xs = list(line.get_xdata())
-                self.ys = list(line.get_ydata())
-                self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
-
-            def __call__(self, event):
-                print('click', event)
-                if event.inaxes != self.line.axes: return
-                self.xs.append(event.xdata)
-                self.ys.append(event.ydata)
-                self.line.set_data(self.xs, self.ys)
-                self.line.figure.canvas.draw()
-
-        self.fig = self.master.figure
-        self.ax2 = self.fig.add_subplot(312, sharex=self.ax1)
-        self.ax2.spines['top'].set_visible(False)
-        self.ax2.spines['bottom'].set_visible(False)
-        self.ax2.spines['right'].set_visible(False)
-        line, = self.ax2.plot([0], [0])  # empty line
-        linebuilder = LineBuilder(line)
-
-        self.ax3 = self.fig.add_subplot(313, sharex=self.ax1)
-        self.ax3.spines['top'].set_visible(False)
-        self.ax2.spines['bottom'].set_visible(False)
-        self.ax3.spines['right'].set_visible(False)
-        self.ax3.plot([0,2,4,6], [0,2,4,6])
-        self.master.canvas.show()
-
-
+    def predict(self, master):
+        #list of Shapelet from different class
+        testdataset = master.guiFunc.testdataset
+        nbr_testTS = master.v_testInstance.get()
+        print("---callback predict---")
+        print(nbr_testTS)
+        if nbr_testTS!="select":
+            hash_testTS = testdataset.tsNameDir[nbr_testTS]
+            self.testTS = testdataset.tsObjectDir[hash_testTS]
+            testTS = self.testTS.timeseries
+            min_dist = float('inf')
+            index_target = None
+            predict_class = '0'
+            match_shapelet = None
+            print("length os shapeletList1 is " + str(len(self.shapeletList1)))
+            for shap in self.shapeletList1 + self.shapeletList2:
+                DP = sm.euclidean_distance_unequal_lengths(testTS, shap.subseq)
+                DP = DP.tolist()
+                DP_min = min(DP)
+                if min_dist > DP_min:
+                    min_dist = DP_min
+                    index_target = DP.index(DP_min)
+                    match_shapelet = shap
+            self.testTS = testdataset.tsObjectDir[hash_testTS]
+            # CANVAS
+            x = range(len(testTS))
+            shap_data = match_shapelet.subseq
+            x_shap = range(index_target, index_target + len(shap_data))
+            self.master.figure.clf()
+            self.ax = self.master.figure.add_subplot(111)
+            self.ax.spines['top'].set_visible(False)
+            self.ax.spines['right'].set_visible(False)
+            self.ax.plot(x, testTS, linewidth=0.5, label="testing TS: " + nbr_testTS)
+            self.ax.plot(x_shap, shap_data, linewidth=2, label="Matching Shapelet")
+            self.ax.set_ylabel("Testing TS")
+            self.ax.set_title("Real class: " + str(self.testTS.class_timeseries) + "; Prediction: " + str(match_shapelet.Class))
+            self.ax.legend(loc="upper right")
+            self.master.canvas.show()
 
 class Shapelet(object):
     def __init__(self):
