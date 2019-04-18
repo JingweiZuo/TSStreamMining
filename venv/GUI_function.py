@@ -352,7 +352,7 @@ class gui_function:
         return 0
 
     def extractEDMatrix(self, master):
-        return 0
+        self.master.v_timeUSE.set(0)
 
     def predict(self, master):
         #list of Shapelet from different class
