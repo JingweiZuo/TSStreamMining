@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1b0895b-7bad-451e-b65d-d7b718530590" name="Default" comment="To modify the time cost of each algorithm.">
+      <change afterPath="$PROJECT_DIR$/venv/ISMAP/evaluation_block.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/similarity_measures.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/venv/similarity_measures.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/utils/old_Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/utils/old_Utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,44 +72,44 @@
     <session id="-266788070">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="17" />
-          <entry key="project.open.time.0" value="2" />
+          <entry key="project.closed" value="19" />
+          <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="3" />
           <entry key="project.open.time.10" value="3" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.28" value="1" />
           <entry key="project.open.time.3" value="1" />
-          <entry key="project.open.time.4" value="1" />
+          <entry key="project.open.time.4" value="2" />
           <entry key="project.open.time.5" value="1" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="2" />
           <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="19" />
+          <entry key="project.opened" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="ipynb" value="4" />
-          <entry key="py" value="85" />
+          <entry key="ipynb" value="6" />
+          <entry key="py" value="91" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="IPNB" value="4" />
-          <entry key="Python" value="85" />
+          <entry key="IPNB" value="6" />
+          <entry key="Python" value="91" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="37" />
-          <entry key="py" value="16531" />
+          <entry key="py" value="17178" />
           <entry key="txt" value="108" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="145" />
-          <entry key="Python" value="16531" />
+          <entry key="Python" value="17178" />
         </counts>
       </usages-collector>
     </session>
@@ -113,16 +117,33 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/venv/GUI.py">
+        <entry file="file://$PROJECT_DIR$/venv/utils/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3390">
-              <caret line="235" column="22" selection-start-line="235" selection-start-column="13" selection-end-line="235" selection-end-column="22" />
+            <state relative-caret-position="-1889">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
               <folding>
-                <element signature="e#0#14#0" expanded="true" />
-                <marker date="1553557870000" expanded="true" signature="3856:3866" ph="..." />
-                <marker date="1553557870000" expanded="true" signature="16828:16903" ph="..." />
-                <marker date="1553557870000" expanded="true" signature="17308:17331" ph="..." />
+                <element signature="e#0#9#0" expanded="true" />
+                <marker date="1556808942280" expanded="true" signature="189:1540" ph="..." />
+                <marker date="1556808942280" expanded="true" signature="1113:1125" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/utils/old_Utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="89">
+              <caret line="15" column="19" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/test.ipynb">
+          <provider selected="true" editor-type-id="ipnb-editor">
+            <state>
+              <selected id="2" />
             </state>
           </provider>
         </entry>
@@ -130,8 +151,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/venv/GUI_function.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="367" column="31" selection-start-line="367" selection-start-column="31" selection-end-line="367" selection-end-column="31" />
+            <state relative-caret-position="526">
+              <caret line="402" lean-forward="true" selection-start-line="402" selection-end-line="402" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <marker date="1555574838666" expanded="true" signature="2208:13736" ph="..." />
@@ -147,36 +168,65 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/venv/utils/__init__.py">
+        <entry file="file://$PROJECT_DIR$/venv/timeseries.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="33" column="44" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="44" />
+            <state relative-caret-position="105">
+              <caret line="7" column="29" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="29" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
-                <marker date="1553069346000" expanded="true" signature="187:1538" ph="..." />
-                <marker date="1553069346000" expanded="true" signature="1111:1123" ph="..." />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/venv/similarity_measures.py">
+        <entry file="file://$PROJECT_DIR$/venv/ISMAP/evaluation_block.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="128" column="34" selection-start-line="128" selection-start-column="34" selection-end-line="128" selection-end-column="34" />
+            <state relative-caret-position="555">
+              <caret line="42" column="21" lean-forward="true" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <marker date="1556814803415" expanded="true" signature="969:974" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/venv/timeseries.py">
+        <entry file="file://$PROJECT_DIR$/venv/SMAP/SMAP.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+            <state relative-caret-position="675">
+              <caret line="50" column="18" selection-start-line="50" selection-start-column="14" selection-end-line="50" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/SMAP/MatrixProfile.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret selection-end-line="2" selection-end-column="20" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/similarity_measures.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="25" column="23" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/similarity_measures.ipynb">
+          <provider selected="true" editor-type-id="ipnb-editor">
+            <state>
+              <selected id="1" />
             </state>
           </provider>
         </entry>
@@ -193,9 +243,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>canva</find>
-      <find>k_list</find>
-      <find>drawShapelet</find>
       <find>extractDP</find>
       <find>dataset</find>
       <find>ClassList</find>
@@ -223,6 +270,9 @@
       <find>mass</find>
       <find>v_timeUSE</find>
       <find>time</find>
+      <find>extractsh</find>
+      <find>Shapelet</find>
+      <find>sha</find>
     </findStrings>
     <replaceStrings>
       <replace>#@profile</replace>
@@ -299,13 +349,11 @@
         <option value="$PROJECT_DIR$/venv/skeleton.py" />
         <option value="$PROJECT_DIR$/venv/USE_page.py" />
         <option value="$PROJECT_DIR$/venv/utils/demo_test.py" />
-        <option value="$PROJECT_DIR$/venv/utils/old_Utils.py" />
         <option value="$PROJECT_DIR$/venv/SMAP/SMAP.py" />
         <option value="$PROJECT_DIR$/venv/demo_test.py" />
         <option value="$PROJECT_DIR$/venv/main.py" />
         <option value="$PROJECT_DIR$/venv/SE4TeC_GUI.py" />
         <option value="$PROJECT_DIR$/venv/timeseries.py" />
-        <option value="$PROJECT_DIR$/venv/utils/__init__.py" />
         <option value="$PROJECT_DIR$/venv/test_file.py" />
         <option value="$PROJECT_DIR$/venv/Demo_test.ipynb" />
         <option value="$PROJECT_DIR$/venv/GUI_USE.py" />
@@ -315,6 +363,10 @@
         <option value="$PROJECT_DIR$/venv/GUI.py" />
         <option value="$PROJECT_DIR$/venv/SMAP/MatrixProfile.py" />
         <option value="$PROJECT_DIR$/venv/GUI_function.py" />
+        <option value="$PROJECT_DIR$/venv/similarity_measures.ipynb" />
+        <option value="$PROJECT_DIR$/venv/utils/__init__.py" />
+        <option value="$PROJECT_DIR$/venv/utils/old_Utils.py" />
+        <option value="$PROJECT_DIR$/venv/ISMAP/evaluation_block.py" />
       </list>
     </option>
   </component>
@@ -339,17 +391,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="use_reconstruct" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Changed Files'; set:Changed Files; ALL; class com.intellij.packageDependencies.ChangeListScope">
           <expand>
@@ -380,6 +421,12 @@
               <item name="use_reconstruct" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="venv" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="ISMAP" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="use_reconstruct" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="venv" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="SMAP" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
             <path>
@@ -399,6 +446,17 @@
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="venv" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="utils" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="use_reconstruct" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
@@ -810,10 +868,10 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4988086" weight="0.32646593" />
-      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49642575" weight="0.3280507" />
+      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49605057" weight="0.17098446" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4988086" weight="0.16640253" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49960285" weight="0.23137876" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5050026" side_tool="true" visible="true" weight="0.24663213" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50394946" side_tool="true" visible="true" weight="0.17098446" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="bottom" id="File Transfer" order="13" visible="true" weight="0.24752475" />
@@ -987,6 +1045,10 @@
           <line>17</line>
           <option name="timeStamp" value="66" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/venv/SMAP/MatrixProfile.py</url>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -1124,13 +1186,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/test.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/venv/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3060">
@@ -1145,13 +1200,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/utils/old_Utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
         </state>
       </provider>
     </entry>
@@ -1183,6 +1231,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/venv/GUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3855">
+          <caret line="257" column="60" lean-forward="true" selection-start-line="257" selection-start-column="60" selection-end-line="257" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/venv/SMAP/SMAP.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
@@ -1192,50 +1247,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/SMAP/MatrixProfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="18" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/GUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3390">
-          <caret line="235" column="22" selection-start-line="235" selection-start-column="13" selection-end-line="235" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <marker date="1553557870000" expanded="true" signature="3856:3866" ph="..." />
-            <marker date="1553557870000" expanded="true" signature="16828:16903" ph="..." />
-            <marker date="1553557870000" expanded="true" signature="17308:17331" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/utils/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="33" column="44" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <marker date="1553069346000" expanded="true" signature="187:1538" ph="..." />
-            <marker date="1553069346000" expanded="true" signature="1111:1123" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/timeseries.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        <state>
+          <caret selection-end-line="2" selection-end-column="20" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/venv/similarity_measures.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="1" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/venv/GUI_function.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="367" column="31" selection-start-line="367" selection-start-column="31" selection-end-line="367" selection-end-column="31" />
+        <state relative-caret-position="526">
+          <caret line="402" lean-forward="true" selection-start-line="402" selection-end-line="402" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <marker date="1555574838666" expanded="true" signature="2208:13736" ph="..." />
@@ -1251,8 +1281,55 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/similarity_measures.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="128" column="34" selection-start-line="128" selection-start-column="34" selection-end-line="128" selection-end-column="34" />
+        <state relative-caret-position="360">
+          <caret line="25" column="23" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/utils/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1889">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <marker date="1556808942280" expanded="true" signature="189:1540" ph="..." />
+            <marker date="1556808942280" expanded="true" signature="1113:1125" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/test.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/timeseries.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="29" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/utils/old_Utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="89">
+          <caret line="15" column="19" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/ISMAP/evaluation_block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="42" column="21" lean-forward="true" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1556814803415" expanded="true" signature="969:974" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
