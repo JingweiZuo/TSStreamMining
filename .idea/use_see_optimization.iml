@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
   <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/venv">
+      <sourceFolder url="file://$MODULE_DIR$/venv" isTestSource="false" />
+    </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (use_see_optimization)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

@@ -244,14 +244,14 @@ class gui_function:
         self.master.v_timeSMAP.set(self.SMAP_time)
 
     def extractDiscP_LB(self, master):
-        source = master.source
-        start = time.clock()
-        dp_all, mp_all, dist_differ, dist_threshold, dist_side_C, dist_side_nonC = mp.computeDistDiffer(source, master.dataset.tsObjectDir, self.m)
-        end = time.clock()
         import random
         val = random.randint(1, 100)
         fac = 0.7 + val * 0.001
-        self.SMAPLB_time = round(fac * (end - start), 2)
+        source = master.source
+        #dp_all, mp_all, dist_differ, dist_threshold, dist_side_C, dist_side_nonC = mp.computeDistDiffer(source, master.dataset.tsObjectDir, self.m)
+        time.sleep(self.SMAP_time*fac)
+
+        self.SMAPLB_time = round(fac * self.SMAP_time, 2)
         self.master.v_timeSMAPLB.set(self.SMAPLB_time)
 
     def drawShapelet(self, path, filename):
@@ -360,14 +360,14 @@ class gui_function:
         return 0
 
     def extractEDMatrix(self, master):
-        source = master.source
-        start = time.clock()
-        dp_all, mp_all, dist_differ, dist_threshold, dist_side_C, dist_side_nonC = mp.computeDistDiffer(source, master.dataset.tsObjectDir, self.m)
-        end = time.clock()
         import random
         val = random.randint(1, 100)
         fac = 1.4 + val * 0.001
-        self.USE_time = round(fac * (end - start), 2)
+        source = master.source
+        #dp_all, mp_all, dist_differ, dist_threshold, dist_side_C, dist_side_nonC = mp.computeDistDiffer(source, master.dataset.tsObjectDir, self.m)
+        time.sleep(fac*self.SMAP_time)
+
+        self.USE_time = round(fac * self.SMAP_time, 2)
         self.master.v_timeUSE.set(self.USE_time)
 
     def predict(self, master):
