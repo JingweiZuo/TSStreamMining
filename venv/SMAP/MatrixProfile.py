@@ -30,8 +30,8 @@ def computeMP(timeseries1, timeseries2, subseq_length):
         if round(np.std(query),4) == 0:
             continue
         else:
-            #DP_all[idx] = sm.mass_v2(data, query)
-            DP_all[idx] = sm.euclidean_distance_unequal_lengths(data, query)
+            DP_all[idx] = sm.mass_v2(data, query)
+            #DP_all[idx] = sm.euclidean_distance_unequal_lengths(data, query)
             MP12.append(min(DP_all[idx]))
             idx += 1
     return DP_all, MP12
