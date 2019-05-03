@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d1b0895b-7bad-451e-b65d-d7b718530590" name="Default" comment="To modify the time cost of each algorithm.">
-      <change afterPath="$PROJECT_DIR$/venv/ISMAP/evaluation_block.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/similarity_measures.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/venv/similarity_measures.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/utils/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/utils/old_Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/utils/old_Utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="d1b0895b-7bad-451e-b65d-d7b718530590" name="Default" comment="Update the evaluation block of Incremental SMAP" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,12 +97,12 @@
         <counts>
           <entry key="dummy" value="37" />
           <entry key="py" value="17178" />
-          <entry key="txt" value="108" />
+          <entry key="txt" value="157" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="145" />
+          <entry key="PLAIN_TEXT" value="194" />
           <entry key="Python" value="17178" />
         </counts>
       </usages-collector>
@@ -182,8 +176,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/ISMAP/evaluation_block.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="42" column="21" lean-forward="true" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+            <state relative-caret-position="558">
+              <caret line="46" column="17" lean-forward="true" selection-start-line="46" selection-start-column="17" selection-end-line="46" selection-end-column="17" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <marker date="1556814803415" expanded="true" signature="969:974" ph="..." />
@@ -376,11 +370,11 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="x" value="-309" />
     <option name="y" value="-1057" />
     <option name="width" value="1920" />
-    <option name="height" value="1057" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -842,7 +836,14 @@
       <option name="project" value="LOCAL" />
       <updated>1555574848066</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Update the evaluation block of Incremental SMAP">
+      <created>1556820108507</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1556820108507</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TodoView">
@@ -855,7 +856,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-309" y="-1057" width="1920" height="1057" extended-state="6" />
+    <frame x="-309" y="-1057" width="1920" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1563981" />
@@ -871,7 +872,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49605057" weight="0.17098446" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.4988086" weight="0.16640253" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49960285" weight="0.23137876" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50394946" side_tool="true" visible="true" weight="0.17098446" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50394946" side_tool="true" visible="true" weight="0.18171807" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="bottom" id="File Transfer" order="13" visible="true" weight="0.24752475" />
@@ -986,7 +987,8 @@
     <MESSAGE value="Some libraries to test on the server" />
     <MESSAGE value="Complete version for the demonstration" />
     <MESSAGE value="To modify the time cost of each algorithm." />
-    <option name="LAST_COMMIT_MESSAGE" value="To modify the time cost of each algorithm." />
+    <MESSAGE value="Update the evaluation block of Incremental SMAP" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update the evaluation block of Incremental SMAP" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1324,8 +1326,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/ISMAP/evaluation_block.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="42" column="21" lean-forward="true" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+        <state relative-caret-position="558">
+          <caret line="46" column="17" lean-forward="true" selection-start-line="46" selection-start-column="17" selection-end-line="46" selection-end-column="17" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <marker date="1556814803415" expanded="true" signature="969:974" ph="..." />
