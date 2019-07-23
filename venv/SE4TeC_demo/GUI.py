@@ -1,12 +1,10 @@
 import tkinter
 from tkinter import *
 from tkinter.ttk import *  #Widgets avec thèmes
-from GUI_function import gui_function
-from GUI_USE import USEPage
-from GUI_SMAP import SMAPPage
-from GUI_SMAPLB import SMAPLBPage
-from ml_methods import ml_methodes
-from utils import Utils, Dataset
+from SE4TeC_demo.GUI_function import gui_function
+from SE4TeC_demo.GUI_USE import USEPage
+from SE4TeC_demo.GUI_SMAP import SMAPPage
+from SE4TeC_demo.GUI_SMAPLB import SMAPLBPage
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk

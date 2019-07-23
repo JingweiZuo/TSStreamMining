@@ -1,6 +1,6 @@
-from utils.old_Utils import old_Utils
+from utils.use_utils import old_Utils
 import collections
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import numpy as np
 
 

@@ -8,7 +8,7 @@ import psutil as ps
 import random
 import csv
 import json
-from timeseries import TimeSeries
+from utils.timeseries import TimeSeries
 
 class Shapelet(object):
     def __init__(self):
@@ -87,8 +87,9 @@ def generate_timeseries(directory):
         array_ts.append({t.name:t})
     return array_ts
 
+# For loading UCR/UEA datasets
 def load_dataset(directory):
-    #list_ts = list[TimeSeries]
+    #return: list of dictionary, each dict. has one single element {t.name:t.sequence}
     array_ts = []
     list_rawData = np.genfromtxt(directory, delimiter=",")
     i = 1

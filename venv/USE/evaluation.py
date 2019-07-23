@@ -1,4 +1,4 @@
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import sys
 from collections import defaultdict
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report

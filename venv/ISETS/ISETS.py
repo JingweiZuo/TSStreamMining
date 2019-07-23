@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import SMAP.MatrixProfile as mp
 import memory_block as mb
 import SMAP_block as sb

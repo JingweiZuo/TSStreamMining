@@ -1,8 +1,8 @@
 import numpy as np
-import similarity_measures as sm
+import utils.utils as util
+import utils.similarity_measures as sm
 import SMAP.MatrixProfile as mp
 import memory_block as mb
-import utils.utils as util
 import time
 
 def discm_profile(TS_set_input, MP_set, m):

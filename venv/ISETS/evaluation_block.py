@@ -1,5 +1,5 @@
 import numpy as np
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import utils.utils as util
 
 class driftDetection(object):

@@ -1,5 +1,5 @@
 import numpy as np
-import similarity_measures as sm
+import utils.similarity_measures as sm
 from SMAP_LB.iterationData import IterationData
 import line_profiler
 from bisect import bisect_left

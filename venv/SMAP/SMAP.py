@@ -1,13 +1,12 @@
 '''SMAP: Shapelet on MAtrix Profile'''
 
 import SMAP.MatrixProfile as mp
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import utils.utils as util
 import numpy as np
 import pandas as pd
 import time, os
 import re, math
-from utils.old_Utils import old_Utils
 import line_profiler
 
 MP_data_file = None
@@ -180,7 +179,7 @@ def InformationGain(mp_dict_same, mp_dict_differ):
             p_C = float(Size_C) / size
             p_NonC = float(Size_NonC) / size
             return -(p_C * np.log2(p_C)) - (p_NonC * np.log2(p_NonC))
-        for two_distances in old_Utils.sliding_window(DistSet, 2):
+        for two_distances in sm.sliding_window(DistSet, 2):
             two_distances = np.array(two_distances)
             candidate_dist_threshold = two_distances.mean()
             d1 = {'C':0, 'NonC':0}

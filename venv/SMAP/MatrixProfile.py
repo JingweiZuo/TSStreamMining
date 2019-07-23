@@ -1,5 +1,5 @@
 import numpy as np
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import line_profiler
 #@profile
 def computeMP(timeseries1, timeseries2, subseq_length, distance_measure):

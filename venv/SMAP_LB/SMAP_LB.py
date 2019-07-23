@@ -1,4 +1,4 @@
-import similarity_measures as sm
+import utils.similarity_measures as sm
 import SMAP_LB.adMatrixProfile as admp
 from utils import *
 import numpy as np

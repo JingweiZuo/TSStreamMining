@@ -65,7 +65,7 @@ def dot_products_2(q, t):
     qt = np.fft.ifft(q_raf * t_af)
     return qt
 
-
+# v1: Full matching MASS, basic version
 def mass_v1(q, t):
     m, n = len(q), len(t)
     # Z-normalization of Query
@@ -97,34 +97,16 @@ def mass_v1(q, t):
     return np.abs(dist)
 
 
-# @profile
+# v2: Half matching MASS, advanced version
 def mass_v2(x, y):
     # x is the data, y is the query
     n, m = len(x), len(y)
 
     # %compute y stats -- O(n)
     meany = np.mean(y)
-
     sigmay = np.std(y)
 
     # compute x stats -- O(n)
-    # compute the average of the first m elements in 'x'
-    def running_mean(x, N):
-        cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
-        cum_v = cumsum[N:] - cumsum[:-N]
-        cum_v1 = np.divide(cum_v[:N], range(1, N + 1))
-        cum_v2 = cum_v[N:] / float(N)
-        return np.concatenate([cum_v1, cum_v2])
-
-    def running_std(x, N):
-        x2 = np.power(x, 2)
-        cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
-        cum_v = cumsum2[N:] - cumsum2[:-N]
-        cum_v1 = np.divide(cum_v[:N], range(1, N + 1))
-        cum_v2 = cum_v[N:] / float(N)
-        cumstd2 = np.concatenate([cum_v1, cum_v2])
-        return (cumstd2 - running_mean(x, N) ** 2) ** 0.5
-
     # compute the moving average and standard deviation of Time Series
     meanx = running_mean(x, m)
     sigmax = running_std(x, m)
@@ -137,26 +119,23 @@ def mass_v2(x, y):
     # return a vector with size of n-m+1
     return np.abs(dist)
 
-
 def running_mean(x, N):
     cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
     cum_v = cumsum[N:] - cumsum[:-N]
-    cum_v1 = np.divide(cum_v[:N], range(1, N + 1))
-    cum_v2 = cum_v[N:] / float(N)
-    return np.concatenate([cum_v1, cum_v2])
-
+    cum_v1 = np.divide(cum_v[:N],range(1,N+1))
+    cum_v2 = cum_v[N:]/ float(N)
+    return np.concatenate([cum_v1,cum_v2])
 
 def running_std(x, N):
     x2 = np.power(x, 2)
     cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
     cum_v = cumsum2[N:] - cumsum2[:-N]
-    cum_v1 = np.divide(cum_v[:N], range(1, N + 1))
-    cum_v2 = cum_v[N:] / float(N)
-    cumstd2 = np.concatenate([cum_v1, cum_v2])
+    cum_v1 = np.divide(cum_v[:N],range(1,N+1))
+    cum_v2 = cum_v[N:]/ float(N)
+    cumstd2 = np.concatenate([cum_v1,cum_v2])
     return (cumstd2 - running_mean(x, N) ** 2) ** 0.5
 
-
-# @profile
+# v3: advanced version using historical computations
 def mass_v3(x, y, meanx, meany, sigmax, sigmay, sigmaQplus):
     # x is the data, y is the query
     n, m = len(x), len(y)
@@ -183,8 +162,7 @@ def mass_v3(x, y, meanx, meany, sigmax, sigmay, sigmaQplus):
 
     lb_list = [(idx, dist) for idx, dist in enumerate(LB)]
     lb_list = sorted(lb_list, key=lambda d: d[1])
-    return np.abs(dist), qt, lb_list  # q_ij here is the LB profile
-
+    return np.abs(dist), qt, lb_list
 
 # @profile
 def compute1Dist(meanQ, meanT, sigmaQ, sigmaT, QT, m):
@@ -194,12 +172,10 @@ def compute1Dist(meanQ, meanT, sigmaQ, sigmaT, QT, m):
         dist = 2 * (m - (QT - m * meanQ * meanT) / (sigmaQ * sigmaT))
     return abs(dist * 0.5)
 
-
 def linearComputeLB(LB, sigmaQ, sigmaQplus):
     # LB: [(rawIndex, value)]
     LB_new = [(rawIndex, value * sigmaQ / sigmaQplus) for (rawIndex, value) in LB]
     return LB_new
-
 
 # @profile
 def computeLB(QT, m, meanQ, meant, sigmaQ, sigmat, sigmaQplus):
@@ -250,5 +226,4 @@ def updateMeanSigma(dataset, mean, sigma, mplus):
         ss_old = (mplus - 1) * (sigma_temp ** 2 + mean_temp ** 2)
         ss_new = ss_old + new_elem ** 2
         sigma_new[ts.name] = ((ss_new / mplus) - mean_new[ts.name] ** 2) ** 0.5
-
     return mean_new, sigma_new

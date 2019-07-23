@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import *
 import tkinter.filedialog as filedialog
 from tkinter.filedialog import askopenfilename
-from utils import Utils, Dataset
-import similarity_measures as sm
+import utils.utils as util
+import utils.similarity_measures as sm
 import SMAP.MatrixProfile as mp
 import matplotlib
 matplotlib.use("TkAgg")
@@ -23,15 +23,15 @@ class gui_function:
         self.testing_filename = 'choose testing set'
         #transfer the main test part to the class
         self.master = master
-        self.dataset = Dataset()
-        self.testdataset = Dataset()
+        self.dataset = util.Dataset()
+        self.testdataset = util.Dataset()
         self.dataset_name = None
         self.shapeletList1 = []
         self.shapeletList2 = []
 
     def add_dataset(self):
         self.dataset_name = askopenfilename(parent=self.master, title="Choose a file")
-        array_tsdict = Utils.load_dataset(self.dataset_name)
+        array_tsdict = util.load_dataset(self.dataset_name)
         dir = self.dataset_name.split("/")
         datasetname = dir[-1]
         self.dataset.update(array_tsdict, datasetname)
@@ -43,7 +43,7 @@ class gui_function:
 
     def add_testing_file(self):
         self.testfile_name = askopenfilename(parent=self.master, title="Choose a file")
-        array_tsdict = Utils.load_dataset(self.testfile_name)
+        array_tsdict = util.load_dataset(self.testfile_name)
         dir = self.testfile_name.split("/")
         datasetname = dir[-1]
         self.testdataset.update(array_tsdict, datasetname)

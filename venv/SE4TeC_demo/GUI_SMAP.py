@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import *
 from tkinter.ttk import *  # Widgets avec thèmes
-from GUI_function import gui_function
+from SE4TeC_demo.GUI_function import gui_function
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt

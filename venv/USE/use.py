@@ -1,7 +1,7 @@
-import USE.old_shapelet as sp
-import similarity_measures
-from USE.timeseries import *
-from utils.old_Utils import old_Utils
+import USE.use_shapelet as sp
+import utils.similarity_measures
+from utils.timeseries import *
+from utils.use_utils import old_Utils
 import numpy as np
 
 import itertools
