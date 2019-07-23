@@ -9,7 +9,13 @@ import csv
 import json
 from timeseries import TimeSeries
 
-
+class Shapelet(object):
+    def __init__(self):
+        self.id = 0.0
+        self.Class = ''
+        self.subseq = None
+        self.DD = 0.0
+        self.thresh = 0.0
 
 class Dataset(object):
     def __init__(self):
@@ -44,20 +50,6 @@ class Dataset(object):
         return self.tsObjectDir(hush)
 
 class Utils(object):
-
-    RAW_DIRNAME = "/RawData/"
-
-    SHAPELET_DIRNAME = "/UniShapelets/"
-    SHAPELET_EXT = ".shapelet"
-    '''
-    SEQUENCE_DIRNAME = "/Sequences/"
-    SEQUENCE_EXT = ".sequence"
-    JSON = SEQUENCE_DIRNAME + "json/"
-    '''
-    CSV_DIRNAME = "/csv_shapelet/"
-    CSV_EXT = ".csv"
-
-
     @staticmethod
     def load(directory, option):
         dirname = ""
@@ -77,7 +69,7 @@ class Utils(object):
         return list_objects
 
     # if the dataset format is changed, just modify this function to adapt it
-    @staticmethod
+    ''''@staticmethod
     def generate_timeseries(directory):
         #list_ts = list[TimeSeries]
         array_ts = []
@@ -89,7 +81,7 @@ class Utils(object):
             t.timeseries = d[1:]
             t.name = hash(d[1:].tostring())
             array_ts.append({t.name:t})
-        return array_ts
+        return array_ts'''
 
     @staticmethod
     def load_dataset(directory):
@@ -104,43 +96,6 @@ class Utils(object):
             t.name = hash(d[1:].tostring())
             array_ts.append({t.name:t})
         return array_ts
-
-    @staticmethod
-    def save(directory, list_objects, option):
-        if option.lower() == 'shapelet':
-            dirname = Utils.SHAPELET_DIRNAME
-            extension = Utils.SHAPELET_EXT
-        elif option.lower() == 'sequence':
-            dirname = Utils.SEQUENCE_DIRNAME
-            extension = Utils.SEQUENCE_EXT
-        elif option.lower() == 'csv':
-            dirname = Utils.CSV_DIRNAME
-            extension = Utils.CSV_EXT
-        folder = directory + dirname
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        else:
-            ##clean the historical files
-            files_list = [f for f in os.listdir(directory + dirname) if f.lower().endswith(extension)]
-            for file in files_list:
-                path = directory + dirname + file
-                os.remove(path)
-
-        if option.lower() != 'csv':
-            for anObject in list_objects:
-                file_name = str(anObject.name) + anObject.dimension_name + extension
-                path = folder + file_name
-                pickle.dump(anObject, open(path, "wb"))
-        else:
-            file_name = "shapelet_test" + extension
-            path = folder + file_name
-            i = 0
-            with open(path, 'w') as f:
-                writer = csv.writer(f, lineterminator='\n', delimiter=';',)
-                for anObject in list_objects:
-                    i+=1
-                    for key in anObject.matching_indices:
-                        writer.writerow(["shapelet" + str(i), anObject.name, anObject.dimension_name, anObject.class_shapelet, key, anObject.matching_indices[key], anObject.normal_distance, anObject.subsequence.tolist(),  anObject.dist_threshold] )
 
 
     @staticmethod

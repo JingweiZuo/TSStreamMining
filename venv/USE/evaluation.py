@@ -1,4 +1,4 @@
-import USE.similarity_measures as sm
+import similarity_measures as sm
 import sys
 from collections import defaultdict
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
@@ -26,10 +26,10 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
         min_distance = float('inf')
         min_distance_not_found = float('inf')
         predicted_class_distance = ''
-        predicted_class_distance_not_found = ''
+        predicted_class_distance_not_found = -10.0
         for shap in list_shapelets:
             shap_found, min_dist = pattern_found(timeseries, shap, distance_measure)
-            shap_class = shap.class_shapelet
+            shap_class = shap.Class
             if(shap_class == timeseries.class_timeseries):
                 if shap_found:      #TP
                     #print("shap_found1")
@@ -65,7 +65,7 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
                         predicted_class_distance_not_found = shap_class
         #the class is decided by the majority corresponding shapelets in 'shap_list'
         if (key[1] and key[1] == 'majority') or key[0] == 'majority':
-            if not predicted_class_distance: #Pattern found
+            if not predicted_class_distance: #Shapelet not found
                 y_pred_maj.append(predicted_class_distance_not_found)
             else:
                 predicted_class = ""
@@ -94,10 +94,10 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
     sk_acc = sk_report = sk_acc_maj = sk_report_maj = 0
 
     if y_pred:
-        '''print("y_true is : ")
+        print("y_true is : ")
         print(y_true)
         print("y_pred is : ")
-        print(y_pred)'''
+        print(y_pred)
         sk_acc = accuracy_score(y_true, y_pred)
         #sk_precision, sk_recall, sk_fscore, sk_support = precision_recall_fscore_support(y_true, y_pred, average='macro')
         sk_report = classification_report(y_true, y_pred)
@@ -116,7 +116,7 @@ def check_performance(list_timeseries, list_shapelets, distance_measure, key='cl
 def pattern_found(a_timeseries, a_shapelet, distance_measure):
     pattern_found =False
     min_dist = float('inf')
-    dist_profile = sm.calculate_distances(a_timeseries.timeseries, a_shapelet.subsequence, distance_measure)
+    dist_profile = sm.calculate_distances(a_timeseries.timeseries, a_shapelet.subseq, distance_measure)
     min_dist = min(dist_profile)
     #print("min_dist is: " + str(min_dist))
     #print("a_shapelet.dist_threshold: " + str(a_shapelet.dist_threshold))
@@ -149,7 +149,7 @@ def check_performance_optimized(list_timeseries, list_shapelets, distance_measur
         predicted_class_distance = ''
         shap_list = {}
         for shap in list_shapelets:
-            shap_class = shap.class_shapelet
+            shap_class = shap.Class
             if shap_class in shap_list.keys():
                 shap_list[shap_class].append(shap)
             else:

@@ -5,12 +5,13 @@ import memory_block as mb
 import utils.utils as util
 import time
 
-def discm_profile(TS_set, MP_set, m):
+def discm_profile(TS_set_input, MP_set, m):
     #Exponential Moving Average (EMA), but the number of instances in each class is different.
     #Simple Moving Average (SMA) is implemented here
     mp_dict_same = []
     mp_dict_differ = []
     TS_set_new=[]
+    TS_set = TS_set_input.copy()
     # mp_dict_same: [mp1, mp2, ...], Array[Array[]]
     # mp_all: {ts_target.name1:mp1, ts_target.name2:mp2, ...}, dict(ts_targe.name:Array[])
     # dp_all: {ts_target.name1:{index1:dp1, index2:dp2, ...}, ts_target.name2:{...}, ...}, dict(ts_target.name: dict(index:Array[]) )
@@ -18,7 +19,6 @@ def discm_profile(TS_set, MP_set, m):
         for idx_t, ts_target in enumerate(TS_set):
             if idx_s == idx_t:
                 continue
-            #print("idx_s:idx_t is " + str(idx_s) + ":" + str(idx_t))
             if ts_source.class_timeseries == ts_target.class_timeseries:
                 mp_sameClass = MP_set[idx_s][idx_t]
                 mp_dict_same.append(mp_sameClass)
@@ -39,12 +39,12 @@ def discm_profile(TS_set, MP_set, m):
         TS_set_new.append(ts_source)
     return TS_set_new
 
-def extract_shapelet(k, TS_set, MP_set, m):
+def extract_shapelet(k, TS_set_input, MP_set, m):
     DiscmPList_dic = {}
     ThreshList_dict = {}
     class_list = []
     shapelet_list = []
-    TS_set = discm_profile(TS_set, MP_set, m)
+    TS_set = discm_profile(TS_set_input, MP_set, m)
     for ts in TS_set:
         c = ts.class_timeseries
         class_list.append(c)
@@ -65,9 +65,9 @@ def extract_shapelet(k, TS_set, MP_set, m):
         keys = range(0, k)
         # take top k shapelets for each class
         topk_discmPower = dict.fromkeys(keys, float('-inf'))
-        for ts in ts_namelist:
+        for ts_name in ts_namelist:
             ## Discm. Profile of source timeseries 'ts'
-            dp = DiscmPList_dic[c][ts]
+            dp = DiscmPList_dic[c][ts_name]
             #print("class c is " + str(c) + "DiscmProfile is " + str(dp))
             # 'idx' is the position of max difference of distance for 'ts'
             for idx, DiscmPower in enumerate(dp):
@@ -77,13 +77,14 @@ def extract_shapelet(k, TS_set, MP_set, m):
                 for idx_topk, dd_topk in topk_discmPower.items():
                     if dd_topk == min_topk and dd_topk < DiscmPower:
                         topk_discmPower.pop(idx_topk)
-                        key_composed = str(ts) + "_" + str(idx)
+                        key_composed = str(ts_name) + "_" + str(idx)
                         topk_discmPower.update({key_composed: DiscmPower})
                         break
         # create shapelets and put matching timeseries
         # topk_discmPower: {ts_name_source+index1 : DiscmPower1, ts_name_source+index2 : DiscmPower2, ... }
         #print(topk_discmPower.values())
         for key, val in topk_discmPower.items():
+                # Test of key is OK
             if type(key) != int:
                 key_val = key.split("_")
                 ts_name_source = int(key_val[0])
@@ -94,14 +95,14 @@ def extract_shapelet(k, TS_set, MP_set, m):
                 shap.Class = c
                 shap.differ_distance = val
                 shap.normal_distance = val / (m ** 0.5)
-                s = [ts for ts in TS_set if ts.name==ts_name_source][0]
-                #to decide the value of Shapelet, back to the off-set in original TS
-                if int(m / 4) == 0:
-                    step = 1
-                else:
+                ts_filtered = [ts for ts in TS_set if ts.name==ts_name_source]
+                s = ts_filtered[0]
+                #to extracte the subsequence data of Shapelet, adjust the index into the off-set in original TS
+                ajt_idx = ts_index_source
+                if int(m / 4) != 0:
                     step = int(m / 4)
-                idx_in_rawTS = ts_index_source * step
-                shap.subseq = s.timeseries[idx_in_rawTS:idx_in_rawTS + m]
+                    ajt_idx = ts_index_source * step
+                shap.subseq = s.timeseries[ajt_idx:ajt_idx + m]
                 # hashing the raw data of subsequence as shapelet name
                 shap.name = hash(shap.subseq.tostring())
 
@@ -114,26 +115,18 @@ def extract_shapelet(k, TS_set, MP_set, m):
     # for each class, we've token k shapelets, so the final result contains k * nbr(class) shapelets
     return shapelet_list
 
-def update_shaplet(k, inputTSBatch, TS_set, MP_set, m):
-    #Consider Forgetting Mechanism in Streaming case
-    TS_set, MP_set = mb.memory_cache(TS_set, MP_set, inputTSBatch, m)
-    newShapList = extract_shapelet(k, TS_set, MP_set, m)
-    return newShapList
-
-def extract_shapelet_all_length(k, TS_set, MP_set, m_step):
+def extract_shapelet_all_length(k, TS_set, MP_set, m_list):
     #'TS_set': [dict{}, dict{}, ...]
     min_m = util.min_length_dataset(TS_set)
     shap_list = []
-    for m in m_step:
-        #print("Extracting shapelet length: " + str(m))
-        start = time.time()
+    for m in m_list:
         #number of shapelet in shap_list: k * nbr_class * (min_l-1)
         nbr_candidate = int((min_m - m)/(0.25*m))
         if 0 < nbr_candidate < k :
+            shap_list.extend(extract_shapelet(nbr_candidate, TS_set, MP_set[m], m))
+        elif nbr_candidate >= k:
             shap_list.extend(extract_shapelet(k, TS_set, MP_set[m], m))
-        elif nbr_candidate > 0:
-            shap_list.extend(extract_shapelet(k, TS_set, MP_set[m], m))
-        #print("time consumed: ", str(time.time() - start))
+
     # for each TS class, extract k shapelets
     grouped_shapelets = {}
     list_all_shapelets_pruned = []

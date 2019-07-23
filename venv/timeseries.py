@@ -12,6 +12,7 @@ class TimeSeries(object):
         self.timeseries = None
         self.matched = False
         self.name = ''
+        self.id = 0
 
 
     def __repr__(self):

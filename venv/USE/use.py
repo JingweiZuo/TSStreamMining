@@ -1,5 +1,5 @@
 import USE.old_shapelet as sp
-import USE.similarity_measures
+import similarity_measures
 from USE.timeseries import *
 from utils.old_Utils import old_Utils
 import numpy as np

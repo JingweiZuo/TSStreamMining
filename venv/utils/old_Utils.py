@@ -9,13 +9,6 @@ import csv
 import json
 from timeseries import TimeSeries
 
-class Shapelet(object):
-    def __init__(self):
-        self.id = 0.0
-        self.Class = ''
-        self.subseq = None
-        self.DD = 0.0
-        self.thresh = 0.0
 
 class old_Utils(object):
 
@@ -199,6 +192,7 @@ class old_Utils(object):
             entropy += old_Utils.entropy_helper(p)
         #print("entropy is ", entropy)
         return entropy
+
 
     @staticmethod
     def entropy_after_split(unid1, unid2):

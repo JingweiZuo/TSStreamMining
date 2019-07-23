@@ -3,6 +3,13 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/venv">
       <sourceFolder url="file://$MODULE_DIR$/venv" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/lib/python3.6" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/ISETS" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/WebUI" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/WebUI/templates" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/ISETS/ISETS_webapp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/venv/utils" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (use_see_optimization)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
