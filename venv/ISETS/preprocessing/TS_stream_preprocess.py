@@ -33,10 +33,18 @@ def concept_construct(df_list, class_list, partition_num):
         for k in range(i):
             index_2 += n_list[k]
         df_Concept[0][index_1:index_2] += len(class_list)
+        #Shuffle the dataset to have random class distribution in sequential order
+        df_Concept = df_Concept.sample(frac=1).reset_index(drop=True)
         df_Concept_list.append(df_Concept)
     return df_Concept_list
 
 elemt1, elemt2 = df_partition(df_file_train)
 df_list = concept_construct(elemt1, elemt2, 3)
-#df_list = [df_Concept1, df_Concept2, df_Concept3]
-print(list(df_list[0][0]))
+
+'''folder_ConceptDriftFile = "/Users/Jingwei/Desktop/ISMAP_results/concept_drift_files"
+DriftFile_1 = folder_ConceptDriftFile + "/concept1.csv"
+DriftFile_2 = folder_ConceptDriftFile + "/concept2.csv"
+DriftFile_3 = folder_ConceptDriftFile + "/concept3.csv"
+df_list[0].to_csv(DriftFile_1, index=False)
+df_list[1].to_csv(DriftFile_2, index=False)
+df_list[2].to_csv(DriftFile_3, index=False)'''
