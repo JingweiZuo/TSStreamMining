@@ -45,6 +45,11 @@ df_list = concept_construct(elemt1, elemt2, 3)
 DriftFile_1 = folder_ConceptDriftFile + "/concept1.csv"
 DriftFile_2 = folder_ConceptDriftFile + "/concept2.csv"
 DriftFile_3 = folder_ConceptDriftFile + "/concept3.csv"
+DriftFile_full = folder_ConceptDriftFile + "/conceptFull.csv"
+df_full = pd.DataFrame()
+for df in df_list:
+    df_full = df_full.append(df)
 df_list[0].to_csv(DriftFile_1, index=False)
 df_list[1].to_csv(DriftFile_2, index=False)
-df_list[2].to_csv(DriftFile_3, index=False)'''
+df_list[2].to_csv(DriftFile_3, index=False)
+df_full.to_csv(DriftFile_full, index=False)'''
