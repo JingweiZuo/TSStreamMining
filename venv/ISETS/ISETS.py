@@ -22,9 +22,9 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
     else:
         w = 1
     inputTSBatch = driftDetection.stream_window(dataset_list, w)  #Test is OK
-    TS_newSet, MP_newSet_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
+    TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
 
-    shap_set = sb.extract_shapelet_all_length(k, TS_newSet, MP_newSet_all, m_list)
+    shap_set = sb.extract_shapelet_all_length(k, TS_newSet, MP_set_all, m_list)
 
     output_driftInfo = pd.DataFrame([[0]], columns=['LossThresh_0.38'])
 

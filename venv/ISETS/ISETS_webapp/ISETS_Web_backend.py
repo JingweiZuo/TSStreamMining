@@ -24,7 +24,7 @@ import evaluation_block as eb
 import utils.utils as util
 import time, sys
 
-def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, distance_measure):
+'''def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, distance_measure):
     list_timeseries = util.load_dataset(data_directory)
     name_dataset = {k: v for ds in list_timeseries for k, v in ds.items()}
     dataset_list = list(name_dataset.values())
@@ -57,9 +57,9 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
             nbr_drift = 0
             time.sleep(1)
         loss_set = [driftDetection.t_stamp, loss_batch, cum_loss, PH, avg_loss, nbr_drift]
-        '''loss_pd = pd.DataFrame([loss_set],
+        'loss_pd = pd.DataFrame([loss_set],
                                    columns=['t_stamp', 'loss_batch', 'cum_loss', 'PH', 'avg_loss', 'nbr_drift'])
-        output_loss = output_loss.append(loss_pd)'''
+        output_loss = output_loss.append(loss_pd)'
         if drift == True:
             #TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_newSet, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
             TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
@@ -67,21 +67,55 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
             for shap in shapList:
                 shap_set = [driftDetection.t_stamp, shap.name, shap.Class, str(shap.subseq), shap.normal_distance]
                 shap_pd = pd.DataFrame([shap_set], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
-                output_shapelet = output_shapelet.append(shap_pd)
+                output_shapelet = output_shapelet.append(shap_pd)'''
 
-def blocking_task(dataset, window_size, distance_measure):
-    '''global x, y
-    while True:
-        x += 1
-        y = 2 ** x
-        time.sleep(0.1)'''
+def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, distance_measure):
+    list_timeseries = util.load_dataset(data_directory)
+    name_dataset = {k: v for ds in list_timeseries for k, v in ds.items()}
+    dataset_list = list(name_dataset.values())
+    ##############################Modified variable for Web GUI##############################
+    global drift, loss_batch, avg_loss, t_stamp, inputTSBatch, TS_set
+    min_m = util.min_length_dataset(dataset_list)
+    print("Maximum length of shapelet is : " + str(min_m))
+    min_length = int(0.1 * min_m)
+    max_length = int(0.5 * min_m)
+    m_list =range(min_length, max_length, int(min_m * m_ratio))
+    stack_size = stack_ratio * len(dataset_list)
+    TS_set = []
+    MP_set_all = {}
+
+    drift_prev = False
+    #Initialization of shap_set
+    driftDetection = eb.driftDetection()
+    if window_size==1:
+        w = 2
+    else:
+        w = 1
+    inputTSBatch = driftDetection.stream_window(dataset_list, w)  #Test is OK
+    TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
+    shap_set = sb.extract_shapelet_all_length(k, TS_newSet, MP_set_all, m_list)
+
+    while driftDetection.t_stamp < len(dataset_list):
+        inputTSBatch = driftDetection.stream_window(dataset_list, window_size)
+        ################ Detect loss information ###################
+        drift = driftDetection.simple_detection(shap_set, inputTSBatch, 0.38)
+
+        ############# Add Concept transition detection #############
+        if drift == True:
+            TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_newSet, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
+            shap_set = sb.extract_shapelet_all_length(k, TS_newSet, MP_set_all, m_list)
+            drift_prev == True
+        elif drift_prev == True:
+            # a Concept Transition event, active caching mechanism kick-off
+            TS_newSet, MP_set_all= mb.elastic_caching_mechanism(TS_newSet, MP_set_all, shap_set, window_size, driftDetection)
+            drift_prev == False
+    return shap_set
+
+def blocking_task(dataset, distance_measure):
     k = 10
-    '''data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015"
-    datasetName = "/FordA/FordA_TRAIN"
-    dataset = data_directory + datasetName'''
     m_ratio = 0.05
     stack_ratio = 0.2
-    #window_size = 20
+    window_size = 20
     global_structure(k, dataset, m_ratio, stack_ratio, window_size, distance_measure)
 
 #Concept Drift Data: avg_loss, loss_batch, cum_loss, PH, t_stamp;
@@ -103,7 +137,9 @@ def data_ConceptDrft():
     for TS in TS_set:
         list_TSset.append(str(TS.timeseries))
 
-    return jsonify(t_stamp=[t_stamp], drift_num=[drift_num], avg_loss=[avg_loss], loss_batch=[loss_batch], label_avg_loss = ['avg_loss'], label_loss_batch=['loss_TSmicroBatch'], label_concept_drift=['concept drift area'], inputTSBatch=[';'.join(list_inputTS)], TS_set=[';'.join(list_TSset)])
+    return jsonify(t_stamp=[t_stamp], drift_num=[drift_num], avg_loss=[avg_loss],
+                   loss_batch=[loss_batch], label_avg_loss = ['avg_loss'], label_loss_batch=['loss_TSmicroBatch'],
+                   label_concept_drift=['concept drift area'], inputTSBatch=[';'.join(list_inputTS)], TS_set=[';'.join(list_TSset)])
 
 #TS data in new Window
 #Question: How to read the window size and change the TS data shown in the GUI?
@@ -121,8 +157,3 @@ def data_TSWindow():
     for TS in TS_set:
         list_TSset.append(str(TS.timeseries))
     return jsonify(inputTSBatch=[';'.join(list_inputTS)], TS_set=[';'.join(list_TSset)])
-
-@account_api.route('/ConceptDrift_adv/', methods=['POST'])
-def data_ConceptDrft_adv():
-    #Memory (nbr. of instance), Concept Drift area,
-    return jsonify(t_stamp=[], label_avg_loss=[])
