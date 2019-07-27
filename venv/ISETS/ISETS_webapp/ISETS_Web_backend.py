@@ -45,11 +45,11 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
     TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
 
     shapList = sb.extract_shapelet_all_length(k, TS_newSet, MP_set_all, m_list)
-    output_loss = pd.DataFrame([[0,0,0,0,0,0]], columns=['t_stamp', 'loss_batch', 'cum_loss', 'PH', 'avg_loss', 'nbr_drift'])
-    output_shapelet = pd.DataFrame([[0,0,0,0,0]], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
+    #output_loss = pd.DataFrame([[0,0,0,0,0,0]], columns=['t_stamp', 'loss_batch', 'cum_loss', 'PH', 'avg_loss', 'nbr_drift'])
+    #output_shapelet = pd.DataFrame([[0,0,0,0,0]], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
     while driftDetection.t_stamp < len(dataset_list):
         inputTSBatch = driftDetection.stream_window(dataset_list, window_size)
-        drift, loss_batch, cum_loss, PH, avg_loss = driftDetection.shapelet_matching(shapList, inputTSBatch)
+        drift, loss_batch, cum_loss, PH, avg_loss = driftDetection.PHtest_detection(shapList, inputTSBatch)
         t_stamp = driftDetection.t_stamp
         if drift == True:
             nbr_drift = 1
@@ -57,9 +57,9 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
             nbr_drift = 0
             time.sleep(1)
         loss_set = [driftDetection.t_stamp, loss_batch, cum_loss, PH, avg_loss, nbr_drift]
-        loss_pd = pd.DataFrame([loss_set],
+        '''loss_pd = pd.DataFrame([loss_set],
                                    columns=['t_stamp', 'loss_batch', 'cum_loss', 'PH', 'avg_loss', 'nbr_drift'])
-        output_loss = output_loss.append(loss_pd)
+        output_loss = output_loss.append(loss_pd)'''
         if drift == True:
             #TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_newSet, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
             TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
@@ -122,4 +122,7 @@ def data_TSWindow():
         list_TSset.append(str(TS.timeseries))
     return jsonify(inputTSBatch=[';'.join(list_inputTS)], TS_set=[';'.join(list_TSset)])
 
-
+@account_api.route('/ConceptDrift_adv/', methods=['POST'])
+def data_ConceptDrft_adv():
+    #Memory (nbr. of instance), Concept Drift area,
+    return jsonify(t_stamp=[], label_avg_loss=[])

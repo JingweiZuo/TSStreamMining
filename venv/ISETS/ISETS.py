@@ -13,8 +13,9 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
     stack_size = stack_ratio * len(dataset_list)
     TS_set = []
     MP_set_all = {}
-
-    #Initialization of shapList
+    drift_prev = None
+    drift_curr = None
+    #Initialization of shap_set
     driftDetection = eb.driftDetection()
     if window_size==1:
         w = 2
@@ -23,7 +24,7 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
     inputTSBatch = driftDetection.stream_window(dataset_list, w)  #Test is OK
     TS_newSet, MP_newSet_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
 
-    shapList = sb.extract_shapelet_all_length(k, TS_newSet, MP_newSet_all, m_list)
+    shap_set = sb.extract_shapelet_all_length(k, TS_newSet, MP_newSet_all, m_list)
 
     output_driftInfo = pd.DataFrame([[0]], columns=['LossThresh_0.38'])
 
@@ -31,11 +32,15 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
     #output_shapelet = pd.DataFrame([[0,0,0,0,0]], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
     while driftDetection.t_stamp < len(dataset_list):
         inputTSBatch = driftDetection.stream_window(dataset_list, window_size)
-        drift = driftDetection.shapelet_matching_incremental(shapList, inputTSBatch, 0.38)
-        #drift, loss_batch, cum_loss, PH, avg_loss = driftDetection.shapelet_matching(shapList, inputTSBatch)
-        driftInfo = [drift]
+        drift_curr = driftDetection.simple_detection(shap_set, inputTSBatch, 0.38)
+        #drift, loss_batch, cum_loss, PH, avg_loss = driftDetection.shapelet_matching(shap_set, inputTSBatch)
+        driftInfo = [drift_curr]
         df_driftInfo = pd.DataFrame([driftInfo], columns=['LossThresh_0.38'])
         output_driftInfo = output_driftInfo.append(df_driftInfo)
+        ############################################################
+        ############# Add Concept transition detection #############
+        ############################################################
+
         '''if drift == True:
             nbr_drift = 1
         else:
@@ -45,15 +50,19 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
                                    columns=['t_stamp', 'loss_batch', 'cum_loss', 'PH', 'avg_loss', 'nbr_drift'])
         output_loss = output_loss.append(loss_pd)'''
 
-        print("Drift is " + str(drift))
-        if drift == True:
+        print("Drift is " + str(drift_curr))
+        if drift_curr == True:
             TS_newSet, MP_set_all = mb.memory_cache_all_length(TS_newSet, MP_set_all, stack_size, inputTSBatch, m_list, distance_measure)
-            shapList = sb.extract_shapelet_all_length(k, TS_newSet, MP_set_all, m_list)
-            '''for shap in shapList:
+            shap_set = sb.extract_shapelet_all_length(k, TS_newSet, MP_set_all, m_list)
+            '''for shap in shap_set:
                 shap_set = [driftDetection.t_stamp, shap.name, shap.Class, str(shap.subseq), shap.normal_distance]
                 shap_pd = pd.DataFrame([shap_set], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
                 output_shapelet = output_shapelet.append(shap_pd)'''
-
+            drift_prev == True
+        elif drift_prev == True:
+            # a Concept Transition event, active caching mechanism kick-off
+            TS_newSet, MP_set_all= mb.elastic_caching_mechanism(TS_newSet, MP_set_all, shap_set, window_size, driftDetection)
+            drift_prev == False
     '''Output folder '''
     dataset_folder = '/'.join(data_directory.split('/')[:-1])
     DriftInfofile = dataset_folder + "/DriftInfo.csv"
@@ -70,16 +79,17 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
     '''Output Shapelet & Loss in each Time tick'''
     '''output_loss.to_csv(dataset_folder + "/avg_lossMeasure_Drift.csv", index=False)
     output_shapelet.to_csv(dataset_folder + "/avg_lossMeasure_Shapelet.csv", index=False)'''
-    return shapList
 
-'''if __name__ == "__main__":
+    return shap_set
+
+if __name__ == "__main__":
     k = 10
     data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015"
-    training = "/FordA/FordA_TRAIN"
-    testing = "/FordA/FordA_TEST"
+    training = "/ElectricDevices/ElectricDevices_TRAIN"
+    testing = "/ElectricDevices/ElectricDevices_TEST"
     dataset = data_directory + training
     m_ratio = 0.05
     stack_ratio = 1
     window_size = 20
-    global_structure(k, dataset, m_ratio, stack_ratio, window_size)'''
+    global_structure(k, dataset, m_ratio, stack_ratio, window_size)
 

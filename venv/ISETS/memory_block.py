@@ -1,6 +1,7 @@
 import numpy as np
 import utils.similarity_measures as sm
 import SMAP.MatrixProfile as mp
+import evaluation_block as eb
 
 # centralized & distributed algorithm
 def TS_cache(TS_set_input, stack_size, inputTSBatch):
@@ -79,3 +80,9 @@ def memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list
     TS_newSet = TS_cache(TS_set, stack_size, inputTSBatch)
     return TS_newSet, MP_set_all
 
+#kick-off event: transition from Concept Drift to Stable Concept
+def elastic_caching_mechanism(cached_TS, cached_MP, shapList, window_size, driftDetection):
+    # Stop point of caching elimination process: when there's no Concept Drift
+    # resolve the index for eliminated historical data
+    cached_TS, cached_MP = driftDetection.eliminate_caching(cached_TS, cached_MP, shapList, window_size)
+    return cached_TS, cached_MP

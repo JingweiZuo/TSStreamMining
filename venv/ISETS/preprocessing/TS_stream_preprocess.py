@@ -10,7 +10,6 @@ def df_partition(dataframe):
     df_list = []
     for c in list(class_list):
         df_list.append(dataframe[dataframe[0]==c])
-        #print(df)
     return df_list, list(class_list)
 
 def concept_construct(df_list, class_list, partition_num):
