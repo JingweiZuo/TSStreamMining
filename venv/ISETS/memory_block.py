@@ -14,7 +14,6 @@ def TS_cache(TS_set_input, stack_size, inputTSBatch):
         return TS_set_new
     return TS_set
 
-
 def MP_cache(TS_set_input, MP_set_input, stack_size, inputTSBatch, m, distance_measure):
     #cache Matrix Profile
     MP_set = MP_set_input.copy()
@@ -84,5 +83,5 @@ def memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list
 def elastic_caching_mechanism(cached_TS, cached_MP, shapList, window_size, driftDetection):
     # Stop point of caching elimination process: when there's no Concept Drift
     # resolve the index for eliminated historical data
-    cached_TS, cached_MP = driftDetection.eliminate_caching(cached_TS, cached_MP, shapList, window_size)
+    cached_TS, cached_MP = driftDetection.eliminate_caching(cached_TS, cached_MP, shapList, window_size, driftDetection)
     return cached_TS, cached_MP

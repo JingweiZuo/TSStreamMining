@@ -10,7 +10,7 @@ from bokeh.io import show, curdoc
 from threading import Thread
 import pandas as pd
 import utils.utils as util
-from ISETS_Web_backend import account_api, blocking_task
+from ISETS_Web_backend import account_api, extraction_thread
 
 app = Flask(__name__)
 app.register_blueprint(account_api)
@@ -42,7 +42,7 @@ def hello():
         # to start a new Thread for computation, how to the transfer the parameters?
         if thread == None:
             print("window_size is " + str(window_size) + "forget_degree is" + str(forget_degree))
-            thread = Thread(target=blocking_task, args=(datasetName, window_size,))
+            thread = Thread(target=extraction_thread, args=(datasetName, window_size,))
             thread.start()
         TSclass = request.form['TSclass']
     return render_template('hello.html',bokS=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)

@@ -8,14 +8,15 @@ import time
 def discm_profile(TS_set_input, MP_set, m):
     #Exponential Moving Average (EMA), but the number of instances in each class is different.
     #Simple Moving Average (SMA) is implemented here
-    mp_dict_same = []
-    mp_dict_differ = []
+
     TS_set_new=[]
     TS_set = TS_set_input.copy()
     # mp_dict_same: [mp1, mp2, ...], Array[Array[]]
     # mp_all: {ts_target.name1:mp1, ts_target.name2:mp2, ...}, dict(ts_targe.name:Array[])
     # dp_all: {ts_target.name1:{index1:dp1, index2:dp2, ...}, ts_target.name2:{...}, ...}, dict(ts_target.name: dict(index:Array[]) )
     for idx_s, ts_source in enumerate(TS_set):
+        mp_dict_same = []
+        mp_dict_differ = []
         for idx_t, ts_target in enumerate(TS_set):
             if idx_s == idx_t:
                 continue
@@ -31,7 +32,8 @@ def discm_profile(TS_set_input, MP_set, m):
         # compute the average distance for each side (under the same class, or the different class)
         dist_intraC = np.mean(mp_dict_same, axis=0)
         dist_interC = np.mean(mp_dict_differ, axis=0)
-        #print("dist_interc is: " +str(dist_interC))
+        #print("MARKER_SB1: dist_intraC is: " + str(dist_intraC))
+        #print("MARKER_SB2: dist_interC is: " +str(dist_interC))
 
         # compute the difference of distance for 2 sides
         ts_source.discmP.update({m:np.subtract(dist_interC, dist_intraC)})
@@ -45,6 +47,7 @@ def extract_shapelet(k, TS_set_input, MP_set, m):
     class_list = []
     shapelet_list = []
     TS_set = discm_profile(TS_set_input, MP_set, m)
+
     for ts in TS_set:
         c = ts.class_timeseries
         class_list.append(c)
@@ -111,7 +114,8 @@ def extract_shapelet(k, TS_set_input, MP_set, m):
                 shap.dist_threshold = dist_thd
                 shapelet_list.append(shap)
             else:
-                print("key is " + str(key))
+                #print("key is " + str(key))
+                b=1 # do notiong
     # for each class, we've token k shapelets, so the final result contains k * nbr(class) shapelets
     return shapelet_list
 

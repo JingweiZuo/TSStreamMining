@@ -20,13 +20,11 @@ def computeMP(timeseries1, timeseries2, subseq_length, distance_measure):
     for index in range(0, indexes, step):
         data = t2.timeseries
         index2 = index + subseq_length
-        #query = t2.timeseries[index:index2]
         query = t1.timeseries[index:index2]
-        DP_all[idx] = sm.calculate_distances(data, query, distance_measure)
-        #DP_all[idx] = sm.mass_v1(query, data)
-        #DP_all[idx] = sm.euclidean_distance_unequal_lengths(data, query)
-        MP12.append(min(DP_all[idx]))
-        idx += 1
+        if round(np.std(query),4) != 0.0: # when the standard variation is not 0
+            DP_all[idx] = sm.calculate_distances(data, query, distance_measure)
+            MP12.append(min(DP_all[idx]))
+            idx += 1
     return np.array(MP12)
 
 def computeDistDiffer(timeseries, dataset, m):

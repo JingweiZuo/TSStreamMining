@@ -4,7 +4,7 @@ import pandas as pd
 import collections
 import pickle
 import sys
-import psutil as ps
+#import psutil as ps
 import random
 import csv
 import json
@@ -92,7 +92,6 @@ def load_dataset(directory):
     #return: list of dictionary, each dict. has one single element {t.name:t.sequence}
     array_ts = []
     list_rawData = np.genfromtxt(directory, delimiter=",")
-    list_rawData = np.genfromtxt(directory, delimiter=",")
     np.random.shuffle(list_rawData)
     i = 1
     for d in list_rawData:
@@ -126,11 +125,11 @@ def print_progress(iteration, total, prefix='Progress:', suffix='Complete', deci
         sys.stdout.write('\n')
     sys.stdout.flush()
 
-def check_memory(perc=90):
+'''def check_memory(perc=90):
     mem = ps.virtual_memory()
     if mem.percent >= perc:
         return False
-    return True
+    return True'''
 
 def min_length_dataset(list_timeseries):
     min_l = sys.maxsize

@@ -8,7 +8,7 @@ import evaluation_block as eb
 import utils.utils as util
 import time, sys, os
 
-def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance_measure, data_directory):
+def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance_measure, data_directory, drift_strategy):
     global drift
     stack_size = stack_ratio * len(dataset_list)
     TS_set = []
@@ -32,7 +32,7 @@ def global_structure(k, dataset_list, m_list, stack_ratio, window_size, distance
     #output_shapelet = pd.DataFrame([[0,0,0,0,0]], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
     while driftDetection.t_stamp < len(dataset_list):
         inputTSBatch = driftDetection.stream_window(dataset_list, window_size)
-        drift_curr = driftDetection.simple_detection(shap_set, inputTSBatch, 0.38)
+        drift_curr = driftDetection.ConceptDrift_detection(shap_set, inputTSBatch)
         #drift, loss_batch, cum_loss, PH, avg_loss = driftDetection.shapelet_matching(shap_set, inputTSBatch)
         driftInfo = [drift_curr]
         df_driftInfo = pd.DataFrame([driftInfo], columns=['LossThresh_0.38'])
