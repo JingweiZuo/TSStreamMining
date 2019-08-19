@@ -11,8 +11,8 @@ class Shapelet(object):
         self.id = id(self)
         self.name = ''
         # self.time = None
-        self.subsequence = None
-        self.class_shapelet = ''
+        self.subseq = None
+        self.Class = ''
         self.dist_threshold = 0.0
         self.normal_distance = 0.0
         # self.utility_score = 0.0
@@ -36,11 +36,11 @@ class Shapelet(object):
         representation = "{"   # Outermost
         representation += '"id": ' + str(self.id) + ','
         representation += '"name": "' + str(self.name) + '",'
-        representation += '"class_shapelet": "' + str(self.class_shapelet) + '",'
+        representation += '"class_shapelet": "' + str(self.Class) + '",'
         representation += '"dist_threshold": ' + str(self.dist_threshold) + ','
         representation += '"gain": ' + str(self.gain) + ','
         representation += '"dimension_name": "' + str(self.dimension_name) + '",'
-        representation = old_Utils.json_list(representation, "subsequence", self.subsequence)
+        representation = old_Utils.json_list(representation, "subsequence", self.subseq)
         representation += ','
         representation = old_Utils.json_dict(representation, 'covering_dict', self.covering_dict)
         representation += ','
@@ -53,7 +53,7 @@ class Shapelet(object):
 
     def __str__(self):
         representation = "Shapelet with id: " + str(self.id)
-        representation += " with class: " + str(self.class_shapelet)
+        representation += " with class: " + str(self.Class)
         representation += " with distance threshold: " + str(self.dist_threshold)
         representation += " with gain: " + str(self.gain)
         representation += " with dimension: " + self.dimension_name
@@ -68,7 +68,7 @@ class Shapelet(object):
     def check(self, list_timeseries, distance_measure):
         distances_dict = collections.defaultdict(list)
         for a_timeseries in list_timeseries:##O(n)
-            distances = sm.calculate_distances(a_timeseries.timeseries, self.subsequence, distance_measure)
+            distances = sm.calculate_distances(a_timeseries.timeseries, self.subseq, distance_measure)
 
             min_distance = distances.min()
 
@@ -108,7 +108,7 @@ class Shapelet(object):
         pool = []
         l = max_length
         while l >= min_length:
-            if skip:
+            if skip and int(l / 4) != 0:
                 step = int(l / 4)
             else:
                 step = 1
@@ -120,8 +120,8 @@ class Shapelet(object):
                     candidate = Shapelet()
                     candidate.name = the_name
                     candidate.dimension_name = the_dimension
-                    candidate.class_shapelet = the_class
-                    candidate.subsequence = chunk
+                    candidate.Class = the_class
+                    candidate.subseq = chunk
                     pool.append(candidate)
             l -= 1
         return pool
@@ -168,7 +168,7 @@ class Shapelet(object):
                 i += 1
                 continue
             a_timeseries = [t for t in list_multivariate_timeseries if
-                            t.name == key and t.class_timeseries == self.class_shapelet and self.matching_indices[key]]
+                            t.name == key and t.class_timeseries == self.Class and self.matching_indices[key]]
 
             if a_timeseries:
                 result.append(a_timeseries[0])
@@ -188,7 +188,7 @@ class Shapelet(object):
             if i < index:
                 i += 1
                 continue
-            if aTimeseries.class_timeseries != self.class_shapelet:
+            if aTimeseries.class_timeseries != self.Class:
                 result.append(aTimeseries)
                 s += 1
                 if s == k:

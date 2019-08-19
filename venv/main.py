@@ -4,7 +4,7 @@
 from __future__ import division, print_function, absolute_import
 
 import argparse
-import sys, csv, os, time, logging
+import csv, os, sys, time, logging
 
 import USE.use as use
 import USE.evaluation as ev
@@ -39,13 +39,23 @@ def parse_args(args):
     parser = argparse.ArgumentParser(
         description="Time Series Stream Mining")
 
+    dataset_name = 'ECG5000'
     parser.add_argument(
         '-d',
         '--data',
         dest="data_directory",
         help="Select the directory where the training csv files are saved",
-        default=''
+        default='/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015/' + dataset_name + '/' + dataset_name + '_TRAIN'
     )
+
+    parser.add_argument(
+        '-e',
+        '--eval',
+        dest='eval_directory',
+        help='Select the directory where the evaluation csv files exist',
+        default='/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015/' + dataset_name + '/' + dataset_name + '_TEST'
+    )
+
     parser.add_argument(
         '-dm',
         '--distance',
@@ -74,13 +84,7 @@ def parse_args(args):
         help="Choose the pruning strategy",
         default='top-k'
     )
-    parser.add_argument(
-        '-e',
-        '--eval',
-        dest='eval_directory',
-        help='Select the directory where the evaluation csv files exist',
-        default=''
-    )
+
     return parser.parse_args(args)
 
 
@@ -127,6 +131,7 @@ def algo_train(ts_training, distance_measure, top_k_value, args):
     min_length = int(0.1 * min_m)
     max_length = int(0.5 * min_m)
     m_list = range(min_length, max_length, int(min_m * m_ratio))
+    print("m_list is " + str(m_list))
     #m_list = range(min_length, max_length, 1)
 
     ###############################Save dataset info to 'csv' file ###############################
@@ -147,20 +152,20 @@ def algo_train(ts_training, distance_measure, top_k_value, args):
     ###############################Save dataset to 'csv' file ###############################
     # The USE algorithm
     start_time = time.time()
-    if args.algo == "use_old":
-        '''list_all_shapelets = use.use_v4(ts_training, min_length=None, max_length=None,
+    if args.algo == "use":
+        list_all_shapelets = use.use_v4(ts_training, min_length=min_length, max_length=max_length,
                                                  pruning=args.pruning, k=top_k_value,
-                                                 distance_measure=distance_measure, skip=True)'''
+                                                 distance_measure=distance_measure, skip=True)
     elif args.algo == "smap":
         print("This is SMAP algorithm")
-        list_all_shapelets = smap.extract_shapelet_all_length(top_k_value, dataset, "top-k", m_list, distance_measure, args.data_directory)
+        list_all_shapelets = smap.extract_shapelet_all_length(top_k_value, ts_training, "top-k", m_list, distance_measure, args.data_directory)
     elif args.algo == "smapLB":
         list_all_shapelets = smap_lb.extract_shapelet_all_length(top_k_value, ts_training, "top-k", 4)
     elif args.algo == "ISETS":
         print("This is ISETS algorithm")
         stack_ratio = 1
         window_size = 1 #len(dataset_list)
-        list_all_shapelets = ISETS.global_structure(top_k_value, dataset_list, m_list, stack_ratio, window_size, distance_measure, args.data_directory)
+        list_all_shapelets = ISETS.global_structure_IncrementalTest(top_k_value, dataset_list, m_list, stack_ratio, window_size, distance_measure, args.data_directory)
 
     print("Execution complete")
     print("Time taken by the algorithm (minutes):", (time.time() - start_time) / 60)

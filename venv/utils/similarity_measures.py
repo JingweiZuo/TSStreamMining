@@ -68,6 +68,7 @@ def dot_products_2(q, t):
 # v1: Full matching MASS, basic version
 def mass_v1(q, t):
     m, n = len(q), len(t)
+    ########### std(q), std(t) should not be 0 ###########
     # Z-normalization of Query
     q = (q - np.mean(q)) / np.std(q)
     qt = dot_products_1(q, t)
@@ -87,25 +88,25 @@ def mass_v1(q, t):
     meant = sumt / m
     # standard deviation of every subsequence of length m
     sigmat2 = (sumt2 / m) - (np.power(meant, 2))
-    sigmat = np.sqrt(sigmat2)
+    sigmat = np.sqrt(np.abs(sigmat2))
 
     dist = (sumt2 - 2 * sumt * meant + m * (np.power(meant, 2))) / sigmat2 - 2 * (
                 qt[m:n] - sum_q * meant) / sigmat + sum_q2
-    dist = np.sqrt(dist)
+    dist = np.sqrt(np.abs(dist))
     # distance here is a complex number, need to return its amplitude/absolute value
     # return a vector with size of n-m+1
-    return np.abs(dist)
+    return dist
 
 
 # v2: Half matching MASS, advanced version
 def mass_v2(x, y):
     # x is the data, y is the query
+    ########### std(x), std(y), running_std() should not be 0 ###########
     n, m = len(x), len(y)
 
     # %compute y stats -- O(n)
     meany = np.mean(y)
     sigmay = np.std(y)
-
     # compute x stats -- O(n)
     # compute the moving average and standard deviation of Time Series
     meanx = running_mean(x, m)
@@ -113,11 +114,12 @@ def mass_v2(x, y):
 
     # The main trick of getting dot products in O(n log n) time
     z = dot_products_2(y, x)
+
     dist = 2 * (m - (z[m - 1:n] - m * meanx[m - 1:n] * meany) / (sigmax[m - 1:n] * sigmay))
-    dist = np.sqrt(dist)
+    dist = np.sqrt(np.abs(dist))
     # distance here is a complex number, need to return its amplitude/absolute value
     # return a vector with size of n-m+1
-    return np.abs(dist)
+    return dist
 
 def running_mean(x, N):
     cumsum = np.cumsum(np.insert(x, 0, np.zeros(N)))
@@ -127,13 +129,16 @@ def running_mean(x, N):
     return np.concatenate([cum_v1,cum_v2])
 
 def running_std(x, N):
+    ########### std(x) should not be 0 ###########
     x2 = np.power(x, 2)
     cumsum2 = np.cumsum(np.insert(x2, 0, np.zeros(N)))
     cum_v = cumsum2[N:] - cumsum2[:-N]
     cum_v1 = np.divide(cum_v[:N],range(1,N+1))
     cum_v2 = cum_v[N:]/ float(N)
     cumstd2 = np.concatenate([cum_v1,cum_v2])
-    return (cumstd2 - running_mean(x, N) ** 2) ** 0.5
+    M = np.abs(cumstd2 - running_mean(x, N) ** 2)
+    M[M == 0] = 0.1
+    return M ** 0.5
 
 # v3: advanced version using historical computations
 def mass_v3(x, y, meanx, meany, sigmax, sigmay, sigmaQplus):

@@ -12,11 +12,11 @@ class driftDetection(object):
         self.theta = 1  # The slope of Sigmoid Function
 
         # Parameters for PH test of Concept Drift
-        self.tolerance = 0  # The loss tolerance for PH test
-        self.thresh = 0  # Threshold of concept drift for PH test
+        self.tolerance = 0.05  # The loss tolerance for PH test
+        self.thresh_PH = 0.1  # Threshold of concept drift for PH test
 
         # Parameters for simple detection of Concept Drift
-        self.thresh_loss = 0.5
+        self.thresh_loss = 0.4
 
     #sigmoid = lambda x: 1 / (1 + np.exp(-x))
     def sigmoid(self, x, theta, x0):
@@ -29,8 +29,8 @@ class driftDetection(object):
         w = len(TS_window)
         for ts in TS_window:
             shap_set_part = [s for s in shap_set if s.Class == ts.class_timeseries]
-            #if len(shap_set) == 0:
-                #print("MARKER_EB: shap_set is empty")
+            if len(shap_set_part) == 0:
+                print("MARKER_EB: shap_set_part is empty, no matching Shapelet existed")
             min_dist = np.inf
             min_s = util.Shapelet()
             # find the closest Shapelet to 'ts'
@@ -45,10 +45,12 @@ class driftDetection(object):
             loss_batch += l
         loss_batch = loss_batch / w
         self.n_batch += 1
+
         if drift_strategy == "manual_set loss":
             # Method 1: set manually a loss threshold, once the detected batch loss exceeds the threshold, then a drift is detected
             if loss_batch <= self.thresh_loss:
                 drift = False
+            print("returned drift is " + str(drift))
             return drift, loss_batch
         elif drift_strategy == "mean loss variance":
             # Method 2: when batch loss exceeds the global average loss, a drift is detected
@@ -66,7 +68,7 @@ class driftDetection(object):
                         self.cum_loss = self.avg_loss'''
             if PH < 0:
                 self.mincum_loss = self.cum_loss
-            if PH <= self.thresh:
+            if PH <= self.thresh_PH:
                 drift = False
             return drift, loss_batch, self.avg_loss, self.cum_loss, self.mincum_loss, PH
 
@@ -106,7 +108,7 @@ class driftDetection(object):
                 # Method 3: when PH test value exceeds a manual-set threshold, a drift is detected
                 cum_loss_temp = self.cum_loss + loss_batch - self.avg_loss - self.tolerance
                 PH = cum_loss_temp - self.mincum_loss
-                if PH <= self.thresh:
+                if PH <= self.thresh_PH:
                     drift = False
             # eliminate the cached data, and adjust the existing parameters
             elim_num += 1

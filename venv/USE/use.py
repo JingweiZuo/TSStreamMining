@@ -10,7 +10,7 @@ import threading
 import gc
 import sys
 
-def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cover", k=20, distance_measure='brute', skip=False):
+def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cover", k=10, distance_measure='brute', skip=False):
     # USE with psutil support
     # 'list_timeseries_dict': [dict{}, dict{}, ...]
     # 'list_timeseries': {ts_name : ts}
@@ -36,13 +36,13 @@ def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cove
         if not list_remaining_cands:
             done = True
         print("Starting the pruning procedure...")
-        #grouped_shapelets = itertools.groupby(list_done_shapelets, lambda shapelet: shapelet.class_shapelet)
+        #grouped_shapelets = itertools.groupby(list_done_shapelets, lambda shapelet: shapelet.Class)
         grouped_shapelets = {}
         for shap in list_done_shapelets:
-            if shap.class_shapelet in grouped_shapelets.keys():
-                grouped_shapelets[shap.class_shapelet].append(shap)
+            if shap.Class in grouped_shapelets.keys():
+                grouped_shapelets[shap.Class].append(shap)
             else:
-                grouped_shapelets[shap.class_shapelet] = [shap]
+                grouped_shapelets[shap.Class] = [shap]
         for keyShapelet, groupShapelet in grouped_shapelets.items():
             list_shapelet_group = list(groupShapelet)
             list_all_shapelets_pruned += pruning_shapelet(groupShapelet, algorithm=pruning, k=k,
@@ -62,12 +62,8 @@ def use_v4(list_timeseries_dict, min_length=None, max_length=None, pruning="cove
 
     #print("Length of list_all_shapelets_pruned is ", len(list_all_shapelets_pruned))
     print("Calculating the matching indices...")
-    i = 0
-    old_Utils.print_progress(i, length)
     for aShapelet in list_all_shapelets_pruned:
         aShapelet.build_matching_indices()
-        i += 1
-        old_Utils.print_progress(i, length)
     print("Calculation complete...")
     print("*************************")
     print()

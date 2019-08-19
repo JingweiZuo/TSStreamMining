@@ -8,7 +8,7 @@ import SMAP_block as sb
 import evaluation_block as eb
 import utils.utils as util
 import psutil as ps
-import time, sys
+import time, sys, os
 
 account_api = Blueprint('account_api', __name__)
 # Global variable for output GUI
@@ -26,6 +26,9 @@ drift = False
 drift_prev = False
 inputTSBatch = []
 TS_set = []
+
+#Parameter to configure
+thresh_loss = 0.5
 
 '''def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, distance_measure):
     list_timeseries = util.load_dataset(data_directory)
@@ -72,6 +75,7 @@ TS_set = []
                 shap_pd = pd.DataFrame([shap_set], columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
                 output_shapelet = output_shapelet.append(shap_pd)'''
 
+
 def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy):
     list_timeseries = util.load_dataset(data_directory)
     name_dataset = {k: v for ds in list_timeseries for k, v in ds.items()}
@@ -90,7 +94,6 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
     TS_set = []
     MP_set_all = {}
 
-
     #Initialization of shap_set
     driftDetection = eb.driftDetection()
     '''if window_size==1:
@@ -105,22 +108,41 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
     print("Time cost for extraction on the first batch is : " + str(end-start))
     shap_set = sb.extract_shapelet_all_length(k, TS_set, MP_set_all, m_list)
     print("MARKER1: initial shap_set size is " + str(len(shap_set)))
+
+    # ***********# The Output File Configuration #***********#
+    drift_col_name = 'LossThresh_' + str(thresh_loss)
+    output_driftInfo = pd.DataFrame([[0]], columns=[drift_col_name])
+    output_loss = pd.DataFrame([[0, 0, 0, 0, 0, 0]],
+                               columns=['t_stamp', 'loss_batch', 'cum_loss', 'PH', 'avg_loss', 'nbr_drift'])
+    output_shapelet = pd.DataFrame([[0, 0, 0, 0, 0]],
+                                   columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
+
     while driftDetection.t_stamp < len(dataset_list):
         inputTSBatch = driftDetection.stream_window(dataset_list, window_size)
         ################ Detect Concept Drift & Loss ###################
         if drift_strategy == "manual_set loss":
-            start = time.time()
+            #start = time.time()
             drift, batch_loss = driftDetection.ConceptDrift_detection(shap_set, inputTSBatch, drift_strategy)
-            end = time.time()
-            print("Time cost for extraction on t_stamp "+str(driftDetection.t_stamp) + " is : " + str(end - start))
-            print("MARKER2: drift is : " + str(drift) + ", batch_loss is : " + str(batch_loss))
+            #end = time.time()
+            #print("Time cost for extraction on t_stamp "+str(driftDetection.t_stamp) + " is : " + str(end - start))
+            print("MARKER2: time : "+ str(driftDetection.t_stamp) + "drift is : " + str(drift) + ", batch_loss is : " + str(batch_loss))
         elif drift_strategy == "mean loss variance":
             drift, batch_loss, avg_loss = driftDetection.ConceptDrift_detection(shap_set, inputTSBatch, drift_strategy)
-            print("MARKER2: drift is : " + str(drift) + ", batch_loss is : " + str(batch_loss) + ", avg_loss is : " + str(avg_loss))
+            print("MARKER2: time : "+ str(driftDetection.t_stamp) + "drift is : " + str(drift) + ", batch_loss is : " + str(batch_loss) + ", avg_loss is : " + str(avg_loss))
         else:
             drift, batch_loss, avg_loss, cum_loss, mincum_loss, PH = driftDetection.ConceptDrift_detection(shap_set, inputTSBatch, drift_strategy)
+
+            # ***********# The Output File Configuration #***********#
+            driftInfo = [drift]
+            df_driftInfo = pd.DataFrame([driftInfo], columns=[drift_col_name])
+            output_driftInfo = output_driftInfo.append(df_driftInfo)
+            loss_set = [drift, batch_loss, avg_loss, cum_loss, mincum_loss, PH]
+            loss_pd = pd.DataFrame([loss_set],
+                                   columns=['drift', 'batch_loss', 'avg_loss', 'cum_loss', 'mincum_loss', 'PH'])
+            output_loss = output_loss.append(loss_pd)
+
             print(
-                "MARKER2: drift is : " + str(drift) + ", batch_loss is : " + str(batch_loss) + ", avg_loss is : " + str(
+                "MARKER2: time : "+ str(driftDetection.t_stamp) + "drift is : " + str(drift) + ", batch_loss is : " + str(batch_loss) + ", avg_loss is : " + str(
                     avg_loss) + ", cum_loss is : " + str(cum_loss) + ", mincum_loss is : " + str(mincum_loss) + ", PH is : " + str(PH))
         t_stamp = driftDetection.t_stamp
         ############# Add Concept transition detection #############
@@ -130,24 +152,52 @@ def global_structure(k, data_directory, m_ratio, stack_ratio, window_size, dista
         # 2. Output the eliminating process: markers of elimination
         # 3. In memory_block, replace the fixed stack_size by the elastic caching mechanism -> just set "stack_sie = 1"
 
-        if drift == True:
+        if drift == True or batch_loss>=thresh_loss:
             ################# Shapelet Update #################
             start = time.time()
             TS_set, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list,
                                                             distance_measure)
             shap_set = sb.extract_shapelet_all_length(k, TS_set, MP_set_all, m_list)
             end = time.time()
-            print("Time cost for extraction on t_stamp "+str(driftDetection.t_stamp) + " is : " + str(end - start))
+            #print("Time cost for extraction on t_stamp "+str(driftDetection.t_stamp) + " is : " + str(end - start))
 
-            drift_prev = True
-            print("MARKER3: Drift is Ture, len(TS_set) is: " + str(len(TS_set)), ", len(MP_set_all) is: " + str(len(MP_set_all)))
+            # ***********# The Output File Configuration #***********#
+            for shap in shap_set:
+                shap_set = [driftDetection.t_stamp, shap.name, shap.Class, str(shap.subseq), shap.normal_distance]
+                shap_pd = pd.DataFrame([shap_set],
+                                       columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
+                output_shapelet = output_shapelet.append(shap_pd)
+
+            if drift == True:
+                drift_prev = True
+                print("MARKER3.1: Drift is Ture")
+            if batch_loss>=thresh_loss:
+                print("MARKER3.2: batch_loss>=thresh_loss")
+            print("len(TS_set) is: " + str(len(TS_set)), ", len(MP_set_all) is: " + str(len(MP_set_all)) + "\n")
         elif drift_prev == True:
             # a Concept Transition event, active caching mechanism kick-off
             print("MARKER4: before a Drift transition, len(TS_set) is: " + str(len(TS_set)),
                   ", len(MP_set_all) is: " + str(len(MP_set_all)))
             TS_set, MP_set_all= mb.elastic_caching_mechanism(TS_set, MP_set_all, shap_set, window_size, driftDetection)
             drift_prev = False
-            print("After a Drift transition, len(TS_set) is: " + str(len(TS_set)), ", len(MP_set_all) is: " + str(len(MP_set_all)))
+            print("After a Drift transition, len(TS_set) is: " + str(len(TS_set)), ", len(MP_set_all) is: " + str(len(MP_set_all)) + "\n")
+
+    # ***********# The Output File Configuration #***********#
+    dataset_folder = '/'.join(data_directory.split('/')[:-1])
+    DriftInfofile = dataset_folder + "/DriftInfo.csv"
+    files_list = [f for f in os.listdir(dataset_folder) if f.endswith('DriftInfo.csv')]
+    if files_list:
+        df_old_driftInfo = pd.read_csv(dataset_folder + '/' + files_list[0])
+    else:
+        df_old_driftInfo = pd.DataFrame([[0]], columns=['Drift'])
+    df_old_driftInfo.reset_index(drop=True, inplace=True)
+    output_driftInfo.reset_index(drop=True, inplace=True)
+    df_old_driftInfo = pd.concat([df_old_driftInfo, output_driftInfo], axis=1)
+    df_old_driftInfo.to_csv(DriftInfofile, index=False)
+    # ***********# The Output File Configuration #***********#
+    # '''Output Shapelet & Loss in each Time tick'''
+    output_loss.to_csv(dataset_folder + "/avg_lossMeasure_Drift.csv", index=False)
+    output_shapelet.to_csv(dataset_folder + "/avg_lossMeasure_Shapelet.csv", index=False)
     return shap_set
 
 #Concept Drift Data: avg_loss, batch_loss, cum_loss, PH, t_stamp;
