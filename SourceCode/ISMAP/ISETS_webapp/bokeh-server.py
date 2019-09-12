@@ -17,7 +17,7 @@ from bokeh.plotting import figure
 
 import utils.utils as util
 #Init variables
-data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015"
+data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015"
 dataset = data_directory + "/FordA/FordA_TRAIN"
 t_stamp = 0
 window_size = 5

@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.register_blueprint(account_api)
 thread = None
 TSclass = None
-data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015"
+data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015"
 datasetName = data_directory + "/FordA/FordA_TRAIN"
 window_size = None
 forget_degree = None
@@ -33,7 +33,7 @@ def hello():
     pl_dataset = plot_dataset()
     pl_conceptDrift = plot_conceptDrift()
     global datasetName, thread, TSclass, window_size, forget_degree
-    #webtitle = "ISETS: Incremental Shapelet Extraction fromStreaming Time Series"
+    #webtitle = "ISMAP: Incremental Shapelet Extraction fromStreaming Time Series"
 
     if request.method == 'POST':
         file = request.files['file']
@@ -48,7 +48,7 @@ def hello():
     return render_template('hello.html',bokS=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)
 
 def plot_dataset():
-    '''data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/venv/TestDataset/UCR_TS_Archive_2015"
+    '''data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015"
     datasetName = "/FordA/FordA_TRAIN"
     list_timeseries = util.load_dataset(data_directory+datasetName)'''
     plot_window = figure(plot_height=150, plot_width=500, title='New Incoming TS micro-batch')
