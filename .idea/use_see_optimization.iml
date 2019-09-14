@@ -9,6 +9,9 @@
       <sourceFolder url="file://$MODULE_DIR$/venv/WebUI" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/venv/WebUI/templates" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/SourceCode/ISMAP/ISETS_webapp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SourceCode/SMAP" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SourceCode/USE" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SourceCode/utils" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (use_see_optimization)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
