@@ -20,7 +20,7 @@ log.setLevel(logging.ERROR)
 app = Flask(__name__)
 app.register_blueprint(account_api)
 thread = None
-#data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015"
+#data_directory = "/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/TestDataset"
 #datasetName = data_directory + "/FordA/FordA_TRAIN"
 
 
@@ -34,6 +34,7 @@ m_ratio = 0.05
 stack_ratio = 1
 window_size = 5
 distance_measure = "mass_v2"
+TestDataset = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/'
 
 @app.route('/')
 def index():
@@ -50,11 +51,13 @@ def hello():
         file = request.files['file']
         datasetName = secure_filename(file.filename)
         file.save(datasetName)
+        datasetNameNoPostfix = file.filename.split('_')[0]
+        TrainDataset = TestDataset + datasetNameNoPostfix + '/' + file.filename
         # to start a new Thread for computation, how to the transfer the parameters?
         if thread == None:
-            thread = Thread(target=global_structure, args=(k, datasetName, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy))
+            thread = Thread(target=global_structure, args=(k, TrainDataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy))
             thread.start()
-    return render_template('hello.html',bokS=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)
+    return render_template('hello.html',bokeh_slider=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)
 
 def plot_conceptDrift():
     # "append" mode is used to output the concatenated data
@@ -89,21 +92,21 @@ def plot_conceptDrift():
         plot_mem.line('sys_time', 'nbr_TS', source=source, y_range_name="foo", line_color="red", legend="label_nbrTS", line_width=2)
         return components(row(plot, plot_mem))
     else:
-        plot1 = figure(plot_height=300, plot_width=400, x_range=(0, 2200), y_range=(0, 1.1))
+        plot1 = figure(plot_height=300, plot_width=350, x_range=(0, 2200), y_range=(0, 1.1))
         '''plot1.line('t_stamp', 'avg_loss', source=source, line_color="red", legend="label_avg_loss", line_width=2)
         plot1.line('t_stamp', 'batch_loss', source=source, line_color="blue", legend="label_batch_loss", line_width=2)
         plot1.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)'''
         plot1.line('t_stamp', 'avg_loss', source=source, line_color="red", line_width=2)
         plot1.line('t_stamp', 'batch_loss', source=source, line_color="blue", line_width=2)
         plot1.square('t_stamp', 'drift_num', source=source, color="orange", size=5)
-        plot2 = figure(plot_height=300, plot_width=400, x_range=(0, 2200), y_range=(-3, 3))
+        plot2 = figure(plot_height=300, plot_width=350, x_range=(0, 2200), y_range=(-3, 3))
         #plot2.line('t_stamp', 'cum_loss', source=source, line_color="red", legend="label_cum_loss", line_width=2)
         #plot2.line('t_stamp', 'mincum_loss', source=source, line_color="blue", legend="label_mincum_loss", line_width=2)
         '''plot2.line('t_stamp', 'PH', source=source, line_color="black", legend="label_PH", line_width=2)
         plot2.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)'''
         plot2.line('t_stamp', 'PH', source=source, line_color="black", line_width=2)
         plot2.square('t_stamp', 'drift_num', source=source, color="orange", size=5)
-        plot_mem = figure(plot_height=300, plot_width=400, x_range=(0, 3000), y_range=(0, 100))
+        plot_mem = figure(plot_height=300, plot_width=350, x_range=(0, 3000), y_range=(0, 100))
         plot_mem.extra_y_ranges = {"foo": Range1d(start=0, end=200)}
         plot_mem.add_layout(LinearAxis(y_range_name="foo"), 'right')
         plot_mem.line('sys_time', 'memory', source=source, line_color="blue", legend="label_memory", line_width=2)

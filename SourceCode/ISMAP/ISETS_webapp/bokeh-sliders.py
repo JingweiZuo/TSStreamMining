@@ -16,29 +16,16 @@ from bokeh.models.widgets import Slider, TextInput, Button, Dropdown, CheckboxBu
 from bokeh.plotting import figure
 import os
 
-# Query from the same
-# Set up data
 
-#--------------- check if the shapelet evolves along with the time? or il iss fixed once we read the file? ---------------#
-shapelet_folder = '/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/Trace'
-file = '/avg_lossMeasure_Shapelet.csv'
-files_list = [f for f in os.listdir(shapelet_folder) if f.endswith('Shapelet.csv')]
-if files_list:
-    shapelet_file = pd.read_csv(shapelet_folder + '/' + files_list[0])
-else:
-    shapelet_file = pd.DataFrame([[0]], columns=['Drift'])
+shapelet_file_stack10 = pd.read_csv("~/Desktop/PhD_study/Done/IEEEBigData2019/ISMAP_results/k10_w20_stack10_shap.csv")
 
-#shapelet_file = pd.read_csv(shapelet_folder)
+shapelet_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace'
 
-shapelet_file_stack10 = pd.read_csv("~/Desktop/ISMAP_results/k10_w20_stack10_shap.csv")
-
-t_stamp_df = shapelet_file['t_stamp'].drop_duplicates(keep='first', inplace=False)
-t_stampList = list(t_stamp_df)
 # Set up widgets
 #menu_T = [('160', "TStamp 160"), ('180', "TStamp 180"), ('200', "TStamp 200")]
-#t_stampList = range(30, 1320, 10)
+t_stampList = range(0, 1320, 10)
 menu_T = [(str(t), "TStamp "+str(t)) for t in t_stampList]
-menu_C = [('1.0', "Class 1"), ('-1.0', "Class -1")]
+menu_C = [('1.0', "Class 1.0"), ('-1.0', "Class -1.0")]
 dropdown1 = Dropdown(label="Select Time Stamp", button_type="success", menu=menu_T)
 dropdown2 = Dropdown(label="Select Class", button_type="primary", menu=menu_C)
 dropdown3 = Dropdown(label="Select Time Stamp", button_type="success", menu=menu_T)
@@ -53,7 +40,6 @@ t_stamp2 = '200'
 t_stamp3 = '200'
 
 
-
 plot1 = figure(plot_height=200, plot_width=300, title='Shapelet (Feature) Ranking', x_range=(0, 100), y_range=(0, 30))
 plot2 =figure(plot_height=200, plot_width=300, title='Shapelet (Feature) Ranking', x_range=(0, 100), y_range=(0, 30))
 plot3 = figure(plot_height=200, plot_width=300, title='Shapelet (Feature) Ranking', x_range=(0, 100), y_range=(0, 30))
@@ -66,8 +52,19 @@ legend3 = Legend(items=[], location='top_right', spacing=-3, label_text_font_siz
 plot1.add_layout(legend1, 'right')
 plot2.add_layout(legend2, 'right')
 plot3.add_layout(legend3, 'right')
-def select_shapelet(shap_df, t_stamp, Class):
-    return shap_df[shap_df["t_stamp"]==int(t_stamp)][shap_df["shap.Class"]==float(Class)]
+
+def select_shapelet(t_stamp, Class):
+    files_list = [f for f in os.listdir(shapelet_folder) if f.endswith('Shapelet.csv')]
+    if files_list:
+        shap_df = pd.read_csv(shapelet_folder + '/' + files_list[0])
+    else:
+        shap_df = pd.DataFrame([[0, 0, 0, 0, 0]],
+                                     columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq',
+                                              'shap.score'])
+
+    t_stamp_df = shap_df['t_stamp'].drop_duplicates(keep='first', inplace=False)
+    t_stampList = list(t_stamp_df)
+    return shap_df[shap_df["t_stamp"]==int(t_stamp) & shap_df["shap.Class"]==float(Class)]
 
 def draw_shapelet(shap_df, firstK, t_stamp, Class, plot):
     shap_subseq = shap_df['shap.subseq'].tolist()
@@ -108,7 +105,7 @@ def update_dropdown2(attrname, old, new):
     global class_1, t_stamp1, plot1
     dropdown2.label = dropdown2.value
     class_1 = dropdown2.value.split()[1]
-    plot1 = draw_shapelet(select_shapelet(shapelet_file, t_stamp1, class_1), 5, t_stamp1, class_1, plot1)
+    plot1 = draw_shapelet(select_shapelet(t_stamp1, class_1), 5, t_stamp1, class_1, plot1)
 def update_dropdown3(attrname, old, new):
     global t_stamp2
     dropdown3.label = dropdown3.value
@@ -117,7 +114,7 @@ def update_dropdown4(attrname, old, new):
     global class_2, t_stamp2, plot2
     dropdown4.label = dropdown4.value
     class_2 = dropdown4.value.split()[1]
-    plot2 = draw_shapelet(select_shapelet(shapelet_file, t_stamp2, class_2), 5, t_stamp2, class_2, plot2)
+    plot2 = draw_shapelet(select_shapelet(t_stamp2, class_2), 5, t_stamp2, class_2, plot2)
 def update_dropdown5(attrname, old, new):
     global t_stamp3
     dropdown5.label = dropdown5.value
@@ -125,8 +122,11 @@ def update_dropdown5(attrname, old, new):
 def update_dropdown6(attrname, old, new):
     global class_3, t_stamp3, plot3
     dropdown6.label = dropdown6.value
-    class_3 = dropdown6.value.split()[1]
-    plot3 = draw_shapelet(select_shapelet(shapelet_file, t_stamp3, class_3), 5, t_stamp3, class_3, plot3)
+    class_3 = dropdown6.value.split(' ')[1]
+    print('t_stamp3 is ' + str(t_stamp3))
+    print('class_3 is ' + class_3)
+
+    plot3 = draw_shapelet(select_shapelet(t_stamp3, class_3), 5, t_stamp3, class_3, plot3)
 
 dropdown1.on_change('value', update_dropdown1)
 dropdown2.on_change('value', update_dropdown2)

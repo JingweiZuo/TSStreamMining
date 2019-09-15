@@ -17,14 +17,14 @@ from bokeh.plotting import figure
 
 import utils.utils as util
 #Init variables
-data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015"
-dataset = data_directory + "/FordA/FordA_TRAIN"
+data_directory = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset"
+dataset = data_directory + "/Trace/Trace_TRAIN"
 t_stamp = 0
 window_size = 5
 forget_degree = 0
 TSClass = None
-plot_window = figure(plot_height=150, plot_width=500, title='New Incoming TS micro-batch', tools="reset")
-plot_all = figure(plot_height=150, plot_width=500, title='All historical TS')
+plot_window = figure(plot_height=150, plot_width=300, title='New Incoming TS micro-batch', tools="reset")
+plot_all = figure(plot_height=150, plot_width=300, title='All historical TS')
 
 # Set up widgets
 menu_C = [("Normal", "Class: 1"), ("Abnormal", "Class: -1")]
