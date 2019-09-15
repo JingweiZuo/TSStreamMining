@@ -15,17 +15,29 @@ from bokeh.models import ColumnDataSource, Legend
 from bokeh.models.widgets import Slider, TextInput, Button, Dropdown, CheckboxButtonGroup, RadioButtonGroup
 from bokeh.plotting import figure
 import os
-
+import utils.utils as util
 
 shapelet_file_stack10 = pd.read_csv("~/Desktop/PhD_study/Done/IEEEBigData2019/ISMAP_results/k10_w20_stack10_shap.csv")
 
 shapelet_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace'
+# dataset_Train
+dataset = shapelet_folder + '/' + shapelet_folder.split('/')[-1] + '_TRAIN'
+shap_df = pd.DataFrame([[0, 0, 0, 0, 0]],
+                               columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq',
+                                        'shap.score'])
 
 # Set up widgets
-#menu_T = [('160', "TStamp 160"), ('180', "TStamp 180"), ('200', "TStamp 200")]
-t_stampList = range(0, 1320, 10)
+m = 5 # window size
+
+dataset_list = util.load_dataset_list(dataset)
+class_repetitiveList = [ts.class_timeseries for ts in dataset_list]
+classList = list(dict.fromkeys(class_repetitiveList))
+t_stampList = range(0, len(dataset_list), m)
+#t_stampList = range(0, 1320, 10)
+#classList = ['1.0', '-1.0']
 menu_T = [(str(t), "TStamp "+str(t)) for t in t_stampList]
-menu_C = [('1.0', "Class 1.0"), ('-1.0', "Class -1.0")]
+menu_C = [(str(t), "Class "+str(t)) for t in classList]
+
 dropdown1 = Dropdown(label="Select Time Stamp", button_type="success", menu=menu_T)
 dropdown2 = Dropdown(label="Select Class", button_type="primary", menu=menu_C)
 dropdown3 = Dropdown(label="Select Time Stamp", button_type="success", menu=menu_T)
@@ -54,17 +66,16 @@ plot2.add_layout(legend2, 'right')
 plot3.add_layout(legend3, 'right')
 
 def select_shapelet(t_stamp, Class):
-    files_list = [f for f in os.listdir(shapelet_folder) if f.endswith('Shapelet.csv')]
+    global shap_df, t_stampList
+    files_list = [f for f in os.listdir(shapelet_folder) if f.endswith('ShapeletFile.csv')]
     if files_list:
         shap_df = pd.read_csv(shapelet_folder + '/' + files_list[0])
     else:
         shap_df = pd.DataFrame([[0, 0, 0, 0, 0]],
-                                     columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq',
-                                              'shap.score'])
+                               columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq',
+                                        'shap.score'])
 
-    t_stamp_df = shap_df['t_stamp'].drop_duplicates(keep='first', inplace=False)
-    t_stampList = list(t_stamp_df)
-    return shap_df[shap_df["t_stamp"]==int(t_stamp) & shap_df["shap.Class"]==float(Class)]
+    return shap_df[(shap_df["t_stamp"]==int(t_stamp)) & (shap_df["shap.Class"]==float(Class))]
 
 def draw_shapelet(shap_df, firstK, t_stamp, Class, plot):
     shap_subseq = shap_df['shap.subseq'].tolist()
@@ -122,10 +133,7 @@ def update_dropdown5(attrname, old, new):
 def update_dropdown6(attrname, old, new):
     global class_3, t_stamp3, plot3
     dropdown6.label = dropdown6.value
-    class_3 = dropdown6.value.split(' ')[1]
-    print('t_stamp3 is ' + str(t_stamp3))
-    print('class_3 is ' + class_3)
-
+    class_3 = dropdown6.value.split()[1]
     plot3 = draw_shapelet(select_shapelet(t_stamp3, class_3), 5, t_stamp3, class_3, plot3)
 
 dropdown1.on_change('value', update_dropdown1)
@@ -139,5 +147,8 @@ input1 = widgetbox(dropdown1, dropdown2)
 input2 = widgetbox(dropdown3, dropdown4)
 input3 = widgetbox(dropdown5, dropdown6)
 
+
 curdoc().add_root(row(column(input1, plot1, width=370), column(input2, plot2, width=370), column(input3, plot3, width=370)))
+
 curdoc().title = "Sliders"
+

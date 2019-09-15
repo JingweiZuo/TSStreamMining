@@ -17,8 +17,8 @@ from bokeh.plotting import figure
 
 import utils.utils as util
 #Init variables
-data_directory = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset"
-dataset = data_directory + "/Trace/Trace_TRAIN"
+dataset_folder = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace"
+dataset = dataset_folder + '/' + dataset_folder.split('/')[-1] + '_TRAIN'
 t_stamp = 0
 window_size = 5
 forget_degree = 0
