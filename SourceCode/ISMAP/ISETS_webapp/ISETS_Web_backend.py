@@ -36,7 +36,8 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
 
     ##############################Modified variable for Web GUI##############################
     global t_stamp, batch_loss, avg_loss, cum_loss, mincum_loss, PH, drift, drift_prev, inputTSBatch, TS_set, start_time
-    dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/' + dataset_name
+    dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/ISMAP/ISETS_webapp/uploaded_data/'
+    #dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/' + dataset_name
     start_time = time.time()
     m = util.min_length_dataset(dataset_list)
     print("Maximum length of shapelet is : " + str(m))
@@ -120,13 +121,13 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
         # ***********# The Output File Configuration #***********#
         # 1. Read Shapelet from file
         ShapeletFile = dataset_folder + "/ShapeletFile.csv"
-        ShapeletFile_list = [f for f in os.listdir(dataset_folder) if f.endswith('ShapeletFile.csv')]
+        '''ShapeletFile_list = [f for f in os.listdir(dataset_folder) if f.endswith('ShapeletFile.csv')]
         if ShapeletFile_list:
             df_old_shapelet = pd.read_csv(dataset_folder + '/' + ShapeletFile_list[0])
         else:
             df_old_shapelet = pd.DataFrame([[0, 0, 0, 0, 0]],
                                            columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq',
-                                                    'shap.score'])
+                                                    'shap.score'])'''
         # 2. Create new shapelet dataframe for new time tick
         for shap in shap_set:
             shap_info = [driftDetection.t_stamp, shap.name, shap.Class, str(shap.subseq), shap.normal_distance]
@@ -134,10 +135,11 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
                                    columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq', 'shap.score'])
             output_shapelet = output_shapelet.append(shap_pd)
         # 3. Concatenate old and new shapelet dataframes, and output into file.
-        df_old_shapelet.reset_index(drop=True, inplace=True)
+        #df_old_shapelet.reset_index(drop=True, inplace=True)
         output_shapelet.reset_index(drop=True, inplace=True)
-        df_old_shapelet = pd.concat([df_old_shapelet, output_shapelet], ignore_index=True)
-        df_old_shapelet.to_csv(ShapeletFile, index=False)
+        #df_old_shapelet = pd.concat([df_old_shapelet, output_shapelet], ignore_index=True)
+        #df_old_shapelet.to_csv(ShapeletFile, index=False)
+        output_shapelet.to_csv(ShapeletFile, index=False)
 
     return shap_set
 

@@ -10,7 +10,7 @@ from bokeh.io import show, curdoc
 from threading import Thread
 import pandas as pd
 import utils.utils as util
-import time
+import time, os
 from ISETS_Web_backend import account_api, global_structure
 
 import logging
@@ -35,24 +35,42 @@ stack_ratio = 1
 window_size = 5
 distance_measure = "mass_v2"
 TestDataset = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/'
+webapp_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/ISMAP/ISETS_webapp/'
+uploaded_datafolder = 'uploaded_data/'
+#os.system('bokeh serve bokeh-server.py bokeh-sliders.py --port 5006 --allow-websocket-origin=127.0.0.1:5000')
 
 @app.route('/')
 def index():
+
     return 'Hello World!'
 
 @app.route("/dashboard/", methods=['POST', 'GET'])
 def hello():
     #script=autoload_server(model=None,app_path="/bokeh-sliders",url="http://localhost:5006")
+    import subprocess
+    import signal
+    process = subprocess.Popen('bokeh serve bokeh-server.py bokeh-sliders.py --port 5006 --allow-websocket-origin=127.0.0.1:5000',shell=True)
+    time.sleep(2)
     bokeh_script=server_document("http://localhost:5006/bokeh-sliders")
     bokeh_server = server_document("http://localhost:5006/bokeh-server")
     pl_conceptDrift = plot_conceptDrift()
     global thread
+
     if request.method == 'POST':
         file = request.files['file']
         datasetName = secure_filename(file.filename)
-        file.save(datasetName)
+        # clear historical uploaded datasets
+        filelist = [f for f in os.listdir(webapp_folder + uploaded_datafolder) if f.endswith(".csv")]
+        for f in filelist:
+            os.remove(os.path.join(webapp_folder + uploaded_datafolder, f))
+        file.save(uploaded_datafolder + datasetName)
+
+        process.send_signal(signal.SIGINT)
+        #os.kill(process.pid, signal.CTRL_C_EVENT)
+        os.system('bokeh serve bokeh-server.py bokeh-sliders.py --port 5006 --allow-websocket-origin=127.0.0.1:5000')
         datasetNameNoPostfix = file.filename.split('_')[0]
-        TrainDataset = TestDataset + datasetNameNoPostfix + '/' + file.filename
+        #TrainDataset = TestDataset + datasetNameNoPostfix + '/' + file.filename
+        TrainDataset = webapp_folder + uploaded_datafolder + datasetName
         # to start a new Thread for computation, how to the transfer the parameters?
         if thread == None:
             thread = Thread(target=global_structure, args=(k, TrainDataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy))
