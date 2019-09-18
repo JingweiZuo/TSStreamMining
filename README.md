@@ -4,7 +4,7 @@ By adopting the concepts Shapelet and Matrix Profile, we conduct the first attem
 - For data source with stable concept, learning model will be updated incrementally; 
 - For data source with drifting concept, we extract the adaptive features under the most recent concept
 
-Main contributions:
+### Main contributions:
 
 1. A novel strategy to evaluate Shapelet, which shows the first attempt of transferring the techniques in Time Series community to Data Stream community 
 
