@@ -12,8 +12,8 @@ class driftDetection(object):
         self.theta = 1  # The slope of Sigmoid Function
 
         # Parameters for PH test of Concept Drift
-        self.tolerance = 0.1  # The loss tolerance for PH test
-        self.thresh_PH = 0.5  # Threshold of concept drift for PH test
+        self.tolerance = 0.3  # The loss tolerance for PH test
+        self.thresh_PH = 0.4  # Threshold of concept drift for PH test
 
         # Parameters for simple detection of Concept Drift
         self.thresh_loss = 0.45
@@ -96,7 +96,7 @@ class driftDetection(object):
             loss_batch = loss_batch / w
             if drift_strategy == "manual_set loss":
                 # Method 1: set manually a loss threshold, once the detected batch loss exceeds the threshold, then a drift is detected
-                if loss_batch <= self.thresh_loss - 0.15:
+                if loss_batch <= self.thresh_loss:
                     drift = False
             elif drift_strategy == "mean loss variance":
                 # Method 2: when batch loss exceeds the global average loss, a drift is detected
@@ -105,10 +105,7 @@ class driftDetection(object):
                 if loss_batch <= avg_loss_temp:
                     drift = False
             else:
-                # Method 3: when PH test value exceeds a manual-set threshold, a drift is detected
-                cum_loss_temp = self.cum_loss + loss_batch - self.avg_loss - self.tolerance
-                PH = cum_loss_temp - self.mincum_loss
-                if PH <= self.thresh_PH:
+                if loss_batch <= self.thresh_loss:
                     drift = False
             # eliminate the cached data, and adjust the existing parameters
             elim_num += 1

@@ -168,7 +168,7 @@ input2 = widgetbox(dropdown3, dropdown4)
 input3 = widgetbox(dropdown5, dropdown6)
 
 
-curdoc().add_root(row(column(input1, plot1, width=370), column(input2, plot2, width=370), column(input3, plot3, width=370)))
+curdoc().add_root(row(column(input1, plot1, width=400), column(input2, plot2, width=400), column(input3, plot3, width=400)))
 #curdoc().add_periodic_callback(update_dataset, 1000)
 curdoc().title = "Sliders"
 

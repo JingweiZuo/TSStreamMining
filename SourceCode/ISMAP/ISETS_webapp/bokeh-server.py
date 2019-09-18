@@ -14,11 +14,14 @@ from bokeh.layouts import row, column, widgetbox
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import Slider, Dropdown, CheckboxButtonGroup, RadioButtonGroup
 from bokeh.plotting import figure
-
+import os
 import utils.utils as util
 #Init variables
-dataset_folder = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace"
-dataset = dataset_folder + '/' + dataset_folder.split('/')[-1] + '_TRAIN'
+
+dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/ISMAP/ISETS_webapp/uploaded_data/'
+
+#dataset_folder = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace"
+#dataset = dataset_folder + '/' + dataset_folder.split('/')[-1] + '_TRAIN'
 t_stamp = 0
 window_size = 5
 forget_degree = 0
@@ -27,7 +30,13 @@ plot_window = figure(plot_height=150, plot_width=300, title='New Incoming TS mic
 plot_all = figure(plot_height=150, plot_width=300, title='All historical TS')
 
 # Set up widgets
-menu_C = [("Normal", "Class: 1"), ("Abnormal", "Class: -1")]
+filelist = [f for f in os.listdir(dataset_folder)]
+dataset = filelist[0]
+ts_list = util.load_dataset_list(dataset_folder+ dataset)
+class_repetitiveList = [ts.class_timeseries for ts in ts_list]
+classList = list(dict.fromkeys(class_repetitiveList))
+menu_C = [(str(t), "Class "+str(t)) for t in classList]
+
 class_select = Dropdown(label="Select Class", button_type="success", menu=menu_C)
 winSize_slider = Slider(start=0, end=20, value=5, step=1, title="Window Size")
 fDegree_slider = Slider(start=0, end=20, value=5, step=1, title="Forgetting Degree")

@@ -2,8 +2,8 @@ import pandas as pd
 from random import *
 # For testing the scenario of Time Series Stream, we need to adjust manually the data set to simulate the scenario.
 # Sampling the data set "ElectricDevices" into 3 equal-seized subsets with different concepts
-df_file_train = pd.read_csv("/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/ECG5000/ECG5000_TRAIN",header=None)
-df_file_test = pd.read_csv("/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/ECG5000/ECG5000_TEST",header=None)
+df_file_train = pd.read_csv("/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace/Trace_TRAIN",header=None)
+df_file_test = pd.read_csv("/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace/Trace_TEST",header=None)
 
 def df_partition(dataframe):
     class_df = dataframe[0].drop_duplicates(keep='first', inplace=False)
@@ -64,28 +64,16 @@ def add_noise_random_position(df_raw, degree, period_ratio, aug_time):
         df_full = df_full.append(df_copy)
     return df_full
 
-df_noised = add_noise_random_position(df_file_train, 0.01, 0.1, 5)
+df_noised = add_noise_random_position(df_file_test, 0.01, 0.1, 10)
 
 elemt1, elemt2 = df_partition(df_noised)
 df_list_origin, df_list = concept_construct(elemt1, elemt2, 3)
 
-folder_ConceptDriftFile = "/Users/Jingwei/Desktop/ISMAP_results/concept_drift_files/ECG5000"
-DriftFile_1 = folder_ConceptDriftFile + "/concept1.csv"
-DriftFile_2 = folder_ConceptDriftFile + "/concept2.csv"
-DriftFile_3 = folder_ConceptDriftFile + "/concept3.csv"
-DriftFile_full = folder_ConceptDriftFile + "/conceptFull.csv"
+folder_ConceptDriftFile = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/concept_drift_files/Trace"
+
+DriftFile_full = folder_ConceptDriftFile + "/conceptFull_test.csv"
 df_full = pd.DataFrame()
 for df in df_list:
     df_full = df_full.append(df)
 
-df_list[0].to_csv(DriftFile_1, index=False)
-df_list[1].to_csv(DriftFile_2, index=False)
-df_list[2].to_csv(DriftFile_3, index=False)
 df_full.to_csv(DriftFile_full, index=False)
-
-DriftFile_1_origin = folder_ConceptDriftFile + "/concept1_origin.csv"
-DriftFile_2_origin = folder_ConceptDriftFile + "/concept2_origin.csv"
-DriftFile_3_origin = folder_ConceptDriftFile + "/concept3_origin.csv"
-df_list_origin[0].to_csv(DriftFile_1_origin, index=False)
-df_list_origin[1].to_csv(DriftFile_2_origin, index=False)
-df_list_origin[2].to_csv(DriftFile_3_origin, index=False)

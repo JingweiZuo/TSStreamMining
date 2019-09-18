@@ -30,7 +30,7 @@ thread = None
 drift_strategy = "PH test"
 ###### Parameters for TS stream ######
 k = 10
-m_ratio = 0.05
+m_ratio = 0.1
 stack_ratio = 1
 window_size = 5
 distance_measure = "mass_v2"
@@ -89,7 +89,7 @@ def plot_conceptDrift():
     if drift_strategy == "manual_set loss":
         plot = figure(plot_height=300, plot_width=500, x_range=(0, 10000), y_range=(0, 1.1))
         plot.line('t_stamp', 'batch_loss', source=source, line_color="blue", legend="label_batch_loss", line_width=2)
-        plot.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)
+        plot.square('t_stamp', 'cacheData_num', source=source, color="red", legend="label_cacheData", size=5)
 
         plot_mem = figure(plot_height=300, plot_width=500, x_range=(0, 2000), y_range=(0, 100))
         plot_mem.line('sys_time', 'memory', source=source, line_color="blue", legend="label_memory", line_width=2)
@@ -102,7 +102,7 @@ def plot_conceptDrift():
         plot = figure(plot_height=300, plot_width=500, x_range=(0, 10000), y_range=(0, 1.1))
         plot.line('t_stamp', 'avg_loss', source=source, line_color="red", legend="label_avg_loss", line_width=2)
         plot.line('t_stamp', 'batch_loss', source=source, line_color="blue", legend="label_batch_loss", line_width=2)
-        plot.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)
+        plot.square('t_stamp', 'cacheData_num', source=source, color="red", legend="label_cacheData", size=5)
         plot_mem = figure(plot_height=300, plot_width=500, x_range=(0, 6000), y_range=(0, 100))
         plot_mem.extra_y_ranges = {"foo": Range1d(start=0, end=300)}
         plot_mem.add_layout(LinearAxis(y_range_name="foo"), 'right')
@@ -110,21 +110,17 @@ def plot_conceptDrift():
         plot_mem.line('sys_time', 'nbr_TS', source=source, y_range_name="foo", line_color="red", legend="label_nbrTS", line_width=2)
         return components(row(plot, plot_mem))
     else:
-        plot1 = figure(plot_height=300, plot_width=350, x_range=(0, 2200), y_range=(0, 1.1))
-        '''plot1.line('t_stamp', 'avg_loss', source=source, line_color="red", legend="label_avg_loss", line_width=2)
+        plot1 = figure(plot_height=300, plot_width=350, x_range=(0, 1200), y_range=(0, 1.1))
+        plot1.line('t_stamp', 'avg_loss', source=source, line_color="red", legend="label_avg_loss", line_width=2)
         plot1.line('t_stamp', 'batch_loss', source=source, line_color="blue", legend="label_batch_loss", line_width=2)
-        plot1.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)'''
-        plot1.line('t_stamp', 'avg_loss', source=source, line_color="red", line_width=2)
-        plot1.line('t_stamp', 'batch_loss', source=source, line_color="blue", line_width=2)
-        plot1.square('t_stamp', 'drift_num', source=source, color="orange", size=5)
-        plot2 = figure(plot_height=300, plot_width=350, x_range=(0, 2200), y_range=(-3, 3))
+        plot1.square('t_stamp', 'cacheData_num', source=source, color="red", legend="cacheData", size=3)
+
+        plot2 = figure(plot_height=300, plot_width=350, x_range=(0, 1200), y_range=(-3, 3))
         #plot2.line('t_stamp', 'cum_loss', source=source, line_color="red", legend="label_cum_loss", line_width=2)
         #plot2.line('t_stamp', 'mincum_loss', source=source, line_color="blue", legend="label_mincum_loss", line_width=2)
-        '''plot2.line('t_stamp', 'PH', source=source, line_color="black", legend="label_PH", line_width=2)
-        plot2.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)'''
-        plot2.line('t_stamp', 'PH', source=source, line_color="black", line_width=2)
-        plot2.square('t_stamp', 'drift_num', source=source, color="orange", size=5)
-        plot_mem = figure(plot_height=300, plot_width=350, x_range=(0, 3000), y_range=(0, 100))
+        plot2.line('t_stamp', 'PH', source=source, line_color="black", legend="label_PH", line_width=2)
+        plot2.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)
+        plot_mem = figure(plot_height=300, plot_width=350, x_range=(0, 2000), y_range=(0, 100))
         plot_mem.extra_y_ranges = {"foo": Range1d(start=0, end=200)}
         plot_mem.add_layout(LinearAxis(y_range_name="foo"), 'right')
         plot_mem.line('sys_time', 'memory', source=source, line_color="blue", legend="label_memory", line_width=2)

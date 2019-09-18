@@ -24,6 +24,7 @@ PH = 0.0
 
 drift = False
 drift_prev = False
+cacheData = False
 inputTSBatch = []
 TS_set = []
 
@@ -35,7 +36,7 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
     dataset_list = util.load_dataset_list(train_dataset)
 
     ##############################Modified variable for Web GUI##############################
-    global t_stamp, batch_loss, avg_loss, cum_loss, mincum_loss, PH, drift, drift_prev, inputTSBatch, TS_set, start_time
+    global t_stamp, batch_loss, avg_loss, cum_loss, mincum_loss, PH, drift, cacheData, drift_prev, inputTSBatch, TS_set, start_time
     dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/ISMAP/ISETS_webapp/uploaded_data/'
     #dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/' + dataset_name
     start_time = time.time()
@@ -102,6 +103,7 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
         # 2. the observed loss exceeds the threshold, we need to update it under the static concept
         if drift == True or batch_loss>=thresh_loss:
             ################# Shapelet Update #################
+            cacheData = True
             TS_set, MP_set_all = mb.memory_cache_all_length(TS_set, MP_set_all, stack_size, inputTSBatch, m_list,
                                                             distance_measure)
             shap_set = sb.extract_shapelet_all_length(k, TS_set, MP_set_all, m_list)
@@ -112,12 +114,15 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
                 print("MARKER3.2: batch_loss>=thresh_loss")
             print("len(TS_set) is: " + str(len(TS_set)), ", len(MP_set_all) is: " + str(len(MP_set_all)) + "\n")
         elif drift_prev == True:
+            cacheData = False
             # a Concept Transition event, active caching mechanism kick-off
             print("MARKER4: before a Drift transition, len(TS_set) is: " + str(len(TS_set)),
                   ", len(MP_set_all) is: " + str(len(MP_set_all)))
-            TS_set, MP_set_all= mb.elastic_caching_mechanism(TS_set, MP_set_all, shap_set, window_size, driftDetection)
+            TS_set, MP_set_all= mb.elastic_caching_mechanism(TS_set, MP_set_all, shap_set, window_size, driftDetection, drift_strategy)
             drift_prev = False
             print("After a Drift transition, len(TS_set) is: " + str(len(TS_set)), ", len(MP_set_all) is: " + str(len(MP_set_all)) + "\n")
+        else:
+            cacheData = False
         # ***********# The Output File Configuration #***********#
         # 1. Read Shapelet from file
         ShapeletFile = dataset_folder + "/ShapeletFile.csv"
@@ -147,20 +152,24 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
 #Question: How to receive the information from GUI and react with it?
 @account_api.route('/ConceptDrift/', methods=['POST'])
 def data_ConceptDrft():
-    global t_stamp, batch_loss, avg_loss, cum_loss, mincum_loss, PH, drift, inputTSBatch, TS_set, start_time
+    global t_stamp, batch_loss, avg_loss, cum_loss, mincum_loss, PH, drift, cacheData, inputTSBatch, TS_set, start_time
     if drift == True:
         drift_num = 1
     else:
         drift_num = -10
+    if cacheData == True:
+        cacheData_num = 1
+    else:
+        cacheData_num = -10
     mem = ps.virtual_memory().percent
     sys_time = time.time() - start_time
     if start_time == 0:
         mem = 0
         sys_time = 0
     return jsonify(t_stamp=[t_stamp], batch_loss=[batch_loss], avg_loss=[avg_loss], cum_loss=[cum_loss],
-                   mincum_loss=[mincum_loss], PH=[PH], drift_num=[drift_num],
+                   mincum_loss=[mincum_loss], PH=[PH], drift_num=[drift_num], cacheData_num = [cacheData_num],
                    label_batch_loss=['batch_loss'], label_avg_loss=['avg_loss'], label_cum_loss=['cum_loss'],
-                   label_mincum_loss=['mincum_loss'], label_PH=['PH'], label_concept_drift=['concept drift area'],
+                   label_mincum_loss=['mincum_loss'], label_PH=['PH'], label_concept_drift=['concept drift area'], label_cacheData = ['cache instance'],
                    sys_time=[sys_time], memory = [mem], label_memory=['memory cost'],
                    nbr_TS=[len(TS_set)], label_nbrTS=['nbr. TS cached'])
 
