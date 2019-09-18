@@ -8,17 +8,18 @@ Main contributions:
 
 1. A novel strategy to evaluate Shapelet, which shows the first attempt of transferring the techniques in Time Series community to Data Stream community 
 
-   <img src="Loss_Func_Plot.pdf" width="50%" height="50%" />  
+   <img src="figures/Loss_Func_Plot.png" width="50%" height="50%" />  
    Figure 1. Shapelet Evaluation by a loss-smoothed  approach.
 
 2. Test-then-Train Stategy: The novel strategy, not only accelerates the incremental Shapelet extraction in stable-concept context, but also helps with detecting Concept Drift in streaming context.
 
-   <img src="ISETS_Structure_BN.pdf" width="60%" height="60%" />
+   <img src="figures/ISETS_Structure_BN.png" width="60%" height="60%" />
 
 3. Elastic Caching Mechanism in Streaming context
 
-   <img src="Caching_mechanism_part.pdf" width="80%" height="80%" />
+   <img src="figures/Caching_mechanism_part.png" width="80%" height="80%" />
 
 4. Scalability & Explainability 
+
 5. Traceability of extracted features
 
