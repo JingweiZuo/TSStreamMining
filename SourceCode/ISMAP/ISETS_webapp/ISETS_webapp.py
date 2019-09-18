@@ -4,7 +4,7 @@ from bokeh.embed import server_document, components
 from werkzeug.utils import secure_filename
 from bokeh.plotting import figure
 from bokeh.layouts import gridplot, row, column, widgetbox
-from bokeh.models import ColumnDataSource, AjaxDataSource, LinearAxis, Range1d
+from bokeh.models import ColumnDataSource, AjaxDataSource, LinearAxis, Range1d, Span, Legend
 from bokeh.models.widgets import Slider, TextInput, Button, Dropdown, CheckboxButtonGroup, RadioButtonGroup
 from bokeh.io import show, curdoc
 from threading import Thread
@@ -51,7 +51,7 @@ def hello():
     import signal
     process = subprocess.Popen('bokeh serve bokeh-server.py bokeh-sliders.py --port 5006 --allow-websocket-origin=127.0.0.1:5000',shell=True)
     time.sleep(2)
-    bokeh_script=server_document("http://localhost:5006/bokeh-sliders")
+    bokeh_script = server_document("http://localhost:5006/bokeh-sliders")
     bokeh_server = server_document("http://localhost:5006/bokeh-server")
     pl_conceptDrift = plot_conceptDrift()
     global thread
@@ -113,18 +113,24 @@ def plot_conceptDrift():
         plot1 = figure(plot_height=300, plot_width=350, x_range=(0, 1200), y_range=(0, 1.1))
         plot1.line('t_stamp', 'avg_loss', source=source, line_color="red", legend="label_avg_loss", line_width=2)
         plot1.line('t_stamp', 'batch_loss', source=source, line_color="blue", legend="label_batch_loss", line_width=2)
-        plot1.square('t_stamp', 'cacheData_num', source=source, color="red", legend="cacheData", size=3)
+        plot1.square('t_stamp', 'cacheData_num', source=source, color="red", legend="cacheData", size=1)
+        hline1 = Span(location=0.5, dimension='width', line_color='red', line_width=2, line_dash='dashed')
+        plot1.add_layout(hline1)
 
         plot2 = figure(plot_height=300, plot_width=350, x_range=(0, 1200), y_range=(-3, 3))
         #plot2.line('t_stamp', 'cum_loss', source=source, line_color="red", legend="label_cum_loss", line_width=2)
         #plot2.line('t_stamp', 'mincum_loss', source=source, line_color="blue", legend="label_mincum_loss", line_width=2)
         plot2.line('t_stamp', 'PH', source=source, line_color="black", legend="label_PH", line_width=2)
         plot2.square('t_stamp', 'drift_num', source=source, color="orange", legend="label_concept_drift", size=5)
-        plot_mem = figure(plot_height=300, plot_width=350, x_range=(0, 2000), y_range=(0, 100))
-        plot_mem.extra_y_ranges = {"foo": Range1d(start=0, end=200)}
+        hline2 = Span(location=0.4, dimension='width', line_color='black', line_width=2, line_dash='dashed')
+        plot2.add_layout(hline2)
+
+        plot_mem = figure(plot_height=300, plot_width=350, x_range=(0, 600), y_range=(0, 100))
+        plot_mem.extra_y_ranges = {"foo": Range1d(start=0, end=150)}
         plot_mem.add_layout(LinearAxis(y_range_name="foo"), 'right')
         plot_mem.line('sys_time', 'memory', source=source, line_color="blue", legend="label_memory", line_width=2)
         plot_mem.line('sys_time', 'nbr_TS', source=source, y_range_name="foo", line_color="red", legend="label_nbrTS", line_width=2)
+
         return components(row(plot1, plot2, plot_mem))
 
 if __name__ == "__main__":

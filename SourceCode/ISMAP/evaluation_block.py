@@ -12,11 +12,11 @@ class driftDetection(object):
         self.theta = 1  # The slope of Sigmoid Function
 
         # Parameters for PH test of Concept Drift
-        self.tolerance = 0.3  # The loss tolerance for PH test
+        self.tolerance = 0.15  # The loss tolerance for PH test
         self.thresh_PH = 0.4  # Threshold of concept drift for PH test
 
         # Parameters for simple detection of Concept Drift
-        self.thresh_loss = 0.45
+        self.thresh_loss = 0.5
 
     #sigmoid = lambda x: 1 / (1 + np.exp(-x))
     def sigmoid(self, x, theta, x0):
@@ -105,7 +105,7 @@ class driftDetection(object):
                 if loss_batch <= avg_loss_temp:
                     drift = False
             else:
-                if loss_batch <= self.thresh_loss:
+                if loss_batch <= self.thresh_loss - 0.3:
                     drift = False
             # eliminate the cached data, and adjust the existing parameters
             elim_num += 1

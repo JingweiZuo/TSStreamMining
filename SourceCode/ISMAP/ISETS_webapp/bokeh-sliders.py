@@ -21,11 +21,9 @@ shapelet_file_stack10 = pd.read_csv("~/Desktop/PhD_study/Done/IEEEBigData2019/IS
 
 #shapelet_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/Trace'
 shapelet_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/ISMAP/ISETS_webapp/uploaded_data/'
-filelist = [f for f in os.listdir(shapelet_folder)]
+filelist = [f for f in os.listdir(shapelet_folder) if f.endswith('Train.csv')]
 dataset = filelist[0]
 
-# dataset_Train
-#dataset = shapelet_folder + '/' + shapelet_folder.split('/')[-1] + '_TRAIN'
 shap_df = pd.DataFrame([[0, 0, 0, 0, 0]],
                                columns=['t_stamp', 'shap.name', 'shap.Class', 'shap.subseq',
                                         'shap.score'])

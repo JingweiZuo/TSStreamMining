@@ -29,8 +29,7 @@ inputTSBatch = []
 TS_set = []
 
 #Parameter to configure
-thresh_loss = 0.45
-dataset_name = 'Trace'
+thresh_loss = 0.5
 
 def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy):
     dataset_list = util.load_dataset_list(train_dataset)
@@ -38,7 +37,6 @@ def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distan
     ##############################Modified variable for Web GUI##############################
     global t_stamp, batch_loss, avg_loss, cum_loss, mincum_loss, PH, drift, cacheData, drift_prev, inputTSBatch, TS_set, start_time
     dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/SourceCode/ISMAP/ISETS_webapp/uploaded_data/'
-    #dataset_folder = '/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/' + dataset_name
     start_time = time.time()
     m = util.min_length_dataset(dataset_list)
     print("Maximum length of shapelet is : " + str(m))
@@ -168,8 +166,8 @@ def data_ConceptDrft():
         sys_time = 0
     return jsonify(t_stamp=[t_stamp], batch_loss=[batch_loss], avg_loss=[avg_loss], cum_loss=[cum_loss],
                    mincum_loss=[mincum_loss], PH=[PH], drift_num=[drift_num], cacheData_num = [cacheData_num],
-                   label_batch_loss=['batch_loss'], label_avg_loss=['avg_loss'], label_cum_loss=['cum_loss'],
-                   label_mincum_loss=['mincum_loss'], label_PH=['PH'], label_concept_drift=['concept drift area'], label_cacheData = ['cache instance'],
+                   label_batch_loss=['Lc(t)'], label_avg_loss=['Lavg(t)'], label_cum_loss=['cum_loss'],
+                   label_mincum_loss=['mincum_loss'], label_PH=['PH'], label_concept_drift=['concept drift detected'], label_cacheData = ['cache instance'],
                    sys_time=[sys_time], memory = [mem], label_memory=['memory cost'],
                    nbr_TS=[len(TS_set)], label_nbrTS=['nbr. TS cached'])
 

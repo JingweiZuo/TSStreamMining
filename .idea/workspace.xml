@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d1b0895b-7bad-451e-b65d-d7b718530590" name="Default" comment="Shapelet Ranking update in real-time is done! To optimize the Concept Drift Detection GUI.">
+    <list default="true" id="d1b0895b-7bad-451e-b65d-d7b718530590" name="Default" comment="Concept Drift Detection GUI is almost done. Some details to optimize!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_Web_backend.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_Web_backend.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_webapp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-server.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/memory_block.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/memory_block.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -94,11 +94,11 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="css" value="1" />
-          <entry key="html" value="53" />
+          <entry key="html" value="55" />
           <entry key="iml" value="1" />
           <entry key="ipynb" value="36" />
           <entry key="jpg" value="2" />
-          <entry key="py" value="435" />
+          <entry key="py" value="437" />
           <entry key="vmoptions" value="1" />
           <entry key="xml" value="2" />
         </counts>
@@ -106,12 +106,12 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSS" value="1" />
-          <entry key="HTML" value="53" />
+          <entry key="HTML" value="55" />
           <entry key="IDEA_MODULE" value="1" />
           <entry key="IPNB" value="36" />
           <entry key="Image" value="2" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="435" />
+          <entry key="Python" value="437" />
           <entry key="XML" value="2" />
         </counts>
       </usages-collector>
@@ -120,18 +120,18 @@
           <entry key="Python Console" value="39" />
           <entry key="css" value="12" />
           <entry key="dummy" value="94" />
-          <entry key="html" value="2837" />
-          <entry key="py" value="61356" />
-          <entry key="txt" value="1696" />
+          <entry key="html" value="2839" />
+          <entry key="py" value="61650" />
+          <entry key="txt" value="1752" />
           <entry key="vmoptions" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="12" />
-          <entry key="HTML" value="2837" />
-          <entry key="PLAIN_TEXT" value="1791" />
-          <entry key="Python" value="61395" />
+          <entry key="HTML" value="2839" />
+          <entry key="PLAIN_TEXT" value="1847" />
+          <entry key="Python" value="61689" />
         </counts>
       </usages-collector>
     </session>
@@ -144,8 +144,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_Web_backend.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="31" column="18" selection-start-line="31" selection-start-column="18" selection-end-line="31" selection-end-column="18" />
+            <state relative-caret-position="141">
+              <caret line="169" column="115" selection-start-line="169" selection-start-column="115" selection-end-line="169" selection-end-column="115" />
               <folding>
                 <element signature="e#0#69#0" expanded="true" />
               </folding>
@@ -154,19 +154,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISMAP.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="47" column="46" selection-start-line="47" selection-start-column="46" selection-end-line="47" selection-end-column="46" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/memory_block.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="284">
-              <caret line="82" column="105" selection-start-line="82" selection-start-column="91" selection-end-line="82" selection-end-column="105" />
+            <state relative-caret-position="1185">
+              <caret line="82" column="101" selection-start-line="82" selection-start-column="98" selection-end-line="82" selection-end-column="101" />
             </state>
           </provider>
         </entry>
@@ -174,8 +165,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="74" column="25" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="25" />
+            <state relative-caret-position="-1337">
+              <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -184,19 +175,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SourceCode/test.ipynb">
-          <provider selected="true" editor-type-id="ipnb-editor">
-            <state>
-              <selected id="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1140">
-              <caret line="77" selection-start-line="77" selection-end-line="77" />
+            <state relative-caret-position="267">
+              <caret line="75" column="18" selection-start-line="75" selection-start-column="18" selection-end-line="75" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -204,8 +186,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_webapp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="580">
-              <caret line="66" selection-start-line="66" selection-end-line="66" />
+            <state relative-caret-position="133">
+              <caret line="127" column="72" selection-start-line="127" selection-start-column="72" selection-end-line="127" selection-end-column="72" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
               </folding>
@@ -213,40 +195,46 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="76" selection-start-line="76" selection-end-line="76" />
+            <state relative-caret-position="140">
+              <caret line="34" column="53" selection-start-line="34" selection-start-column="53" selection-end-line="34" selection-end-column="53" />
               <folding>
                 <element signature="e#392#410#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="35" column="12" selection-start-line="35" selection-end-line="35" selection-end-column="12" />
-              <folding>
-                <element signature="e#392#410#0" expanded="true" />
-                <marker date="1568771938752" expanded="true" signature="7341:7342" ph="..." />
-                <marker date="1568771938752" expanded="true" signature="7341:7343" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SourceCode/SMAP/SMAP.py">
+        <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+            <state relative-caret-position="587">
+              <caret line="167" selection-start-line="167" selection-end-line="167" />
               <folding>
-                <element signature="e#40#71#0" expanded="true" />
+                <element signature="e#392#410#0" expanded="true" />
+                <marker date="1568809009659" expanded="true" signature="7275:7276" ph="..." />
+                <marker date="1568809009659" expanded="true" signature="7275:7277" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2">
+              <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/utils/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="116" column="24" selection-start-line="116" selection-start-column="24" selection-end-line="116" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -264,20 +252,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>concat</find>
-      <find>fir</find>
-      <find>first</find>
-      <find>visible</find>
-      <find>type</find>
-      <find>update</find>
-      <find>select</find>
-      <find>line</find>
-      <find>TestDataset</find>
-      <find>shap_set</find>
-      <find>w</find>
-      <find>window_size</find>
-      <find>mean loss variance</find>
-      <find>dataset_name</find>
       <find>global_structure</find>
       <find>batch_loss</find>
       <find>dataset_folder</find>
@@ -287,13 +261,27 @@
       <find>ConceptDrift</find>
       <find>elasti</find>
       <find>shapelet_folder</find>
-      <find>dataset_list</find>
       <find>driftDet</find>
       <find>driftDetection</find>
       <find>drift_strategy</find>
       <find>eliminate_caching</find>
-      <find>thresh_loss</find>
+      <find>dataset_name</find>
       <find>leg</find>
+      <find>trace</find>
+      <find>dataset_list</find>
+      <find>menu_C</find>
+      <find>TSClass</find>
+      <find>ts_li</find>
+      <find>server</find>
+      <find>draw_TS</find>
+      <find>size of</find>
+      <find>label</find>
+      <find>bokeh_server</find>
+      <find>thresh_loss</find>
+      <find>train</find>
+      <find>legen</find>
+      <find>1507</find>
+      <find>forget</find>
     </findStrings>
     <replaceStrings>
       <replace>concept_drift_plot</replace>
@@ -393,15 +381,15 @@
         <option value="$PROJECT_DIR$/venv/ISETS/ISETS_webapp/bokeh-sliders.py" />
         <option value="$PROJECT_DIR$/SourceCode/ISETS/ISETS_webapp/bokeh-sliders.py" />
         <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISMAP.py" />
-        <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html" />
         <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/utils/utils.py" />
         <option value="$PROJECT_DIR$/SourceCode/ISMAP/memory_block.py" />
+        <option value="$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py" />
+        <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py" />
+        <option value="$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py" />
+        <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html" />
+        <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_Web_backend.py" />
         <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_webapp.py" />
         <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-server.py" />
-        <option value="$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py" />
-        <option value="$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py" />
-        <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_Web_backend.py" />
-        <option value="$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py" />
       </list>
     </option>
   </component>
@@ -481,6 +469,14 @@
               <item name="SourceCode" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="ISMAP" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="ISETS_webapp" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="TimeSeriesStreamMining" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="SourceCode" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="ISMAP" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="ISETS_webapp" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="templates" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
             <path>
               <item name="TimeSeriesStreamMining" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
@@ -1051,7 +1047,14 @@
       <option name="project" value="LOCAL" />
       <updated>1568762115952</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Concept Drift Detection GUI is almost done. Some details to optimize!">
+      <created>1568772058682</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1568772058682</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1072,7 +1075,7 @@
       <window_info id="Favorites" order="2" sideWeight="0.50166667" side_tool="true" weight="0.2248062" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4997367" weight="0.29637307" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5650342" visible="true" weight="0.2874494" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5650342" visible="true" weight="0.3900135" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49710375" weight="0.39606127" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1177,7 +1180,6 @@
       <path value="$PROJECT_DIR$/venv////jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr" />
       <path value="$PROJECT_DIR$/venv////jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr/venv/jingwei@s6.adam.uvsq.fr" />
     </ignored-roots>
-    <MESSAGE value="Plot the diagrams for Shapelet's Discovery:&#10;1. Distance between TS and all TS in the same class&#10;2. Distance between TS and all TS in different classes&#10;3. By Difference of the Distance, extract the Shapelets" />
     <MESSAGE value="Final version of Basic Shaplet Discovery based on Matrix Profile" />
     <MESSAGE value="First template version of Variable-Length Query based Matrix Profile for Shapelet Discovery, have added the functions:&#10;- computeIterateMP()&#10;- updateMP()&#10;- updateParaT()&#10;for similarity measure:&#10;- computLB()" />
     <MESSAGE value="First template version of Variable-Length Query based Matrix Profile for Shapelet Discovery, have added the functions:&#10;- computeIterateMP()&#10;- updateMP()&#10;- updateParaT()&#10;for similarity measure:&#10;- computLB()&#10;&#10;the logic of the new algorithm is complete, need to implement some branch methods" />
@@ -1202,7 +1204,8 @@
     <MESSAGE value="GUI is OK, to handle the problem of Shapelet Query error" />
     <MESSAGE value="Shapelet Query error is solved, to optimize the demo scenario" />
     <MESSAGE value="Shapelet Ranking update in real-time is done! To optimize the Concept Drift Detection GUI." />
-    <option name="LAST_COMMIT_MESSAGE" value="Shapelet Ranking update in real-time is done! To optimize the Concept Drift Detection GUI." />
+    <MESSAGE value="Concept Drift Detection GUI is almost done. Some details to optimize!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Concept Drift Detection GUI is almost done. Some details to optimize!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1435,13 +1438,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/dashboard.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SourceCode/SE4TeC_demo/GUI.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="236">
@@ -1476,27 +1472,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="91" column="22" selection-start-line="91" selection-start-column="10" selection-end-line="91" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/utils/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="151" column="4" selection-start-line="151" selection-start-column="4" selection-end-line="151" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/utils/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="125" column="42" selection-start-line="125" selection-start-column="40" selection-end-line="125" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SourceCode/SMAP/MatrixProfile.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
@@ -1524,13 +1499,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1140">
-          <caret line="77" selection-start-line="77" selection-end-line="77" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SourceCode/test.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -1538,68 +1506,103 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/utils/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="93" column="42" selection-start-line="93" selection-start-column="33" selection-end-line="93" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/utils/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="116" column="24" selection-start-line="116" selection-start-column="24" selection-end-line="116" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISMAP.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="47" column="46" selection-start-line="47" selection-start-column="46" selection-end-line="47" selection-end-column="46" />
+        <state relative-caret-position="108">
+          <caret line="139" column="168" selection-start-line="139" selection-start-column="163" selection-end-line="139" selection-end-column="168" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-server.py">
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/preprocessing/TS_stream_preprocess.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="76" selection-start-line="76" selection-end-line="76" />
-          <folding>
-            <element signature="e#392#410#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="74" column="25" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/memory_block.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="82" column="105" selection-start-line="82" selection-start-column="91" selection-end-line="82" selection-end-column="105" />
+        <state relative-caret-position="267">
+          <caret line="75" column="18" selection-start-line="75" selection-start-column="18" selection-end-line="75" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_Web_backend.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="31" column="18" selection-start-line="31" selection-start-column="18" selection-end-line="31" selection-end-column="18" />
+        <state relative-caret-position="141">
+          <caret line="169" column="115" selection-start-line="169" selection-start-column="115" selection-end-line="169" selection-end-column="115" />
           <folding>
             <element signature="e#0#69#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_webapp.py">
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/dashboard.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="66" selection-start-line="66" selection-end-line="66" />
+        <state relative-caret-position="105">
+          <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/templates/hello.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2">
+          <caret line="76" column="14" selection-start-line="76" selection-start-column="14" selection-end-line="76" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/memory_block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1185">
+          <caret line="82" column="101" selection-start-line="82" selection-start-column="98" selection-end-line="82" selection-end-column="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/evaluation_block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1337">
+          <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
           <folding>
-            <element signature="e#0#91#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-sliders.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="35" column="12" selection-start-line="35" selection-end-line="35" selection-end-column="12" />
+        <state relative-caret-position="587">
+          <caret line="167" selection-start-line="167" selection-end-line="167" />
           <folding>
             <element signature="e#392#410#0" expanded="true" />
-            <marker date="1568771938752" expanded="true" signature="7341:7342" ph="..." />
-            <marker date="1568771938752" expanded="true" signature="7341:7343" ph="..." />
+            <marker date="1568809009659" expanded="true" signature="7275:7276" ph="..." />
+            <marker date="1568809009659" expanded="true" signature="7275:7277" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/ISETS_webapp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="127" column="72" selection-start-line="127" selection-start-column="72" selection-end-line="127" selection-end-column="72" />
+          <folding>
+            <element signature="e#0#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SourceCode/ISMAP/ISETS_webapp/bokeh-server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="34" column="53" selection-start-line="34" selection-start-column="53" selection-end-line="34" selection-end-column="53" />
+          <folding>
+            <element signature="e#392#410#0" expanded="true" />
           </folding>
         </state>
       </provider>

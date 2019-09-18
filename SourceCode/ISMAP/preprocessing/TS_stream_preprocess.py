@@ -64,14 +64,14 @@ def add_noise_random_position(df_raw, degree, period_ratio, aug_time):
         df_full = df_full.append(df_copy)
     return df_full
 
-df_noised = add_noise_random_position(df_file_test, 0.01, 0.1, 10)
+df_noised = add_noise_random_position(df_file_train, 0.01, 0.1, 5)
 
 elemt1, elemt2 = df_partition(df_noised)
 df_list_origin, df_list = concept_construct(elemt1, elemt2, 3)
 
 folder_ConceptDriftFile = "/Users/Jingwei/PycharmProjects/use_reconstruct/TestDataset/concept_drift_files/Trace"
 
-DriftFile_full = folder_ConceptDriftFile + "/conceptFull_test.csv"
+DriftFile_full = folder_ConceptDriftFile + "/conceptFullIncreaseDegree5.csv"
 df_full = pd.DataFrame()
 for df in df_list:
     df_full = df_full.append(df)
