@@ -9,6 +9,7 @@ By adopting the concepts Shapelet and Matrix Profile, we conduct the first attem
 1. A novel strategy to evaluate Shapelet, which shows the first attempt of transferring the techniques in Time Series community to Data Stream community 
 
    <img src="figures/Loss_Func_Plot.png" width="50%" height="50%" />  
+
    Figure 1. Shapelet Evaluation by a loss-smoothed  approach.
 
 2. Test-then-Train Stategy: The novel strategy, not only accelerates the incremental Shapelet extraction in stable-concept context, but also helps with detecting Concept Drift in streaming context.
