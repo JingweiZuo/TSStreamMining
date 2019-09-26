@@ -1,7 +1,7 @@
 ## Incremental and Adaptive Feature Exploration over Time Series Stream
 <p align="right">DAVID Lab <br/> Unversity of Versaille Saint-Quentin (UVSQ)<br/> Université Paris-Saclay</p>
 
-## The demonstration video can be found here -> [Adaptive features over TS Stream - Demo](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
+## A demonstration video can be found here -> [Adaptive features over TS Stream - Demo](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
 
 By adopting the concepts Shapelet and Matrix Profile, we conduct the first attempt to extract the adaptive features from Time Series Stream, two streaming contexts are considered: 
 - For data source with stable concept, learning model will be updated incrementally; 
