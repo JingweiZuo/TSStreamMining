@@ -31,7 +31,7 @@ TS_set = []
 #Parameter to configure
 thresh_loss = 0.5
 
-def global_structure(k, train_dataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy):
+def adaptive_feature_extraction(k, train_dataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy):
     dataset_list = util.load_dataset_list(train_dataset)
 
     ##############################Modified variable for Web GUI##############################

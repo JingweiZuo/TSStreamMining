@@ -74,7 +74,6 @@ def draw_TS():
                 x = range(len(ts.timeseries))
                 y = ts.timeseries
                 plot_window.line(x, y, line_width=1, name = str(t_stamp))
-
     if t_stamp + window_size < 50:
         if plot_all.select({'name': str(t_stamp-window_size)}) != None:
             line2 = plot_all.select({'name': str(t_stamp-window_size)})

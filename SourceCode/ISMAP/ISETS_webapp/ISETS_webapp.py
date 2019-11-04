@@ -11,7 +11,7 @@ from threading import Thread
 import pandas as pd
 import utils.utils as util
 import time, os
-from ISETS_Web_backend import account_api, global_structure
+from ISETS_Web_backend import account_api, adaptive_feature_extraction
 
 import logging
 log = logging.getLogger('werkzeug')
@@ -73,7 +73,7 @@ def hello():
         TrainDataset = webapp_folder + uploaded_datafolder + datasetName
         # to start a new Thread for computation, how to the transfer the parameters?
         if thread == None:
-            thread = Thread(target=global_structure, args=(k, TrainDataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy))
+            thread = Thread(target=adaptive_feature_extraction, args=(k, TrainDataset, m_ratio, stack_ratio, window_size, distance_measure, drift_strategy))
             thread.start()
     return render_template('hello.html',bokeh_slider=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)
 
