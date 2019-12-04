@@ -1,5 +1,6 @@
 ## Incremental and Adaptive Feature Exploration over Time Series Stream
 <p align="right">DAVID Lab <br/> Unversity of Versaille Saint-Quentin (UVSQ)<br/> Université Paris-Saclay</p>
+
 ### A demonstration video can be found here -> [Demo Video](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
 </br>
 
