@@ -1,11 +1,11 @@
 ## Incremental and Adaptive Feature Exploration over Time Series Stream
 <p align="right">DAVID Lab <br/> Unversity of Versaille Saint-Quentin (UVSQ)<br/> Université Paris-Saclay</p>
 
-### A demonstration video can be found here -> [Demo Video](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
+### A demonstration video [1] can be found here -> [Demo Video](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
 </br>
 
 
-By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the first attempt to extract the incremental and adaptive features from Time Series Stream:
+By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the first attempt to extract the incremental and adaptive features from Time Series Stream:
 - For data source with stable concept, learning model will be updated incrementally; 
 - For data source with Concept Drift, we extract the adaptive Shapelets under the most recent concept;
 - An elastic caching mechanism allows to tackle the infinite TS instances in streaming context. 
@@ -47,16 +47,17 @@ By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the fir
 
 4. Scalability & Explainability 
 
-   Based on SMAP (Shapelet extraction on MAtrix Profile) [1], our system is capable of being distributed in Spark environment. In addition, apart from the interpretability provided by Shapelet features, the system shows a strong explainnabileiy for Shapelet Extraction and Shapelet updating process. 
+   Based on SMAP (Shapelet extraction on MAtrix Profile) [4], our system is capable of being distributed in Spark environment. In addition, apart from the interpretability provided by Shapelet features, the system shows a strong explainnabileiy for Shapelet Extraction and Shapelet updating process. 
 
 5. Traceability of extracted features
 <br /><br /><br /><br />
 
 
+[1] J. Zuo, K. Zeitouni, and Y. Taher, “[ISETS: Incremental Shapelet Extraction from Time Series Stream](https://www.jingweizuo.com/publication/ECML_PKDD2019.pdf)“，(demo paper) ECML-PKDD’19
 
-[1] L. Ye and E. Keogh, “[Time series shapelets: A New Primitive for Data Mining](https://www.cs.ucr.edu/~eamonn/shaplet.pdf),” *Proc. KDD ’09*, p. 947, 2009.
+[2] L. Ye and E. Keogh, “[Time series shapelets: A New Primitive for Data Mining](https://www.cs.ucr.edu/~eamonn/shaplet.pdf),” in Proc. KDD 2019
 
-[2] C. Yeh, Y. Zhu, L. Ulanova, and N. Begum, “[Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View that Includes Motifs, Discords and Shapelets](https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix%20Profile_I.pdf),” *ICDM*, 2016
+[3] C. Yeh, Y. Zhu, L. Ulanova, and N. Begum, “[Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View that Includes Motifs, Discords and Shapelets](https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix%20Profile_I.pdf),” IEEE ICDM 2016
 
-[3] J. Zuo, K. Zeitouni, and Y. Taher, “[Exploring interpretable features for large time series with se4tec](https://openproceedings.org/2019/conf/edbt/EDBT19_paper_353.pdf),” in Proc. EDBT 2019
+[4] J. Zuo, K. Zeitouni, and Y. Taher, “[Exploring interpretable features for large time series with se4tec](https://openproceedings.org/2019/conf/edbt/EDBT19_paper_353.pdf),” in Proc. EDBT 2019
 
