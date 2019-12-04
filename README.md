@@ -2,6 +2,7 @@
 <p align="right">DAVID Lab <br/> Unversity of Versaille Saint-Quentin (UVSQ)<br/> Université Paris-Saclay</p>
 ## A demonstration video can be found here -> [Adaptive features over TS Stream - Demo](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
 
+
 By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the first attempt to extract the incremental and adaptive features from Time Series Stream:
 - For data source with stable concept, learning model will be updated incrementally; 
 - For data source with Concept Drift, we extract the adaptive Shapelets under the most recent concept;
@@ -12,13 +13,13 @@ By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the fir
 **dataset_folder**: in each file, change the location of the datasets in the background. The selected input file will be saved/uploaded into this folder.
 **Data Augmentation**: refer to *preprocessing/TS_stream_preprocess.py*. As Shapelet-based methods (e.g., SMAP) are noise resistant, we put randomly the noise of random durations into the original TS data to augment the data volume. 
 
-####Web application (demo)
+### Web application (demo)
 - **ISETS_webapp.py**: main program, a web application based on Flask and Bokeh
 - **ISETS_webbackend.py**: the program for adaptive shapelet extraction and Concept Drift detection
 - **draw_adaptive_shapelets.py**: show the adaptive shapelets in the web interface
 - **draw_TS_Stream.py**: show in real time the input TS instances in the stream
 
-###Core algorithms
+### Core algorithms
 - **utils/**: the repository which contains the basic file operations and similairty measure functions
 - **memory_block.py**: the caching mechanism including the computation of Matrix Profile for cached instance
 - **SMAP_block.py**: Shapelet extraction on MAtrix Profile
@@ -47,6 +48,7 @@ By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the fir
    Based on SMAP (Shapelet extraction on MAtrix Profile) [1], our system is capable of being distributed in Spark environment. In addition, apart from the interpretability provided by Shapelet features, the system shows a strong explainnabileiy for Shapelet Extraction and Shapelet updating process. 
 
 5. Traceability of extracted features
+<br /><br /><br /><br />
 
 
 
