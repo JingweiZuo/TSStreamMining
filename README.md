@@ -1,6 +1,7 @@
 ## Incremental and Adaptive Feature Exploration over Time Series Stream
 <p align="right">DAVID Lab <br/> Unversity of Versaille Saint-Quentin (UVSQ)<br/> Université Paris-Saclay</p>
-## A demonstration video can be found here -> [Adaptive features over TS Stream - Demo](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
+### A demonstration video can be found here -> [Demo Video](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb)
+</br>
 
 
 By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the first attempt to extract the incremental and adaptive features from Time Series Stream:
@@ -54,7 +55,7 @@ By adopting the concepts Shapelet [1] and Matrix Profile [2], we conduct the fir
 
 [1] L. Ye and E. Keogh, “[Time series shapelets: A New Primitive for Data Mining](https://www.cs.ucr.edu/~eamonn/shaplet.pdf),” *Proc. KDD ’09*, p. 947, 2009.
 
-[2] C. Yeh, Y. Zhu, L. Ulanova, and N. Begum, “[Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View that Includes Motifs, Discords and Shapelets]([https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix%20Profile_I.pdf](https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix Profile_I.pdf)),” *ICDM*, 2016
+[2] C. Yeh, Y. Zhu, L. Ulanova, and N. Begum, “[Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View that Includes Motifs, Discords and Shapelets](https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix%20Profile_I.pdf),” *ICDM*, 2016
 
 [3] J. Zuo, K. Zeitouni, and Y. Taher, “[Exploring interpretable features for large time series with se4tec](https://openproceedings.org/2019/conf/edbt/EDBT19_paper_353.pdf),” in Proc. EDBT 2019
 
