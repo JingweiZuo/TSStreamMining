@@ -10,7 +10,7 @@ from bokeh.io import show, curdoc
 from threading import Thread
 import pandas as pd
 import utils.utils as util
-from ISETS_Web_backend import account_api, extraction_thread
+from ISETS_webbackend import account_api, extraction_thread
 
 app = Flask(__name__)
 app.register_blueprint(account_api)
@@ -45,7 +45,7 @@ def hello():
             thread = Thread(target=extraction_thread, args=(datasetName, window_size,))
             thread.start()
         TSclass = request.form['TSclass']
-    return render_template('hello.html',bokS=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)
+    return render_template('webapp_interface.html',bokS=bokeh_script, bokeh_server=bokeh_server, pl_conceptDrift = pl_conceptDrift)
 
 def plot_dataset():
     '''data_directory = "/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015"

@@ -12,6 +12,8 @@ import SMAP_LB.SMAP_LB as smap_lb
 import SMAP.SMAP as smap
 import utils.utils as util
 import ISMAP
+import adaptive_features
+
 from sklearn.model_selection import StratifiedShuffleSplit, train_test_split, StratifiedKFold
 
 __author__ = "Jingwei ZUO"
@@ -123,31 +125,14 @@ def main(args):
         print(sk_report)
 
 def algo_train(ts_training, distance_measure, top_k_value, args):
-    # Pre-configuration Area of Parameters#
+    # Pre-configuration Area of Parameters
     dataset = {k: v for ds in ts_training for k, v in ds.items()}
-    m_ratio = 0.05
+    m_ratio = 0.1
     dataset_list = list(dataset.values())
     min_m = util.min_length_dataset(dataset_list)
     min_length = int(0.1 * min_m)
     max_length = int(0.5 * min_m)
     m_list = range(min_length, max_length, int(min_m * m_ratio))
-    print("m_list is " + str(m_list))
-    #m_list = range(min_length, max_length, 1)
-
-    ###############################Save dataset info to 'csv' file ###############################
-    '''file_name = "TrainingInstanceInfo.csv"
-    dirname = args.data_directory
-    ##clean the historical files
-    files_list = [f for f in os.listdir(dirname) if f.lower().endswith('csv')]
-    for file in files_list:
-        path = dirname + file
-        os.remove(path)
-    path = dirname + file_name
-
-    with open(path, 'w') as f:
-        writer = csv.writer(f, lineterminator='\n', delimiter=';', )
-        for anObject in dataset.values():
-            writer.writerow([anObject.name, anObject.class_timeseries])'''
 
     ###############################Save dataset to 'csv' file ###############################
     # The USE algorithm
@@ -162,12 +147,21 @@ def algo_train(ts_training, distance_measure, top_k_value, args):
     elif args.algo == "smapLB":
         list_all_shapelets = smap_lb.extract_shapelet_all_length(top_k_value, ts_training, "top-k", 4)
     elif args.algo == "ISMAP":
-        # 1. ISMAP: incremental SMAP, which sets a loss threshold and filtre input instances
-        # 2. Adaptive Features exploration under Concept Drift
+        # ISMAP: incremental SMAP, which sets a loss threshold and filtre input instances
         print("This is ISMAP algorithm")
         stack_ratio = 1
         window_size = 1 #len(dataset_list)
         list_all_shapelets = ISMAP.ISMAP(top_k_value, dataset_list, m_list, stack_ratio, window_size, distance_measure, args.data_directory)
+    elif args.algo == "AdaptiveFeatures":
+        # Adaptive Feature exploration under Concept Drift
+        print("This is the algorithm for Adaptive Feature exploration")
+        stack_ratio = 1
+        window_size = 5
+        distance_measure = "mass_v2"
+        drift_strategy = "PH test"
+        thresh_loss = 0.5
+        adaptive_features.adaptive_feature_extraction(top_k_value, args.data_directory, m_ratio, stack_ratio, window_size, distance_measure,
+                                    drift_strategy, thresh_loss)
 
     print("Execution complete")
     print("Time taken by the algorithm (minutes):", (time.time() - start_time) / 60)

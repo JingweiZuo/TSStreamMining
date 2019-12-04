@@ -23,10 +23,10 @@ t_stamp = 0
 window_size = 10
 forget_degree = 0
 TSClass = None
-plot_window = figure(plot_height=150, plot_width=500, title='New Incoming TS micro-batch')
-plot_all = figure(plot_height=150, plot_width=500, title='All historical TS')
-plot_window.axis.visible = False
-plot_all.axis.visible = False
+plot_TS_window = figure(plot_height=150, plot_width=500, title='New Incoming TS micro-batch')
+plot_TS_all = figure(plot_height=150, plot_width=500, title='All historical TS')
+plot_TS_window.axis.visible = False
+plot_TS_all.axis.visible = False
 
 
 # Set up widgets
@@ -40,7 +40,7 @@ def set_class(attr, old, new):
     TSClass = class_select.value
     class_select.label = class_select.value
 def set_windowSize(attr, old, new):
-    global t_stamp, window_size, plot_window, plot_all, TSClass
+    global t_stamp, window_size, plot_TS_window, plot_TS_all, TSClass
     window_size = winSize_slider.value
     for ts in dataset_list[t_stamp:t_stamp+window_size]:
         if ts.class_timeseries == TSClass:
@@ -57,7 +57,7 @@ fDegree_slider.on_change('value', set_forgetDegree)
 widgetSet = widgetbox(class_select, winSize_slider, fDegree_slider)
 
 def draw_TS():
-    global t_stamp, dataset_list, window_size, plot_window, plot_all, TSClass
+    global t_stamp, dataset_list, window_size, plot_TS_window, plot_TS_all, TSClass
     list_timeseries = util.load_dataset(dataset)
     name_dataset = {k: v for ds in list_timeseries for k, v in ds.items()}
     dataset_list = list(name_dataset.values())
@@ -76,6 +76,6 @@ def draw_TS():
             y = ts.timeseries
             plot_all.line(x, y, line_width=1)
 
-curdoc().add_root(column(widgetSet, plot_window, plot_all, width=370))
+curdoc().add_root(column(widgetSet, plot_TS_window, plot_TS_all, width=370))
 curdoc().add_periodic_callback(draw_TS, 5000)
 curdoc().title = "Sliders"
