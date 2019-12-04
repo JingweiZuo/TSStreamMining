@@ -11,9 +11,9 @@ By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the fir
 - An elastic caching mechanism allows to tackle the infinite TS instances in streaming context. 
 
 ### Configurations (demo)
-**Input File**: the name should be end with "Train.csv"
-**dataset_folder**: in each file, change the location of the datasets in the background. The selected input file will be saved/uploaded into this folder.
-**Data Augmentation**: refer to *preprocessing/TS_stream_preprocess.py*. As Shapelet-based methods (e.g., SMAP) are noise resistant, we put randomly the noise of random durations into the original TS data to augment the data volume. 
+- **Input File**: the name should be end with "Train.csv"
+- **dataset_folder**: in each file, change the location of the datasets in the background. The selected input file will be saved/uploaded into this folder.
+- **Data Augmentation**: refer to *preprocessing/TS_stream_preprocess.py*. As Shapelet-based methods (e.g., SMAP) are noise resistant, we put randomly the noise of random durations into the original TS data to augment the data volume. 
 
 ### Web application (demo)
 - **ISETS_webapp.py**: main program, a web application based on Flask and Bokeh
