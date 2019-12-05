@@ -55,7 +55,7 @@ By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the fir
 
 [1] J. Zuo, K. Zeitouni, and Y. Taher, “[ISETS: Incremental Shapelet Extraction from Time Series Stream](https://www.jingweizuo.com/publication/ECML_PKDD2019.pdf)“，(demo paper) ECML-PKDD’19
 
-[2] L. Ye and E. Keogh, “[Time series shapelets: A New Primitive for Data Mining](https://www.cs.ucr.edu/~eamonn/shaplet.pdf),” in Proc. KDD 2019
+[2] L. Ye and E. Keogh, “[Time series shapelets: A New Primitive for Data Mining](https://www.cs.ucr.edu/~eamonn/shaplet.pdf),” in Proc. KDD 2009
 
 [3] C. Yeh, Y. Zhu, L. Ulanova, and N. Begum, “[Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View that Includes Motifs, Discords and Shapelets](https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix%20Profile_I.pdf),” IEEE ICDM 2016
 
