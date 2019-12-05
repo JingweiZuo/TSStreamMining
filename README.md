@@ -47,7 +47,7 @@ By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the fir
 
 4. Scalability & Explainability 
 
-   Based on SMAP (Shapelet extraction on MAtrix Profile) [4], our system is capable of being distributed in Spark environment. In addition, apart from the interpretability provided by Shapelet features, the system shows a strong explainnabileiy for Shapelet Extraction and Shapelet updating process. 
+   Based on SMAP (Shapelet extraction on MAtrix Profile) [4], our system is capable of being distributed in Spark environment. In addition, apart from the interpretability provided by Shapelet features, the system shows a strong explainability for Shapelet Extraction and Shapelet updating process. 
 
 5. Traceability of extracted features
 <br /><br /><br /><br />
