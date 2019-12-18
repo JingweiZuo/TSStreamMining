@@ -3,7 +3,9 @@
 
 ### A demonstration video can be found here -> [Demo Video](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb) [1]
 </br>
+
 ### You can find the paper here -> [IEEE Big Data 2019](https://hal.archives-ouvertes.fr/hal-02391802/document)
+</br>
 
 By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the first attempt to extract the incremental and adaptive features from Time Series Stream:
 - For data source with stable concept, learning model will be updated incrementally; 
