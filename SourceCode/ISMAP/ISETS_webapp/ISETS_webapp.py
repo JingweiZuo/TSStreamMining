@@ -45,8 +45,9 @@ def hello():
     import signal
     process = subprocess.Popen('bokeh serve draw_TS_Stream.py draw_adaptive_shapelets.py --port 5006 --allow-websocket-origin=127.0.0.1:5000',shell=True)
     time.sleep(2)
-    draw_adaptive_shapelets = server_document("http://localhost:5006/draw_adaptive_shapelets")
+
     draw_TS_Stream = server_document("http://localhost:5006/draw_TS_Stream")
+    draw_adaptive_shapelets = server_document("http://localhost:5006/draw_adaptive_shapelets")
     pl_conceptDrift = plot_conceptDrift()
     global thread
 
@@ -61,6 +62,7 @@ def hello():
 
         process.send_signal(signal.SIGINT)
         os.system('bokeh serve draw_TS_Stream.py draw_adaptive_shapelets.py --port 5006 --allow-websocket-origin=127.0.0.1:5000')
+
         TrainDataset = dataset_folder + datasetName
         # to start a new Thread for computation, how to the transfer the parameters?
         if thread == None:

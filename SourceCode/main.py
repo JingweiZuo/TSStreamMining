@@ -47,7 +47,8 @@ def parse_args(args):
         '--data',
         dest="data_directory",
         help="Select the directory where the training csv files are saved",
-        default='/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/' + dataset_name + '/' + dataset_name + '_TRAIN'
+        #default='/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/' + dataset_name + '/' + dataset_name + '_TRAIN'
+        default='/Users/Jingwei/Downloads/plasticc_part_data_201912/TransiXplore_1000_TRAIN'
     )
 
     parser.add_argument(
@@ -55,7 +56,8 @@ def parse_args(args):
         '--eval',
         dest='eval_directory',
         help='Select the directory where the evaluation csv files exist',
-        default='/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/' + dataset_name + '/' + dataset_name + '_TEST'
+        #default='/Users/Jingwei/PycharmProjects/distributed_use/SourceCode/TestDataset/UCR_TS_Archive_2015/' + dataset_name + '/' + dataset_name + '_TEST'
+        default='/Users/Jingwei/Downloads/plasticc_part_data_201912/TransiXplore_500_TEST'
     )
 
     parser.add_argument(
@@ -151,7 +153,7 @@ def algo_train(ts_training, distance_measure, top_k_value, args):
         print("This is ISMAP algorithm")
         stack_ratio = 1
         window_size = 1 #len(dataset_list)
-        list_all_shapelets = ISMAP.ISMAP(top_k_value, dataset_list, m_list, stack_ratio, window_size, distance_measure, args.data_directory)
+        list_all_shapelets = ISMAP.ISMAP(top_k_value, ts_training, m_list, stack_ratio, window_size, distance_measure, args.data_directory)
     elif args.algo == "AdaptiveFeatures":
         # Adaptive Feature exploration under Concept Drift
         print("This is the algorithm for Adaptive Feature exploration")

@@ -1,6 +1,6 @@
 import numpy as np
 import utils.similarity_measures as sm
-import line_profiler
+#import line_profiler
 #@profile
 def computeMP(timeseries1, timeseries2, subseq_length, distance_measure):
     #timeseries1: Query TS, timeseries2: Target TS

@@ -1,5 +1,5 @@
 import numpy as np
-import line_profiler
+#import line_profiler
 
 
 def sliding_window(sequence, win_size, step=1):

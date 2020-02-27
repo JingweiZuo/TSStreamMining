@@ -91,14 +91,19 @@ def generate_timeseries(directory):
 def load_dataset(directory):
     #return: list of dictionary, each dict. has one single element {t.name:t.sequence}
     array_ts = []
-    list_rawData = np.genfromtxt(directory, delimiter=",")
+    list_rawData = np.genfromtxt(directory, delimiter=",", dtype=object)
     np.random.shuffle(list_rawData)
     i = 1
     for d in list_rawData:
         # d[0] is the class of TS in the original data, d[1:] is the data in TS
         t = TimeSeries()
         t.class_timeseries = d[0]
-        t.timeseries = d[1:]
+        ### MODIFIED PART ###
+        #t.timeseries = d[1:]
+        #print(str(d[1])[2:-1].split(' '))
+        ts = [float(i) for i in str(d[1])[2:-1].split(' ')]
+
+        t.timeseries = np.asarray(ts)
         t.id = i
         t.name = hash(d[1:].tostring())
         array_ts.append({t.name:t})

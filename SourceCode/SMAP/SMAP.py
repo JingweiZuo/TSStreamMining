@@ -231,8 +231,8 @@ def extract_shapelet(k, dataset, m, pruning_option, distance_measure):
         # 'mp_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         # 'ip_all': dict{ ts_name_source1: dict{ts_name_target1:Array[], ...}, ts_name_source2: dict{...}, ... }
         #dp_all[ts.name], mp_all[ts.name], dist_differ, dist_threshold= computeDistDiffer(ts, dataset, m, plot_flag)
-        #mp_all[ts.name], dist_differ, dist_threshold = computeDistDiffer(ts, dataset, m, distance_measure)
-        mp_all[ts.name], dist_differ, dist_threshold = computeDistDifferFromFile(ts.id, m)
+        mp_all[ts.name], dist_differ, dist_threshold = computeDistDiffer(ts, dataset, m, distance_measure)
+        #mp_all[ts.name], dist_differ, dist_threshold = computeDistDifferFromFile(ts.id, m)
 
         plot_flag = False
         # Array of distance's difference for all timeseries in the dataset
@@ -344,12 +344,15 @@ def extract_shapelet(k, dataset, m, pruning_option, distance_measure):
         return shapelet_list'''
 
 #@profile
-def extract_shapelet_all_length(k, dataset, pruning_option, m_list, distance_measure, MP_file):
+def extract_shapelet_all_length(k, ts_training, pruning_option, m_list, distance_measure, MP_file):
     global MP_data_file
     MP_data_file = MP_file
-    #'dataset': {ts_name:ts_obj}
+    # 'ts_training': [{ts_name:ts_obj}]
+    # 'dataset': {ts_name:ts_obj}
+    dataset = {k: v for ds in ts_training for k, v in ds.items()}
     shap_list = []
     # 'ts' is the object of TimeSeries
+
     min_m = util.min_length_dataset(dataset.values())
     for m in m_list:
         print("Extracting shapelet length: " + str(m))

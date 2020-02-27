@@ -60,7 +60,7 @@ def draw_TS():
             line1 = plot_TS_window.select({'name': str(t_stamp - window_size)})
             line1.visible = False
         for ts in dataset_list[t_stamp:t_stamp+window_size]:
-            if str(int(ts.class_timeseries)) == TSClass.split()[1]:
+            if str(ts.class_timeseries) == TSClass.split()[1]:
                 x = range(len(ts.timeseries))
                 y = ts.timeseries
                 plot_TS_window.line(x, y, line_width=1, name = str(t_stamp))
@@ -70,7 +70,7 @@ def draw_TS():
             line2.visible = False
         n = t_stamp + window_size
         for ts in dataset_list[:n]:
-            if str(int(ts.class_timeseries)) == TSClass.split()[1]:
+            if str(ts.class_timeseries) == TSClass.split()[1]:
                 x = range(len(ts.timeseries))
                 y = ts.timeseries
                 plot_TS_all.line(x, y, line_width=1, name=str(t_stamp))
