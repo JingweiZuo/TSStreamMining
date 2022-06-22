@@ -4,7 +4,7 @@
 ### A demonstration video can be found here -> [Demo Video](https://drive.google.com/open?id=1-7RpKNIdMLYUuv1Fg7X7IlJMUrmkKwAb) [1]
 </br>
 
-### You can find the paper here -> [IEEE Big Data 2019](https://ieeexplore.ieee.org/document/9005660)
+### You can find the paper here -> [IEEE Big Data 2019]([https://ieeexplore.ieee.org/document/9005660](https://www.jingweizuo.com/publication/ISMAP_BigData2019.pdf))
 </br>
 
 By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the first attempt to extract the incremental and adaptive features from Time Series Stream:
