@@ -54,6 +54,21 @@ By adopting the concepts Shapelet [2] and Matrix Profile [3], we conduct the fir
 5. Traceability of extracted features
 <br /><br /><br /><br />
 
+### Citation
+
+If you find this repository useful in your research, please consider citing the following paper:
+
+```script
+@inproceedings{zuo2019incremental,
+  title={Incremental and Adaptive Feature Exploration over Time Series Stream},
+  author={Zuo, Jingwei and Zeitouni, Karine and Taher, Yehia},
+  booktitle={2019 IEEE International Conference on Big Data (Big Data)},
+  pages={593--602},
+  year={2019},
+  organization={IEEE}
+}
+```
+
 
 [1] J. Zuo, K. Zeitouni, and Y. Taher, “[ISETS: Incremental Shapelet Extraction from Time Series Stream](https://www.jingweizuo.com/publication/ECML_PKDD2019.pdf)“，(demo paper) ECML-PKDD’19
 
